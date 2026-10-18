@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software in research, cite the version or commit you actually used."
+title: "Chess Opening Trainer"
+type: software
+authors:
+  - name: "Chess Opening Trainer contributors"
+version: "0.24.0"
+license: GPL-3.0-or-later
+repository-code: "https://github.com/AdrianSomething/chess-trainer"
+url: "https://github.com/AdrianSomething/chess-trainer"
+abstract: "An offline-first Windows application for repertoire learning, local engine analysis, puzzles and chess vision."
+keywords:
+  - chess
+  - spaced repetition
+  - Stockfish
+# No DOI or publication date has been assigned. Add verified metadata at release time.

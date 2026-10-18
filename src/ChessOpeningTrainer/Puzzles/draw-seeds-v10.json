@@ -1,0 +1,110 @@
+[
+  {
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [],
+    "id": "c50296baff2f4f7da2a646f0de3cf84c",
+    "fen": "1k6/8/8/4r3/5K2/8/8/8 w - - 0 1",
+    "moves": [],
+    "theme": "Remis sichern in 1 eigenen Zügen",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Königsressource gegen Turm · vollständige begrenzte Remisprüfung",
+    "fingerprint": "",
+    "goalMoves": 1,
+    "goalKind": "Draw",
+    "preparedMateRoutes": {
+      "1k6/8/8/4r3/5K2/8/8/8 w - - 0 1|1": [
+        {
+          "move": "f4e5",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [],
+    "id": "41f80a2b60a641e18d82d06b8dbe78c2",
+    "fen": "8/3K4/8/8/1N6/2k5/8/2q5 w - - 0 1",
+    "moves": [],
+    "theme": "Remis sichern in 2 eigenen Zügen",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Springergabel · vollständige begrenzte Remisprüfung",
+    "fingerprint": "",
+    "goalMoves": 2,
+    "goalKind": "Draw",
+    "preparedMateRoutes": {
+      "8/3K4/8/8/1N6/2k5/8/2q5 w - - 0 1|2": [
+        {
+          "move": "b4a2",
+          "defense": "c3d4"
+        }
+      ],
+      "8/3K4/8/8/3k4/8/N7/2q5 w - - 2 2|1": [
+        {
+          "move": "a2c1",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [],
+    "id": "e97370154fdf4f6d8b655cc39a6d1db0",
+    "fen": "8/k7/8/1B6/2q5/K7/8/8 w - - 0 1",
+    "moves": [],
+    "theme": "Remis sichern in 1 eigenen Zügen",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Läuferressource gegen Dame · vollständige begrenzte Remisprüfung",
+    "fingerprint": "",
+    "goalMoves": 1,
+    "goalKind": "Draw",
+    "preparedMateRoutes": {
+      "8/k7/8/1B6/2q5/K7/8/8 w - - 0 1|1": [
+        {
+          "move": "b5c4",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [],
+    "id": "5ca84e57db1545eea8ac09a7d822a6c5",
+    "fen": "8/6N1/3q1k2/8/8/8/K7/8 w - - 0 1",
+    "moves": [],
+    "theme": "Remis sichern in 2 eigenen Zügen",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Springergabel · vollständige begrenzte Remisprüfung",
+    "fingerprint": "",
+    "goalMoves": 2,
+    "goalKind": "Draw",
+    "preparedMateRoutes": {
+      "8/6N1/3q1k2/8/8/8/K7/8 w - - 0 1|2": [
+        {
+          "move": "g7e8",
+          "defense": "f6g6"
+        }
+      ],
+      "4N3/8/3q2k1/8/8/8/K7/8 w - - 2 2|1": [
+        {
+          "move": "e8d6",
+          "defense": null
+        }
+      ]
+    }
+  }
+]

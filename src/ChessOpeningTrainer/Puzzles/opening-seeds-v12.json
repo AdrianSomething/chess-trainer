@@ -1,0 +1,94 @@
+[
+  {
+    "cacheKey": "opening-errors-365DE3B263E27E424FF5.json",
+    "puzzle": {
+      "setupFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "setupMoves": [
+        "e2e4",
+        "d7d6",
+        "d2d4",
+        "g8f6",
+        "b1c3",
+        "g7g6",
+        "f2f4",
+        "f8g7",
+        "g1f3",
+        "e8g8",
+        "f1d3",
+        "c7c5",
+        "d4d5",
+        "e7e6",
+        "d5e6",
+        "c8e6",
+        "e1g1",
+        "b8c6",
+        "c3b1"
+      ],
+      "openingAnchorFen": "r2q1rk1/pp3pbp/2npbnp1/2p5/4PP2/2NB1N2/PPP3PP/R1BQ1RK1 w - - 2 10",
+      "positionalStyle": "",
+      "pastMove": null,
+      "mateDefenseVersion": 0,
+      "acceptedMoves": [],
+      "id": "d5beafbb1e474365a0473fa964d5797e",
+      "fen": "r2q1rk1/pp3pbp/2npbnp1/2p5/4PP2/3B1N2/PPP3PP/RNBQ1RK1 b - - 3 10",
+      "moves": [
+        "c5c4",
+        "f4f5"
+      ],
+      "theme": "Gegnerfehler ausnutzen \u00B7 nach Nb1",
+      "minimumDepth": 14,
+      "lastPlayedUtc": null,
+      "origin": "Pirc Defence \u2013 Schwarzes Repertoire, erweitert \u00B7 ausgelassener Gegnerzug Nb1 \u00B7 Pr\u00FCfung Tiefe 14",
+      "fingerprint": "",
+      "goalMoves": 3,
+      "goalKind": "OpeningMistake",
+      "preparedMateRoutes": null
+    }
+  },
+  {
+    "cacheKey": "opening-errors-365DE3B263E27E424FF5-deviations.json",
+    "puzzle": {
+      "setupFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "setupMoves": [
+        "e2e4",
+        "d7d6",
+        "d2d4",
+        "g8f6",
+        "b1c3",
+        "g7g6",
+        "f2f4",
+        "f8g7",
+        "g1f3",
+        "e8g8",
+        "f1d3",
+        "c7c5",
+        "d4d5",
+        "e7e6",
+        "d5e6",
+        "c8e6",
+        "e1g1",
+        "b8c6",
+        "c3b1"
+      ],
+      "openingAnchorFen": "r2q1rk1/pp3pbp/2npbnp1/2p5/4PP2/2NB1N2/PPP3PP/R1BQ1RK1 w - - 2 10",
+      "positionalStyle": "",
+      "pastMove": null,
+      "mateDefenseVersion": 0,
+      "acceptedMoves": [],
+      "id": "d5beafbb1e474365a0473fa964d5797e",
+      "fen": "r2q1rk1/pp3pbp/2npbnp1/2p5/4PP2/3B1N2/PPP3PP/RNBQ1RK1 b - - 3 10",
+      "moves": [
+        "c5c4",
+        "f4f5"
+      ],
+      "theme": "Gegnerfehler ausnutzen \u00B7 nach Nb1",
+      "minimumDepth": 14,
+      "lastPlayedUtc": null,
+      "origin": "Pirc Defence \u2013 Schwarzes Repertoire, erweitert \u00B7 ausgelassener Gegnerzug Nb1 \u00B7 Pr\u00FCfung Tiefe 14",
+      "fingerprint": "",
+      "goalMoves": 3,
+      "goalKind": "OpeningMistake",
+      "preparedMateRoutes": null
+    }
+  }
+]

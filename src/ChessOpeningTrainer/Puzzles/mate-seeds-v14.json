@@ -1,0 +1,428 @@
+[
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "g2g1q",
+      "g2g1r",
+      "h4h1"
+    ],
+    "solutionLines": [],
+    "id": "1d695c718bd740d5be03132cb0253df8",
+    "fen": "8/7P/7P/1R3p2/7q/2kb4/6p1/2NK4 b - - 0 1",
+    "moves": [
+      "g2g1q"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/7P/7P/1R3p2/7q/2kb4/6p1/2NK4 b - - 0 1|1": [
+        {
+          "move": "g2g1q",
+          "defense": null
+        },
+        {
+          "move": "g2g1r",
+          "defense": null
+        },
+        {
+          "move": "h4h1",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "e5h8",
+      "e6e8"
+    ],
+    "solutionLines": [],
+    "id": "e51a705596c245929b6246bcc329ec7b",
+    "fen": "2k5/5p2/1pKPR3/2prQ1P1/n2PP3/2P5/3pp3/8 w - - 0 1",
+    "moves": [
+      "e5h8"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "2k5/5p2/1pKPR3/2prQ1P1/n2PP3/2P5/3pp3/8 w - - 0 1|1": [
+        {
+          "move": "e5h8",
+          "defense": null
+        },
+        {
+          "move": "e6e8",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "e2g2"
+    ],
+    "solutionLines": [],
+    "id": "646dce9837d344f887dd8f6296a9ff4c",
+    "fen": "8/3p4/6p1/8/1P4Pp/4k1Nb/1P2q3/2R4K b - - 0 1",
+    "moves": [
+      "e2g2"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/3p4/6p1/8/1P4Pp/4k1Nb/1P2q3/2R4K b - - 0 1|1": [
+        {
+          "move": "e2g2",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "h2h1q",
+      "h2h1r"
+    ],
+    "solutionLines": [],
+    "id": "57e45aa6ab8b4945952a4e7a12219938",
+    "fen": "8/4p3/pp2PP2/6P1/P4R1K/k4qp1/1N3P1p/6b1 b - - 0 1",
+    "moves": [
+      "h2h1q"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/4p3/pp2PP2/6P1/P4R1K/k4qp1/1N3P1p/6b1 b - - 0 1|1": [
+        {
+          "move": "h2h1q",
+          "defense": null
+        },
+        {
+          "move": "h2h1r",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "f1e1"
+    ],
+    "solutionLines": [],
+    "id": "b2cc5509d9af49cd8a86b5e805912d82",
+    "fen": "2N5/P7/3P4/3p4/8/8/k1p1q3/2K1Rr2 b - - 0 1",
+    "moves": [
+      "f1e1"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "2N5/P7/3P4/3p4/8/8/k1p1q3/2K1Rr2 b - - 0 1|1": [
+        {
+          "move": "f1e1",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "f8h6",
+      "f8g8"
+    ],
+    "solutionLines": [],
+    "id": "e9ef8258899647c48fceb6e010b188c0",
+    "fen": "5Qrk/5B2/8/8/8/1p1PPK2/1p1P1p2/n7 w - - 0 1",
+    "moves": [
+      "f8h6"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "5Qrk/5B2/8/8/8/1p1PPK2/1p1P1p2/n7 w - - 0 1|1": [
+        {
+          "move": "f8h6",
+          "defense": null
+        },
+        {
+          "move": "f8g8",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "d4d1"
+    ],
+    "solutionLines": [],
+    "id": "4a36cb1c42b94419afac5cab4a0654be",
+    "fen": "5N2/4p3/8/PP2pp1P/3r1R2/8/5q1k/1K6 b - - 0 1",
+    "moves": [
+      "d4d1"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "5N2/4p3/8/PP2pp1P/3r1R2/8/5q1k/1K6 b - - 0 1|1": [
+        {
+          "move": "d4d1",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "d8g5"
+    ],
+    "solutionLines": [],
+    "id": "64317b32cdc74608b17356fdf90128a4",
+    "fen": "2KQ4/6P1/n2pr3/1p3B1k/7P/8/p5P1/8 w - - 0 1",
+    "moves": [
+      "d8g5"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "2KQ4/6P1/n2pr3/1p3B1k/7P/8/p5P1/8 w - - 0 1|1": [
+        {
+          "move": "d8g5",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "g2g7"
+    ],
+    "solutionLines": [],
+    "id": "148c46078d1a4211b73798a715d89697",
+    "fen": "8/4P2k/P1Pr1p1B/1K3P2/p7/1pp5/1P3pQ1/4n3 w - - 0 1",
+    "moves": [
+      "g2g7"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/4P2k/P1Pr1p1B/1K3P2/p7/1pp5/1P3pQ1/4n3 w - - 0 1|1": [
+        {
+          "move": "g2g7",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "f2f1q",
+      "f2f1r"
+    ],
+    "solutionLines": [],
+    "id": "3f743cf95b1c427093ae99f7a9c09793",
+    "fen": "8/1PPP4/p6p/1k6/2N5/1p1r2PR/5pq1/1K6 b - - 0 1",
+    "moves": [
+      "f2f1q"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/1PPP4/p6p/1k6/2N5/1p1r2PR/5pq1/1K6 b - - 0 1|1": [
+        {
+          "move": "f2f1q",
+          "defense": null
+        },
+        {
+          "move": "f2f1r",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "d6b8"
+    ],
+    "solutionLines": [],
+    "id": "0708fcea60714adc848ac3b1ca01a64b",
+    "fen": "3k4/3pp2r/3Q3P/8/7K/2P4n/2P2p2/3B4 w - - 0 1",
+    "moves": [
+      "d6b8"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "3k4/3pp2r/3Q3P/8/7K/2P4n/2P2p2/3B4 w - - 0 1|1": [
+        {
+          "move": "d6b8",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [
+      "g4g6"
+    ],
+    "solutionLines": [],
+    "id": "8218a7cb616d451983aff1507aa0e4b8",
+    "fen": "8/2P4p/3b3K/7R/1P4q1/2p1pP2/3N4/3k4 b - - 0 1",
+    "moves": [
+      "g4g6"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Zuf\u00E4llige Taktikkomposition \u00B7 vollst\u00E4ndig regelgepr\u00FCft",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/2P4p/3b3K/7R/1P4q1/2p1pP2/3N4/3k4 b - - 0 1|1": [
+        {
+          "move": "g4g6",
+          "defense": null
+        }
+      ]
+    }
+  }
+]

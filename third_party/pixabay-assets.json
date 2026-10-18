@@ -1,0 +1,53 @@
+{
+  "license": "Pixabay Content License",
+  "licenseUrl": "https://pixabay.com/service/terms/",
+  "distribution": "Contextual audio in complete application only; excluded from public source export.",
+  "modifications": "Edited in Audacity by the maintainer; exact steps and original download dates not recorded.",
+  "assets": [
+    {
+      "file": "Check.mp3",
+      "sha256": "fb227fb41d2983060f3fc8986d8de1efef706a2af0906c2a09eae18f3003a358",
+      "sourceId": 60890
+    },
+    {
+      "file": "Checkmate.mp3",
+      "sha256": "480e3c7251b25f49d9690549d7cef850e9b1da67ffe0f1ed5c9d649c604bf11a",
+      "sourceId": 99336
+    },
+    {
+      "file": "Confirmarion.mp3",
+      "sha256": "254e4ae8758b85547f276010d8f1411873d78246913dd37667d49a6a12d32298",
+      "sourceId": 394001
+    },
+    {
+      "file": "Error.mp3",
+      "sha256": "e3fbdef895213dc23b6ef54221976aa3abfb777aa36598d257f5689b70429098",
+      "sourceId": 206492
+    },
+    {
+      "file": "Piece_01_heavy.mp3",
+      "sha256": "00e495af351bb8c900c1649a9c40b6b9be82b226f7721f76e52c2e2384b3e71a",
+      "sourceId": 60890
+    },
+    {
+      "file": "Piece_02_heavy.mp3",
+      "sha256": "009cf4e243242b7ac57099d0d12ed7b7489eeabb417e3c50896a91661de4098a",
+      "sourceId": 60890
+    },
+    {
+      "file": "Piece_03_heavy.mp3",
+      "sha256": "5f3b5e70f9b67f8fc42415216c3b09455ce61d6b9303a021caaa318afa1465fd",
+      "sourceId": 60890
+    },
+    {
+      "file": "Piece_04_light.mp3",
+      "sha256": "9b52ce85e902e97bc87fcac2e6997e77d2800d9a9e8558dfc9923d2201851c7a",
+      "sourceId": 60890
+    },
+    {
+      "file": "Piece_05_light.mp3",
+      "sha256": "0ab848f8424c7a23495e4b43a4e09ff595bccca91e120f8ff4b5f0bef2903cf5",
+      "sourceId": 60890
+    }
+  ]
+}

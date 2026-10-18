@@ -1,0 +1,43 @@
+# Private local workspace, historical packages and personal chess data
+/outputs/
+/work/
+/private/
+/publication/
+/artifacts/
+/.cache/
+/.dotnet-home/
+*.pdb
+.env
+.env.*
+*.pem
+*.pfx
+*.key
+*.pgn
+!src/ChessOpeningTrainer/Samples/demo-game.pgn
+/src/ChessOpeningTrainer/Customization/sounds/user/
+/src/ChessOpeningTrainer/engine/stockfish_release/
+/src/ChessOpeningTrainer/Openings/example_pirc_defense.json
+/tests/
+/docs/versions/
+/docs/history/
+/tools/Prepare-Publication.ps1
+/tools/Publish.ps1
+/tools/Test.ps1
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+
+# Local generated repertoires never belong to the distributable source by default.
+/src/ChessOpeningTrainer/Openings/custom_*.json
+/src/ChessOpeningTrainer/Openings/combined_*.json
+
+# Downloaded Stockfish executable: source/license notices remain visible.
+/src/ChessOpeningTrainer/engine/*.exe
+/src/ChessOpeningTrainer/engine/*.zip
+/src/ChessOpeningTrainer/engine/**/*.exe
+/src/ChessOpeningTrainer/engine/**/*.zip
+
+# One-time migration utilities are workspace maintenance, not application source.
+/tools/SourceOrganizer/

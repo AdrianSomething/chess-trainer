@@ -1,0 +1,37 @@
+{
+  "id": "white",
+  "name": "White · Hell",
+  "branchNodes": {
+    "unknown": "#D3DDE6", "unknown-opponent": "#B8C7D5",
+    "seen": "#A9CCE9", "seen-opponent": "#88B4D7",
+    "learned": "#A6D8B8", "learned-opponent": "#84BDA0",
+    "due": "#F1D291", "due-opponent": "#D9B970",
+    "later": "#CFB9DE", "later-opponent": "#B29BC4",
+    "excluded": "#D9DDE1", "excluded-opponent": "#BCC1C7"
+  },
+  "colors": {
+    "#1F2327": "#F4F5F7",
+    "#1D2126": "#EFF1F4",
+    "#20262C": "#DFE3E8",
+    "#2B3137": "#FFFFFF",
+    "#2C3339": "#F9FAFC",
+    "#395B77": "#CDDFEF",
+    "#3A424A": "#E8EDF3",
+    "#454D53": "#D4DBE3",
+    "#363D43": "#E8EDF3",
+    "#464E55": "#D7E1EB",
+    "#465A6A": "#CADBEA",
+    "#505F6F": "#CBD9E5",
+    "#536373": "#CFDCE7",
+    "#535B63": "#D4DBE3",
+    "#576A7D": "#C6D8E8",
+    "#5E6F7F": "#889FB3",
+    "#DCDCDC": "#26333E",
+    "#FFFFFF": "#1D2D3B",
+    "#9BA3AB": "#586674",
+    "#858D97": "#65717E",
+    "#E19BFF": "#792E9C",
+    "#87CEFA": "#245D92",
+    "#FFA500": "#A35C00"
+  }
+}

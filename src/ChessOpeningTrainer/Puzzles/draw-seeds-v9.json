@@ -1,0 +1,16 @@
+[
+  {
+    "id": "draw-v9-fork-two-turns",
+    "fen": "8/4N3/5k1q/8/8/8/4K3/8 w - - 0 1",
+    "moves": [],
+    "theme": "Remis sichern in 2 eigenen Zügen",
+    "minimumDepth": 0,
+    "origin": "Springergabel-Komposition · alle Gegnerantworten bis zum Remisziel geprüft",
+    "goalMoves": 2,
+    "goalKind": "Draw",
+    "preparedMateRoutes": {
+      "8/4N3/5k1q/8/8/8/4K3/8 w - - 0 1|2": [{"move":"e7g8","defense":"f6g7"}],
+      "6N1/6k1/7q/8/8/8/4K3/8 w - - 2 2|1": [{"move":"g8h6","defense":null}]
+    }
+  }
+]

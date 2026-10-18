@@ -1,0 +1,22 @@
+[
+  {
+    "id": "positional-v9-quiet-black-14",
+    "fen": "r3k2r/1b1n1pbp/1qp1pp2/pp6/P1pP4/5BP1/1PQNPP1P/R2RN1K1 b kq - 3 14",
+    "acceptedMoves": ["f6f5", "e8g8"],
+    "moves": ["f6f5", "e2e3", "e8g8", "b2b3", "c6c5", "a4b5", "b7f3", "e1f3", "c4b3", "c2b3", "b6b7", "h2h3"],
+    "theme": "Stellungsgefühl · 2 gute ruhige Züge",
+    "minimumDepth": 12,
+    "origin": "Engine-Selbstspiel · MultiPV aller legalen Züge, Tiefe 12",
+    "goalKind": "Positional"
+  },
+  {
+    "id": "positional-v9-quiet-black-23",
+    "fen": "r5k1/1Rppbpp1/4b3/7p/8/2PPBP2/3N1PKP/8 b - - 3 23",
+    "acceptedMoves": ["h5h4", "e7d8", "c7c6", "a8c8"],
+    "moves": ["h5h4", "h2h3", "e7d8", "c3c4", "g8f8", "d2e4", "f8e8", "e4g5", "e6f5", "g5e4", "d7d6", "b7b4", "a8a3"],
+    "theme": "Stellungsgefühl · 4 gute ruhige Züge",
+    "minimumDepth": 12,
+    "origin": "Engine-Selbstspiel · MultiPV aller legalen Züge, Tiefe 12",
+    "goalKind": "Positional"
+  }
+]

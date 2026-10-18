@@ -1,0 +1,9 @@
+[Event "Synthetic demonstration — Black loses in three moves"]
+[Site "?"]
+[Date "2026.01.01"]
+[Round "-"]
+[White "Example White"]
+[Black "Example Black"]
+[Result "1-0"]
+
+1. e4 f6 2. d4 g5 3. Qh5# 1-0

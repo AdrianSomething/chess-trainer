@@ -1,0 +1,390 @@
+[
+  {
+    "id": "136EA4118DFC36A7FAAA",
+    "fen": "3r4/8/8/7p/1K1nk3/8/3R1P2/3R4 w - - 0 1",
+    "moves": [
+      "d1e1",
+      "e4f4",
+      "b4c4",
+      "d4c6",
+      "d2d8"
+    ],
+    "theme": "Materialgewinn",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": null
+  },
+  {
+    "id": "E9A23DA96848D4C07B18",
+    "fen": "7k/K7/4R3/8/2p3p1/3P3Q/8/2r5 b - - 0 1",
+    "moves": [
+      "g4h3",
+      "d3c4",
+      "h8g7"
+    ],
+    "theme": "Materialgewinn",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": null
+  },
+  {
+    "id": "A5F5C415126D4CF213A6",
+    "fen": "2q2B2/7r/3k3P/1p3Q2/8/8/1p6/4K3 b - - 0 1",
+    "moves": [
+      "c8f8",
+      "f5f8",
+      "h7e7",
+      "e1d2",
+      "b2b1q"
+    ],
+    "theme": "Materialgewinn",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": null
+  },
+  {
+    "id": "80B0F2DA674F625F0050",
+    "fen": "1r6/8/3Q1pk1/4R3/6P1/8/p7/4K3 b - - 0 1",
+    "moves": [
+      "a2a1q",
+      "e1f2",
+      "a1e5"
+    ],
+    "theme": "Materialgewinn",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": null
+  },
+  {
+    "id": "A0174F0FB300E49A73EE",
+    "fen": "8/1k6/5K2/8/6Qp/3r4/2pP4/8 b - - 0 1",
+    "moves": [
+      "c2c1q",
+      "g4b4",
+      "b7c8"
+    ],
+    "theme": "Materialgewinn",
+    "minimumDepth": 17,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": null
+  },
+  {
+    "id": "7445802C1D832C7054AF",
+    "fen": "4k3/8/1Q2p3/3q2BK/1rp5/1P6/8/8 w - - 0 1",
+    "moves": [
+      "b6b4",
+      "e8d7",
+      "b3c4"
+    ],
+    "theme": "Materialgewinn",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": null
+  },
+  {
+    "id": "ECF4C687024FEFC120E7",
+    "fen": "8/6Q1/8/3P2p1/4R3/1r6/K2p4/5k2 b - - 0 1",
+    "moves": [
+      "d2d1q",
+      "g7f6",
+      "b3f3"
+    ],
+    "theme": "Materialgewinn",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": null
+  },
+  {
+    "id": "E0951366680E1503734F",
+    "fen": "1r6/8/K2p1k2/8/8/P7/R7/n3R3 w - - 0 1",
+    "moves": [
+      "a2f2",
+      "f6g6",
+      "e1g1",
+      "g6h6",
+      "f2h2"
+    ],
+    "theme": "Matt in 3",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": {
+      "1r6/8/K2p1k2/8/8/P7/R7/n3R3 w - - 0 1|3": [
+        {
+          "move": "a2f2",
+          "defense": "f6g7"
+        }
+      ],
+      "1r6/6k1/K2p4/8/8/P7/5R2/n3R3 w - - 2 2|2": [
+        {
+          "move": "e1g1",
+          "defense": "g7h8"
+        }
+      ],
+      "1r5k/8/K2p4/8/8/P7/5R2/n5R1 w - - 4 3|1": [
+        {
+          "move": "f2h2",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "B02008DA8AA789CF401A",
+    "fen": "3R4/8/p1k5/r2p2K1/8/Q7/4P3/8 w - - 0 1",
+    "moves": [
+      "a3d6",
+      "c6b5",
+      "d8b8",
+      "b5a4",
+      "d6b4"
+    ],
+    "theme": "Matt in 3",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": {
+      "3R4/8/p1k5/r2p2K1/8/Q7/4P3/8 w - - 0 1|3": [
+        {
+          "move": "a3d6",
+          "defense": "c6b5"
+        }
+      ],
+      "3R4/8/p2Q4/rk1p2K1/8/8/4P3/8 w - - 2 2|2": [
+        {
+          "move": "d8b8",
+          "defense": "b5c4"
+        }
+      ],
+      "1R6/8/p2Q4/r2p2K1/2k5/8/4P3/8 w - - 4 3|1": [
+        {
+          "move": "d6b4",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "0FAC6C8B7D790B0A0749",
+    "fen": "7k/3R3p/8/8/4P3/1P1P1K2/5p1r/8 b - - 0 1",
+    "moves": [
+      "f2f1q",
+      "f3g4",
+      "h2g2",
+      "g4h3",
+      "f1h1"
+    ],
+    "theme": "Matt in 3",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": {
+      "7k/3R3p/8/8/4P3/1P1P1K2/5p1r/8 b - - 0 1|3": [
+        {
+          "move": "f2f1q",
+          "defense": "f3g4"
+        }
+      ],
+      "7k/3R3p/8/8/4P1K1/1P1P4/7r/5q2 b - - 1 2|2": [
+        {
+          "move": "h2g2",
+          "defense": "g4h5"
+        }
+      ],
+      "7k/3R3p/8/7K/4P3/1P1P4/6r1/5q2 b - - 3 3|1": [
+        {
+          "move": "f1h1",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "A4C59740CDF3D2B878F0",
+    "fen": "4r3/1K5k/5p2/4B3/n7/8/8/Q1q1N3 b - - 0 1",
+    "moves": [
+      "c1c8",
+      "b7a7",
+      "c8a8"
+    ],
+    "theme": "Matt in 2",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": {
+      "4r3/1K5k/5p2/4B3/n7/8/8/Q1q1N3 b - - 0 1|2": [
+        {
+          "move": "c1c8",
+          "defense": "b7a7"
+        }
+      ],
+      "2q1r3/K6k/5p2/4B3/n7/8/8/Q3N3 b - - 2 2|1": [
+        {
+          "move": "c8a8",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "DB42B7983BC822ACA005",
+    "fen": "8/7K/1r4p1/2P2q2/8/4B1Q1/2p5/7k b - - 0 1",
+    "moves": [
+      "b6b7",
+      "g3c7",
+      "b7c7",
+      "h7g8",
+      "f5c8"
+    ],
+    "theme": "Matt in 3",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition",
+    "fingerprint": "",
+    "preparedMateRoutes": {
+      "8/7K/1r4p1/2P2q2/8/4B1Q1/2p5/7k b - - 0 1|3": [
+        {
+          "move": "b6b7",
+          "defense": "g3c7"
+        }
+      ],
+      "8/1rQ4K/6p1/2P2q2/8/4B3/2p5/7k b - - 2 2|2": [
+        {
+          "move": "b7c7",
+          "defense": "h7h6"
+        }
+      ],
+      "8/2r5/6pK/2P2q2/8/4B3/2p5/7k b - - 1 3|1": [
+        {
+          "move": "f5h5",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "4C865B6A0DD36A514A82",
+    "fen": "1k3rr1/1ppq4/p1b4p/8/3RNN2/P6P/1nP1RQP1/6K1 b - - 0 35",
+    "moves": [
+      "f8f4",
+      "d4d7",
+      "f4f2"
+    ],
+    "theme": "Materialgewinn",
+    "minimumDepth": 15,
+    "lastPlayedUtc": null,
+    "origin": "Engine-Selbstspiel",
+    "fingerprint": "KNNPPPPQRRbknppppqrr|f8f4,f4f2",
+    "preparedMateRoutes": null
+  },
+  {
+    "id": "6EC058A00C3BA1290685",
+    "fen": "4Rq2/Q7/p1k5/1p6/4RN2/P6P/2P4K/8 w - - 9 55",
+    "moves": [
+      "e4e6",
+      "f8d6",
+      "e8c8"
+    ],
+    "theme": "Matt in 2",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Engine-Selbstspiel",
+    "fingerprint": "KNPPPQRRkppq|e4e6,e8c8",
+    "preparedMateRoutes": {
+      "4Rq2/Q7/p1k5/1p6/4RN2/P6P/2P4K/8 w - - 9 55|2": [
+        {
+          "move": "e4e6",
+          "defense": "f8d6"
+        }
+      ],
+      "4R3/Q7/p1kqR3/1p6/5N2/P6P/2P4K/8 w - - 11 56|1": [
+        {
+          "move": "e8c8",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "2851692A827101D72F60",
+    "fen": "8/3bk3/8/3Q4/PRQ2p1P/8/6P1/R5K1 w - - 0 49",
+    "moves": [
+      "d5g5",
+      "e7e8",
+      "c4g8"
+    ],
+    "theme": "Matt in 2",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Engine-Selbstspiel",
+    "fingerprint": "KPPPQQRRbkp|d5g5,c4g8",
+    "preparedMateRoutes": {
+      "8/3bk3/8/3Q4/PRQ2p1P/8/6P1/R5K1 w - - 0 49|2": [
+        {
+          "move": "d5g5",
+          "defense": "e7f8"
+        }
+      ],
+      "5k2/3b4/8/6Q1/PRQ2p1P/8/6P1/R5K1 w - - 2 50|1": [
+        {
+          "move": "c4g8",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "A65304DDBAA15CB6539A",
+    "fen": "r6k/p1p5/1p1p4/1P1Pb2p/2P1pN1q/P4b1R/7K/3B1R2 b - - 13 40",
+    "moves": [
+      "e5f4",
+      "h2g1",
+      "a8g8",
+      "h3g3",
+      "h4g3"
+    ],
+    "theme": "Matt in 3",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Engine-Selbstspiel",
+    "fingerprint": "BKNPPPPRRbbkppppppqr|e5f4,a8g8,h4g3",
+    "preparedMateRoutes": {
+      "r6k/p1p5/1p1p4/1P1Pb2p/2P1pN1q/P4b1R/7K/3B1R2 b - - 13 40|3": [
+        {
+          "move": "e5f4",
+          "defense": "h2g1"
+        }
+      ],
+      "r6k/p1p5/1p1p4/1P1P3p/2P1pb1q/P4b1R/8/3B1RK1 b - - 1 41|2": [
+        {
+          "move": "a8g8",
+          "defense": "h3g3"
+        }
+      ],
+      "6rk/p1p5/1p1p4/1P1P3p/2P1pb1q/P4bR1/8/3B1RK1 b - - 3 42|1": [
+        {
+          "move": "h4g3",
+          "defense": null
+        }
+      ]
+    }
+  }
+]

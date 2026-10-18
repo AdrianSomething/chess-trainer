@@ -1,0 +1,12 @@
+{
+  "version": "19",
+  "tag": "sf_19",
+  "commit": "edb0d9db6731067ec50ce619ff372b463bc4dd5d",
+  "binaryUrl": "https://github.com/official-stockfish/Stockfish/releases/download/sf_19/stockfish-windows-x86-64-universal.zip",
+  "binaryArchiveSha256": "3c8bf1f9ea66a09350a40df4f632288285ac206d99f33ab5842c408fc30b48a7",
+  "executableSha256": "45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0",
+  "sourceUrl": "https://codeload.github.com/official-stockfish/Stockfish/zip/edb0d9db6731067ec50ce619ff372b463bc4dd5d",
+  "sourceArchiveSha256": "a6368d704182ad976d73c8b8349119f6bf9e76737bdf609fd8e873346193dc98",
+  "network": "nn-1a298aa575a0.nnue",
+  "networkSha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2"
+}

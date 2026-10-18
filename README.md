@@ -76,4 +76,3 @@ The complete Windows edition also contains edited Pixabay sound effects under th
 ## Contributing, security and citation
 
 Read [CONTRIBUTING](CONTRIBUTING.md) and [SECURITY](SECURITY.md). Citation metadata is in [CITATION.cff](CITATION.cff). This community project comes without warranty.
-

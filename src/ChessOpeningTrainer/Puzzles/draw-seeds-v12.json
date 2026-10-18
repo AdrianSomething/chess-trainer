@@ -1,0 +1,164 @@
+[
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [],
+    "id": "84bf99eecb1c475491d17e3de5c0dc61",
+    "fen": "8/8/8/K7/7k/4q3/8/4N3 w - - 0 1",
+    "moves": [],
+    "theme": "Remis sichern in 2 eigenen Z\u00FCgen",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Springergabel \u00B7 vollst\u00E4ndige begrenzte Remispr\u00FCfung",
+    "fingerprint": "",
+    "goalMoves": 2,
+    "goalKind": "Draw",
+    "preparedMateRoutes": {
+      "8/8/8/K7/7k/4q3/8/4N3 w - - 0 1|2": [
+        {
+          "move": "e1g2",
+          "defense": "h4h3"
+        }
+      ],
+      "8/8/8/K7/8/4q2k/6N1/8 w - - 2 2|1": [
+        {
+          "move": "g2e3",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [],
+    "id": "4d2e8df42b954477b64a7bd9f7eb0a08",
+    "fen": "8/7B/8/8/8/2k5/5q2/6K1 w - - 0 1",
+    "moves": [],
+    "theme": "Remis sichern in 1 eigenen Z\u00FCgen",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "L\u00E4uferressource gegen Dame \u00B7 vollst\u00E4ndige begrenzte Remispr\u00FCfung",
+    "fingerprint": "",
+    "goalMoves": 1,
+    "goalKind": "Draw",
+    "preparedMateRoutes": {
+      "8/7B/8/8/8/2k5/5q2/6K1 w - - 0 1|1": [
+        {
+          "move": "g1f2",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [],
+    "id": "d94da2bfc0d54aa9b801dbf0efac854d",
+    "fen": "8/8/8/6k1/K6p/8/5Qr1/8 w - - 0 1",
+    "moves": [],
+    "theme": "Remis sichern in 3 eigenen Z\u00FCgen",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Damenressource gegen Turm und Bauer \u00B7 vollst\u00E4ndige begrenzte Remispr\u00FCfung",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "Draw",
+    "preparedMateRoutes": {
+      "8/8/8/6k1/K6p/8/5Qr1/8 w - - 0 1|3": [
+        {
+          "move": "f2g2",
+          "defense": "g5h6"
+        }
+      ],
+      "8/8/7k/8/K6p/8/6Q1/8 w - - 1 2|2": [
+        {
+          "move": "g2h3",
+          "defense": "h6h5"
+        },
+        {
+          "move": "g2h1",
+          "defense": "h4h3"
+        },
+        {
+          "move": "g2h2",
+          "defense": "h4h3"
+        },
+        {
+          "move": "g2g4",
+          "defense": "h4h3"
+        }
+      ],
+      "8/8/8/7k/K6p/7Q/8/8 w - - 3 3|1": [
+        {
+          "move": "h3h4",
+          "defense": null
+        }
+      ],
+      "8/8/7k/8/K7/7p/8/7Q w - - 0 3|1": [
+        {
+          "move": "h1h3",
+          "defense": null
+        }
+      ],
+      "8/8/7k/8/K7/7p/7Q/8 w - - 0 3|1": [
+        {
+          "move": "h2h3",
+          "defense": null
+        }
+      ],
+      "8/8/7k/8/K5Q1/7p/8/8 w - - 0 3|1": [
+        {
+          "move": "g4h3",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [],
+    "id": "02086437c1844c0b91995fd17e54582f",
+    "fen": "5k2/8/5q2/2N5/8/4K3/8/8 w - - 0 1",
+    "moves": [],
+    "theme": "Remis sichern in 2 eigenen Z\u00FCgen",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Springergabel \u00B7 vollst\u00E4ndige begrenzte Remispr\u00FCfung",
+    "fingerprint": "",
+    "goalMoves": 2,
+    "goalKind": "Draw",
+    "preparedMateRoutes": {
+      "5k2/8/5q2/2N5/8/4K3/8/8 w - - 0 1|2": [
+        {
+          "move": "c5d7",
+          "defense": "f8g8"
+        }
+      ],
+      "6k1/3N4/5q2/8/8/4K3/8/8 w - - 2 2|1": [
+        {
+          "move": "d7f6",
+          "defense": null
+        }
+      ]
+    }
+  }
+]

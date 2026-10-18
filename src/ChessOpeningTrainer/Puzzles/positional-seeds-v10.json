@@ -1,0 +1,72 @@
+[
+  {
+    "positionalStyle": "clear",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [
+      "d6d5",
+      "d6b6"
+    ],
+    "id": "c6d3b9a82cdb4bb4b497d2736973dff3",
+    "fen": "8/6p1/3rpk2/pp5p/2pP1P1P/P1P1K3/5P2/1R6 b - - 4 35",
+    "moves": [
+      "d6d5",
+      "e3e4",
+      "g7g6",
+      "e4e3",
+      "f6e7",
+      "a3a4",
+      "b5a4",
+      "b1a1",
+      "d5d7",
+      "a1a4",
+      "d7a7",
+      "a4c4"
+    ],
+    "theme": "Klare Stellungszüge · 2 gute Züge",
+    "minimumDepth": 12,
+    "lastPlayedUtc": null,
+    "origin": "Engine-Selbstspiel · alle legalen Antworten, Tiefe 12",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "Positional",
+    "preparedMateRoutes": null
+  },
+  {
+    "positionalStyle": "subtle",
+    "pastMove": null,
+    "mateDefenseVersion": 0,
+    "acceptedMoves": [
+      "c8d7",
+      "c7c5"
+    ],
+    "id": "f6e36ae98f5c4fbbb90f6c767ed0c808",
+    "fen": "rnbqk2r/p1p1bpp1/1p2p2p/3pPn2/1P1P3P/P1P2N2/5PP1/RNBQKB1R b KQkq - 0 8",
+    "moves": [
+      "c8d7",
+      "h4h5",
+      "c7c5",
+      "f1d3",
+      "c5d4",
+      "c3d4",
+      "b8c6",
+      "e1g1",
+      "e8g8",
+      "c1b2",
+      "f7f6",
+      "d3f5",
+      "e6f5",
+      "b1c3",
+      "d7e8",
+      "d1b3"
+    ],
+    "theme": "Feines Stellungsgefühl · 2 gute Züge",
+    "minimumDepth": 16,
+    "lastPlayedUtc": null,
+    "origin": "Engine-Selbstspiel · alle legalen Antworten, Tiefe 16",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "Positional",
+    "preparedMateRoutes": null
+  }
+]

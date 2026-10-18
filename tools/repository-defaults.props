@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <PublicRelease Condition="'$(PublicRelease)' == ''">true</PublicRelease>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,62 @@
+[
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [],
+    "id": "13ADAAC3C3E4C8027816",
+    "fen": "rnbqkbnr/pppp1ppp/8/4p3/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq g3 0 2",
+    "moves": [
+      "d8h4"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition \u00B7 legale Er\u00F6ffnungszugfolge",
+    "fingerprint": "BBKNNPPPPPPPPQRRbbknnppppppppqrr|d8h4",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "rnbqkbnr/pppp1ppp/8/4p3/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq g3 0 2|1": [
+        {
+          "move": "d8h4",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "drawProofVersion": 0,
+    "acceptedMoves": [],
+    "id": "B028A28D4A8C69F9CD4E",
+    "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4",
+    "moves": [
+      "h5f7"
+    ],
+    "theme": "Matt in 1",
+    "minimumDepth": 18,
+    "lastPlayedUtc": null,
+    "origin": "Komposition \u00B7 legale Er\u00F6ffnungszugfolge",
+    "fingerprint": "BBKNNPPPPPPPPQRRbbknnppppppppqrr|h5f7",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4|1": [
+        {
+          "move": "h5f7",
+          "defense": null
+        }
+      ]
+    }
+  }
+]

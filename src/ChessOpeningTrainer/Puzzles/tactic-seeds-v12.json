@@ -1,0 +1,498 @@
+[
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "acceptedMoves": [],
+    "id": "daf0406a22d047a0a055ac527325fdc3",
+    "fen": "3Q4/k7/2K5/8/8/8/8/8 w - - 0 1",
+    "moves": [],
+    "theme": "Matt in 2",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Endspielkomposition \u00B7 vollst\u00E4ndig bewiesener Mattbaum",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "3Q4/k7/2K5/8/8/8/8/8 w - - 0 1|2": [
+        {
+          "move": "d8e7",
+          "defense": "a7b8"
+        },
+        {
+          "move": "d8c7",
+          "defense": "a7a6"
+        },
+        {
+          "move": "d8b6",
+          "defense": "a7a8"
+        },
+        {
+          "move": "d8e8",
+          "defense": "a7a6"
+        },
+        {
+          "move": "d8f8",
+          "defense": "a7a6"
+        },
+        {
+          "move": "d8g8",
+          "defense": "a7a6"
+        },
+        {
+          "move": "d8h8",
+          "defense": "a7a6"
+        }
+      ],
+      "1k6/4Q3/2K5/8/8/8/8/8 w - - 2 2|1": [
+        {
+          "move": "e7b7",
+          "defense": null
+        }
+      ],
+      "8/2Q5/k1K5/8/8/8/8/8 w - - 2 2|1": [
+        {
+          "move": "c7b6",
+          "defense": null
+        }
+      ],
+      "k7/8/1QK5/8/8/8/8/8 w - - 2 2|1": [
+        {
+          "move": "b6b7",
+          "defense": null
+        }
+      ],
+      "4Q3/8/k1K5/8/8/8/8/8 w - - 2 2|1": [
+        {
+          "move": "e8a8",
+          "defense": null
+        }
+      ],
+      "5Q2/8/k1K5/8/8/8/8/8 w - - 2 2|1": [
+        {
+          "move": "f8a3",
+          "defense": null
+        },
+        {
+          "move": "f8a8",
+          "defense": null
+        }
+      ],
+      "6Q1/8/k1K5/8/8/8/8/8 w - - 2 2|1": [
+        {
+          "move": "g8a2",
+          "defense": null
+        },
+        {
+          "move": "g8a8",
+          "defense": null
+        }
+      ],
+      "7Q/8/k1K5/8/8/8/8/8 w - - 2 2|1": [
+        {
+          "move": "h8a1",
+          "defense": null
+        },
+        {
+          "move": "h8a8",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "acceptedMoves": [],
+    "id": "a5b67623918c4ad2a78baf12547f7692",
+    "fen": "1k6/8/2K5/Q7/8/8/8/8 w - - 0 1",
+    "moves": [],
+    "theme": "Matt in 2",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Endspielkomposition \u00B7 vollst\u00E4ndig bewiesener Mattbaum",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "1k6/8/2K5/Q7/8/8/8/8 w - - 0 1|2": [
+        {
+          "move": "a5b6",
+          "defense": "b8c8"
+        },
+        {
+          "move": "a5c7",
+          "defense": "b8a8"
+        },
+        {
+          "move": "a5b4",
+          "defense": "b8c8"
+        },
+        {
+          "move": "a5a4",
+          "defense": "b8c8"
+        },
+        {
+          "move": "a5a3",
+          "defense": "b8c8"
+        },
+        {
+          "move": "a5a2",
+          "defense": "b8c8"
+        },
+        {
+          "move": "a5a1",
+          "defense": "b8c8"
+        }
+      ],
+      "2k5/8/1QK5/8/8/8/8/8 w - - 2 2|1": [
+        {
+          "move": "b6c7",
+          "defense": null
+        }
+      ],
+      "k7/2Q5/2K5/8/8/8/8/8 w - - 2 2|1": [
+        {
+          "move": "c7b7",
+          "defense": null
+        }
+      ],
+      "2k5/8/2K5/8/1Q6/8/8/8 w - - 2 2|1": [
+        {
+          "move": "b4f8",
+          "defense": null
+        }
+      ],
+      "2k5/8/2K5/8/Q7/8/8/8 w - - 2 2|1": [
+        {
+          "move": "a4a8",
+          "defense": null
+        }
+      ],
+      "2k5/8/2K5/8/8/Q7/8/8 w - - 2 2|1": [
+        {
+          "move": "a3f8",
+          "defense": null
+        },
+        {
+          "move": "a3a8",
+          "defense": null
+        }
+      ],
+      "2k5/8/2K5/8/8/8/Q7/8 w - - 2 2|1": [
+        {
+          "move": "a2g8",
+          "defense": null
+        },
+        {
+          "move": "a2a8",
+          "defense": null
+        }
+      ],
+      "2k5/8/2K5/8/8/8/8/Q7 w - - 2 2|1": [
+        {
+          "move": "a1h8",
+          "defense": null
+        },
+        {
+          "move": "a1a8",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "acceptedMoves": [],
+    "id": "9fb7885a843d4a279b2e141d1ccb7e5b",
+    "fen": "8/7k/4K3/8/8/8/8/6R1 w - - 0 1",
+    "moves": [],
+    "theme": "Matt in 3",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Endspielkomposition \u00B7 vollst\u00E4ndig bewiesener Mattbaum",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/7k/4K3/8/8/8/8/6R1 w - - 0 1|3": [
+        {
+          "move": "e6f6",
+          "defense": "h7h8"
+        }
+      ],
+      "7k/8/5K2/8/8/8/8/6R1 w - - 2 2|2": [
+        {
+          "move": "f6f7",
+          "defense": "h8h7"
+        }
+      ],
+      "8/5K1k/8/8/8/8/8/6R1 w - - 4 3|1": [
+        {
+          "move": "g1h1",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "acceptedMoves": [],
+    "id": "a76d62ddbc754c6c872f4b7aa824d6c2",
+    "fen": "8/8/8/8/8/1r6/K1k5/8 b - - 0 1",
+    "moves": [],
+    "theme": "Matt in 2",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Endspielkomposition \u00B7 vollst\u00E4ndig bewiesener Mattbaum",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/8/8/8/8/1r6/K1k5/8 b - - 0 1|2": [
+        {
+          "move": "b3c3",
+          "defense": "a2a1"
+        },
+        {
+          "move": "b3d3",
+          "defense": "a2a1"
+        },
+        {
+          "move": "b3e3",
+          "defense": "a2a1"
+        },
+        {
+          "move": "b3f3",
+          "defense": "a2a1"
+        },
+        {
+          "move": "b3g3",
+          "defense": "a2a1"
+        },
+        {
+          "move": "b3h3",
+          "defense": "a2a1"
+        }
+      ],
+      "8/8/8/8/8/2r5/2k5/K7 b - - 2 2|1": [
+        {
+          "move": "c3a3",
+          "defense": null
+        }
+      ],
+      "8/8/8/8/8/3r4/2k5/K7 b - - 2 2|1": [
+        {
+          "move": "d3a3",
+          "defense": null
+        }
+      ],
+      "8/8/8/8/8/4r3/2k5/K7 b - - 2 2|1": [
+        {
+          "move": "e3a3",
+          "defense": null
+        }
+      ],
+      "8/8/8/8/8/5r2/2k5/K7 b - - 2 2|1": [
+        {
+          "move": "f3a3",
+          "defense": null
+        }
+      ],
+      "8/8/8/8/8/6r1/2k5/K7 b - - 2 2|1": [
+        {
+          "move": "g3a3",
+          "defense": null
+        }
+      ],
+      "8/8/8/8/8/7r/2k5/K7 b - - 2 2|1": [
+        {
+          "move": "h3a3",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "acceptedMoves": [],
+    "id": "759386405006464d9f9b1e004d2c2dd6",
+    "fen": "8/8/b7/8/8/b7/K1k5/8 b - - 0 1",
+    "moves": [],
+    "theme": "Matt in 3",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Endspielkomposition \u00B7 vollst\u00E4ndig bewiesener Mattbaum",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/8/b7/8/8/b7/K1k5/8 b - - 0 1|3": [
+        {
+          "move": "a3c1",
+          "defense": "a2a1"
+        }
+      ],
+      "8/8/b7/8/8/8/2k5/K1b5 b - - 2 2|2": [
+        {
+          "move": "c1b2",
+          "defense": "a1a2"
+        }
+      ],
+      "8/8/b7/8/8/8/Kbk5/8 b - - 4 3|1": [
+        {
+          "move": "a6c4",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "acceptedMoves": [],
+    "id": "d858d8bdee03481b9e292968464e4e4a",
+    "fen": "1kB5/8/1K6/2B5/8/8/8/8 w - - 0 1",
+    "moves": [],
+    "theme": "Matt in 3",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Endspielkomposition \u00B7 vollst\u00E4ndig bewiesener Mattbaum",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "1kB5/8/1K6/2B5/8/8/8/8 w - - 0 1|3": [
+        {
+          "move": "c8a6",
+          "defense": "b8a8"
+        }
+      ],
+      "k7/8/BK6/2B5/8/8/8/8 w - - 2 2|2": [
+        {
+          "move": "a6b7",
+          "defense": "a8b8"
+        }
+      ],
+      "1k6/1B6/1K6/2B5/8/8/8/8 w - - 4 3|1": [
+        {
+          "move": "c5d6",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "acceptedMoves": [],
+    "id": "fdb97b58029f4366aa374fba165c6687",
+    "fen": "8/8/8/8/8/4N2B/5K1k/8 w - - 0 1",
+    "moves": [],
+    "theme": "Matt in 3",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Endspielkomposition \u00B7 vollst\u00E4ndig bewiesener Mattbaum",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/8/8/8/8/4N2B/5K1k/8 w - - 0 1|3": [
+        {
+          "move": "h3f1",
+          "defense": "h2h1"
+        }
+      ],
+      "8/8/8/8/8/4N3/5K2/5B1k w - - 2 2|2": [
+        {
+          "move": "f1g2",
+          "defense": "h1h2"
+        }
+      ],
+      "8/8/8/8/8/4N3/5KBk/8 w - - 4 3|1": [
+        {
+          "move": "e3g4",
+          "defense": null
+        },
+        {
+          "move": "e3f1",
+          "defense": null
+        }
+      ]
+    }
+  },
+  {
+    "setupFen": null,
+    "setupMoves": [],
+    "openingAnchorFen": null,
+    "positionalStyle": "",
+    "pastMove": null,
+    "mateDefenseVersion": 2,
+    "acceptedMoves": [],
+    "id": "1f6ae653fd504c08bcfe0c2c4eacdeb1",
+    "fen": "8/5k1K/7b/8/4n3/8/8/8 b - - 0 1",
+    "moves": [],
+    "theme": "Matt in 3",
+    "minimumDepth": 0,
+    "lastPlayedUtc": null,
+    "origin": "Endspielkomposition \u00B7 vollst\u00E4ndig bewiesener Mattbaum",
+    "fingerprint": "",
+    "goalMoves": 3,
+    "goalKind": "",
+    "preparedMateRoutes": {
+      "8/5k1K/7b/8/4n3/8/8/8 b - - 0 1|3": [
+        {
+          "move": "h6f8",
+          "defense": "h7h8"
+        }
+      ],
+      "5b1K/5k2/8/8/4n3/8/8/8 b - - 2 2|2": [
+        {
+          "move": "f8g7",
+          "defense": "h8h7"
+        }
+      ],
+      "8/5kbK/8/8/4n3/8/8/8 b - - 4 3|1": [
+        {
+          "move": "e4f6",
+          "defense": null
+        },
+        {
+          "move": "e4g5",
+          "defense": null
+        }
+      ]
+    }
+  }
+]

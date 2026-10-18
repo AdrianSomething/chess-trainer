@@ -1,0 +1,875 @@
+{
+  "languages": [{"id":"de","name":"Deutsch"},{"id":"en","name":"English"}],
+  "rows": [
+    {"de":"Standard - Dark","en":"Standard - Dark"},
+    {"de":"Zur Lernstellung","en":"Return to learning position"},
+    {"de":"In Branch anzeigen","en":"Show in branch"},
+    {"de":"In Freies Spiel öffnen","en":"Open in Custom Game"},
+    {"de":"Ausgangsstellung","en":"Original position"},
+    {"de":"Ergebnisse","en":"Results"},
+    {"de":"In Warteschlange","en":"Queued"},
+    {"de":"Aus Warteschlange entfernen","en":"Remove from queue"},
+    {"de":"Analyse läuft …","en":"Analysis in progress …"},
+    {"de":"Analyse gespeichert.","en":"Analysis saved."},
+    {"de":"Analyse abgebrochen.","en":"Analysis cancelled."},
+    {"de":"Eigene Antwort: Variationsverlust","en":"Own reply: variation allowance"},
+    {"de":"Zufällige eigene Antwort unter legalen Zügen mit Bewertung strikt über bester Zug minus diesem Verlust (Bauern). 0 = bester Zug. Lernkompression hat Vorrang.","en":"Random own reply among legal moves scoring strictly above the best move minus this pawn allowance. 0 = best move. Learning compression takes priority."},
+    {"de":"Eigener Variationsverlust muss zwischen 0 und 20 Bauern liegen.","en":"Own-reply variation allowance must be between 0 and 20 pawns."},
+    {"de":"Bearbeitung bestätigen","en":"Confirm edits"},
+    {"de":"Bearbeitung abbrechen","en":"Cancel edits"},
+    {"de":"Bester Enginezug spielen","en":"Play best engine move"},
+    {"de":"Gegenantworten vorbereiten","en":"Prepare opponent replies"},
+    {"de":"Engine-Einstellungen ▸","en":"Engine settings ▸"},
+    {"de":"Engine-Einstellungen ▾","en":"Engine settings ▾"},
+    {"de":"Ergebnis schließen","en":"Close result"},
+    {"de":"Zugfolge zurücksetzen","en":"Reset move sequence"},
+    {"de":"Knoten hinzufügen","en":"Add node"},
+    {"de":"Knoten löschen","en":"Delete node"},
+    {"de":"Stellungsvariante löschen","en":"Delete position variant"},
+    {"de":"Subbranch-Farben ausblenden","en":"Hide subbranch colors"},
+    {"de":"Farbe der Partiemarkierungen","en":"Game-position outline color"},
+    {"de":"White · Hell","en":"White · Light"},
+    {"de":"Pfeilspitze (%)","en":"Arrowhead size (%)"},
+    {"de":"Feldmarkierung","en":"Square annotation color"},
+    {"de":"Demo: 400 Tage Testdaten (nicht gespeichert)","en":"Demo: 400 days of test data (not saved)"},
+    {"de":"Zeitraum","en":"Date range"},
+    {"de":"bis","en":"to"},
+    {"de":"Keine datierten Durchgänge im gewählten Zeitraum.","en":"No dated runs in the selected range."},
+    {"de":"Auswahlfehler ohne Detailprotokoll (vor V16)","en":"Selection error without detailed records (before V16)"},
+    {"de":"Engine-Suche wird vorbereitet","en":"Preparing engine search"},
+    {"de":"Restzeit wird aus ersten Karten ermittelt","en":"Estimating remaining time from the first cards"},
+    {"de":"Generierung abgeschlossen","en":"Generation complete"},
+    {"de":"0 %: schlechtester legaler Zug laut Suche. 50 %: Zufall aus allen legalen Zügen. 100 %: bester Enginezug. Zwischenwerte gewichten bessere oder schlechtere Züge; die Bewertung hängt von Suchtiefe und Zeitlimit ab.","en":"0%: worst legal move according to the search. 50%: uniformly random legal move. 100%: best engine move. Intermediate values favor worse or better moves; evaluations depend on search depth and the time limit."},
+    {"de":"Markierungen","en":"Annotations"},
+    {"de":"Pfeildicke (%)","en":"Arrow thickness (%)"},
+    {"de":"Pfeilfarbe","en":"Arrow color"},
+    {"de":"Auswahlfarbe","en":"Selection color"},
+    {"de":"Farbe auswählen","en":"Choose color"},
+    {"de":"Übernehmen","en":"Apply"},
+    {"de":"Standardspieler:","en":"Default player:"},
+    {"de":"Nächster Highlightzug","en":"Next highlight"},
+    {"de":"Engine-Intelligenz (%)","en":"Engine intelligence (%)"},
+    {"de":"Uhr pausieren","en":"Pause clock"},
+    {"de":"Uhr fortsetzen","en":"Resume clock"},
+    {"de":"Neues Spiel","en":"New game"},
+    {"de":"Pro Tag","en":"Per day"},
+    {"de":"Pro 3 Tage","en":"Every three days"},
+    {"de":"Pro Woche","en":"Per week"},
+    {"de":"Pro Monat","en":"Per month"},
+    {"de":"Fehlerzusammensetzung (%)","en":"Error composition (%)"},
+    {"de":"Fehler pro Durchgang","en":"Errors per run"},
+    {"de":"Durchgänge","en":"Runs"},
+    {"de":"Geschwindigkeit (Figuren/s)","en":"Speed (pieces/s)"},
+    {"de":"Wachsender Opening-Branch","en":"Growing opening branch"},
+    {"de":"Rätselvorrat","en":"Puzzle supply"},
+    {"de":"Taktikvorrat je Typ und Schwierigkeit","en":"Tactic stock per type and difficulty"},
+    {"de":"Parallele Taktik-Generatoren","en":"Parallel tactic generators"},
+    {"de":"Engine-Threads je Taktik-Generator","en":"Engine threads per tactic generator"},
+    {"de":"Matt und Material haben je drei Schwierigkeitsvorräte; Remis hat einen gemeinsamen Vorrat. Nachfüllen läuft bei geöffneter App. Erzeugung und Prüfung können Zeit brauchen. Diese Grenzen gelten für Taktik, noch nicht für separate Endspiel-/Mittelspiel-/Opening-Generatoren. Änderungen greifen beim nächsten Arbeitsblock.","en":"Mate and material each have three difficulty pools; draws share one pool. Refilling runs while the app is open. Generation and validation take time. These limits apply to tactics, not yet to separate endgame/positional/opening generators. Changes apply at the next batch."},
+    {"de":"Vorbereitete Taktikaufgaben","en":"Prepared tactical puzzles"},
+    {"de":"Mate/Leicht","en":"Mate/Easy"},
+    {"de":"Mate/Normal","en":"Mate/Normal"},
+    {"de":"Mate/Schwer","en":"Mate/Hard"},
+    {"de":"Material/Leicht","en":"Material/Easy"},
+    {"de":"Material/Normal","en":"Material/Normal"},
+    {"de":"Material/Schwer","en":"Material/Hard"},
+    {"de":"Draw","en":"Draw"},
+    {"de":"Aus Fehlern lernen","en":"Learn from mistakes"},
+    {"de":"Taktik","en":"Tactics"},
+    {"de":"Endspiel","en":"Endgames"},
+    {"de":"Aufgabentypen","en":"Puzzle types"},
+    {"de":"Änderungen speichern","en":"Save changes"},
+    {"de":"Geänderte Trainingsregeln speichern und die Statistik dieses Presets zurücksetzen?","en":"Save changed training rules and reset this preset's statistics?"},
+    {"de":"Jede Abweichung vom besten Enginezug (sonst nur klarer eigener Vorteil)","en":"Any deviation from the engine's best move (otherwise only a clear advantage for you)"},
+    {"de":"Im Branch anzeigen","en":"Show in branch"},
+    {"de":"Lernpriorität","en":"Learning priority"},
+    {"de":"Subbranch erstellen","en":"Create subbranch"},
+    {"de":"Subbranch löschen","en":"Remove subbranch marker"},
+    {"de":"Aufklappen","en":"Expand"},
+    {"de":"Zuklappen","en":"Collapse"},
+    {"de":"Zug anschauen","en":"View move"},
+    {"de":"Lernstatus dieses Branches zurücksetzen","en":"Reset this branch's learning progress"},
+    {"de":"Lernstatus dieses Branches einschließlich gemeinsamer Folgekarten zurücksetzen?","en":"Reset learning progress for this branch, including shared continuation cards?"},
+    {"de":"Eigene Spiele und Analysen","en":"My games and analyses"},
+    {"de":"Opening-Branch-Generator","en":"Opening Branch Generator"},
+    {"de":"Freies Spiel","en":"Custom Game"},
+    {"de":"Lokales Spiel","en":"Local Game"},
+    {"de":"Schnelle Rätsel","en":"Quick puzzles"},
+    {"de":"Schnelles Lernen","en":"Quick learning"},
+    {"de":"Rätselmodus","en":"Puzzle mode"},
+    {"de":"Rätselstellung","en":"Puzzle position"},
+    {"de":"Stellungsbewertung","en":"Position evaluation"},
+    {"de":"Debug-Informationen anzeigen","en":"Show debug information"},
+    {"de":"Eigene Piktogramme verwenden (nach erneutem Öffnen)","en":"Use custom icons (reopen windows to apply)"},
+    {"de":"Gleichzeitige Bewertungsengines","en":"Concurrent evaluation engines"},
+    {"de":"Suchtiefe: sofortige Bewertung","en":"Search depth: instant evaluation"},
+    {"de":"Suchtiefe: leichte Bewertung","en":"Search depth: light evaluation"},
+    {"de":"Suchtiefe: starke Bewertung","en":"Search depth: strong evaluation"},
+    {"de":"1 = sofortig; 2 = zusätzlich leicht; 3 = zusätzlich stark. Änderungen gelten ab der nächsten neuen Analyse. Zeitlimits bleiben bestehen; die erreichte Tiefe kann niedriger sein.","en":"1 = instant; 2 = add light; 3 = add strong. Changes apply to new analyses. Time limits remain; reached depth may be lower."},
+    {"de":"Standard","en":"Default"},
+    {"de":"UI-Farbschema","en":"UI color theme"},
+    {"de":"Midnight · Blau & Violett","en":"Midnight · Blue & Violet"},
+    {"de":"Animationsdauer (100 % = Original, 0 % = sofort)","en":"Animation duration (100% = original, 0% = instant)"},
+    {"de":"Eigene Spiele & Analyse","en":"My games & analysis"},
+    {"de":"PGN schreiben","en":"Write PGN"},
+    {"de":"Partie entfernen","en":"Remove game"},
+    {"de":"Highlights durchgehen","en":"Review highlights"},
+    {"de":"Fehlende Partien analysieren","en":"Analyze missing games"},
+    {"de":"Fehlende Partien automatisch analysieren","en":"Automatically analyze missing games"},
+    {"de":"Analyse-Einstellungen","en":"Analysis settings"},
+    {"de":"Partie-Analyse","en":"Game analysis"},
+    {"de":"Parallele Analyse-Arbeiter","en":"Parallel analysis workers"},
+    {"de":"Threads je Analyse-Arbeiter","en":"Threads per analysis worker"},
+    {"de":"Patzer: gewichtete Verschlechterung","en":"Blunder: weighted deterioration"},
+    {"de":"Schlecht: gewichtete Verschlechterung","en":"Mistake: weighted deterioration"},
+    {"de":"Verpasste Chance: Bewertungstoleranz","en":"Missed opportunity: evaluation tolerance"},
+    {"de":"Chance: höchstens gute Antworten","en":"Opportunity: maximum good replies"},
+    {"de":"Dämpfung bei klaren Gewinn-/Verluststellungen","en":"Damping in clearly won/lost positions"},
+    {"de":"Gegnerfehler ausnutzen","en":"Punish opponent mistakes"},
+    {"de":"Gegnerfehler trainieren","en":"Practice opponent mistakes"},
+    {"de":"Mittelspiel: klare Stellungszüge","en":"Middlegame: clear positional moves"},
+    {"de":"Mittelspiel: feine Unterschiede (tiefere Suche)","en":"Middlegame: subtle differences (deeper search)"},
+    {"de":"Bauern: Durchbruch & Verteidigung","en":"Pawns: breakthrough & defense"},
+    {"de":"Komplexe Bauernstellungen","en":"Complex pawn positions"},
+    {"de":"Kürzesten Lösungsweg verlangen (Engine-Näherung)","en":"Require shortest solution (engine approximation)"},
+    {"de":"Diesen Subbranch auf-/zuklappen","en":"Expand/collapse this subbranch"},
+    {"de":"Stellungsvarianten vergrößern/verkleinern","en":"Expand/collapse position variants"},
+    {"de":"Komplexitätsreserve (KGR): Topzüge","en":"Complexity reserve: top moves"},
+    {"de":"KGR-Bewertungsgrenze (Weißsicht)","en":"Reserve evaluation threshold (White perspective)"},
+    {"de":"Schach zu zweit · an einem Gerät","en":"Two-player chess · one device"},
+    {"de":"Brett aufstellen · Freies Spiel","en":"Set up board · free play"},
+    {"de":"Mit dieser Stellung spielen","en":"Play from this position"},
+    {"de":"Verschieben","en":"Move pieces"},
+    {"de":"Leeres Brett","en":"Empty board"},
+    {"de":"Name Weiß","en":"White player name"},
+    {"de":"Name Schwarz","en":"Black player name"},
+    {"de":"Deine Seite (für die Partienanalyse)","en":"Your side (for game analysis)"},
+    {"de":"Ich spiele Weiß","en":"I play White"},
+    {"de":"Ich spiele Schwarz","en":"I play Black"},
+    {"de":"Schachuhr verwenden","en":"Use chess clock"},
+    {"de":"Minuten für Weiß","en":"Minutes for White"},
+    {"de":"Minuten für Schwarz","en":"Minutes for Black"},
+    {"de":"Sekunden pro Zug für Weiß","en":"Increment for White"},
+    {"de":"Sekunden pro Zug für Schwarz","en":"Increment for Black"},
+    {"de":"Nach jedem Zug Ansicht wechseln","en":"Flip board after every move"},
+    {"de":"Partie starten","en":"Start game"},
+    {"de":"Uhr pausieren / fortsetzen","en":"Pause / resume clock"},
+    {"de":"Remis vereinbaren","en":"Agree a draw"},
+    {"de":"Aufgeben (Seite am Zug)","en":"Resign (side to move)"},
+    {"de":"Endspieltraining","en":"Endgame training"},
+    {"de":"Zufällige Farbe","en":"Random side"},
+    {"de":"Dieses Endspiel trainieren","en":"Practice this endgame"},
+    {"de":"Kürzesten bewiesenen Lösungsweg verlangen","en":"Require the shortest proven solution"},
+    {"de":"Optimalprüfung: exakt bei kurzen Mattaufgaben und KPK-Umwandlung; für allgemeine Endspiele kein bewiesenes Minimum verfügbar.","en":"Shortest-path verification: exact for short mates and KPK promotion; no proven minimum for general endgames."},
+    {"de":"Gesamte Lösung anzeigen","en":"Show entire solution"},
+    {"de":"Lösung stoppen","en":"Stop solution"},
+    {"de":"Preset löschen","en":"Delete preset"},
+    {"de":"Alte Einträge wiederherstellen","en":"Restore legacy entries"},
+    {"de":"Presets werden nur über Speichern angelegt. Training starten merkt sich die Einstellungen separat.","en":"Only Save creates a preset. Starting training remembers settings separately."},
+    {"de":"Aufgabentypen für Taktik · unabhängig vom Endspieltraining unten","en":"Tactical themes · endgames have their own tab"},
+    {"de":"Aufgabentypen für Taktik · Endspiele haben einen eigenen Tab","en":"Tactical themes · endgames have their own tab"},
+    {"de":"Bauern + Läufer","en":"Pawns and bishops"},
+    {"de":"Bauern + Springer","en":"Pawns and knights"},
+    {"de":"Bauernverteidigung: mehrere Bauern","en":"Defending against multiple pawns"},
+    {"de":"Remis sichern (auch komplexere Kompositionen)","en":"Secure a draw (including material compositions)"},
+    {"de":"Bauernverteidigung: ruhige eigene Züge bis zum Trainingsziel","en":"Pawn defense: quiet own turns until the training goal"},
+    {"de":"Threads je Arbeiter: CPU-Suchthreads innerhalb einer Engine. Nicht fest 2. Arbeiter × Threads = gesamtes CPU-Budget. Mehr Arbeiter: mehr Stellungen parallel; mehr Threads: aufwendigere Suche einer Stellung.","en":"Threads per worker: CPU search threads within one engine, not fixed at 2. Workers × threads = total CPU budget. More workers analyze more positions in parallel; more threads deepen one position's search."},
+    {"de":"Einstellungen","en":"Settings"},
+    {"de":"Sprache","en":"Language"},
+    {"de":"Brett und Figuren","en":"Board and pieces"},
+    {"de":"Soundpaket","en":"Sound pack"},
+    {"de":"Lautstärke","en":"Volume"},
+    {"de":"Stumm","en":"Mute"},
+    {"de":"Eigene Pakete: Ordner Customization bearbeiten, dann App neu starten.","en":"Custom packs: edit the Customization folder, then restart the app."},
+    {"de":"Dein Schachtraining","en":"Your chess training"},
+    {"de":"Ton: aus","en":"Sound: off"},
+    {"de":"Ton: an","en":"Sound: on"},
+    {"de":"‹ Openings","en":"‹ Openings"},
+    {"de":"Lernen","en":"Learn"},
+    {"de":"Rätsel","en":"Puzzles"},
+    {"de":"Rätsel · Taktik & Endspiel","en":"Puzzles · tactics & endgames"},
+    {"de":"Rätsel · Taktik und Endspiel","en":"Puzzles · tactics and endgames"},
+    {"de":"Openings neu laden","en":"Reload openings"},
+    {"de":"Rätsel-Schwierigkeit (grobe Kategorien)","en":"Puzzle difficulty (approximate)"},
+    {"de":"Alle","en":"All"},
+    {"de":"Leicht","en":"Easy"},
+    {"de":"Normal","en":"Normal"},
+    {"de":"Schwer","en":"Hard"},
+    {"de":"Freies Spiel · beide Seiten / Engine","en":"Free play · both sides / engine"},
+    {"de":"Ähnliche Gegenvarianten als gemeinsame Lernkarte","en":"Group similar replies into one learning card"},
+    {"de":"Fortschritt zurücksetzen","en":"Reset progress"},
+    {"de":"Branch Modus","en":"Branch view"},
+    {"de":"Branch Modus · {0}","en":"Branch view · {0}"},
+    {"de":"Opening löschen","en":"Delete opening"},
+    {"de":"Fortschritt für „{0}“ zurücksetzen?","en":"Reset progress for “{0}”?"},
+    {"de":"Bestätigen","en":"Confirm"},
+    {"de":"„{0}“ aus der Auswahl entfernen? Die Datei wird zur Wiederherstellung archiviert.","en":"Remove “{0}” from the list? Its file will be archived for recovery."},
+    {"de":"Löschen fehlgeschlagen: {0}","en":"Deletion failed: {0}"},
+    {"de":"Weiß","en":"White"},
+    {"de":"Schwarz","en":"Black"},
+    {"de":"Weiß am Zug","en":"White to move"},
+    {"de":"Schwarz am Zug","en":"Black to move"},
+    {"de":"Du spielst Weiß","en":"You play White"},
+    {"de":"Du spielst Schwarz","en":"You play Black"},
+    {"de":"Schach","en":"Check"},
+    {"de":"Schachmatt","en":"Checkmate"},
+    {"de":"Matt","en":"Mate"},
+    {"de":"Patt","en":"Stalemate"},
+    {"de":"Startstellung","en":"Starting position"},
+    {"de":"Grundstellung","en":"Initial position"},
+    {"de":"Anfangsstellung","en":"Initial position"},
+    {"de":"Gelernt","en":"Learned"},
+    {"de":"Zu Wiederholen","en":"Due for review"},
+    {"de":"Angeschaut","en":"Seen"},
+    {"de":"Unbekannt","en":"Unknown"},
+    {"de":"{0} Lernzüge","en":"{0} learning moves"},
+    {"de":"Lösung zeigen","en":"Show solution"},
+    {"de":"Erneut versuchen","en":"Try again"},
+    {"de":"Andere Antwort","en":"Another reply"},
+    {"de":"Zur aktuellen Stellung","en":"Return to current position"},
+    {"de":"Stockfish: Stark","en":"Stockfish: strong"},
+    {"de":"Stockfish: Leicht","en":"Stockfish: light"},
+    {"de":"Top 3 + Varianten anzeigen","en":"Show top 3 and variations"},
+    {"de":"Analyse: Zug zurück","en":"Analysis: undo move"},
+    {"de":"Enginevarianten · Schritte zum Anschauen anklicken","en":"Engine lines · click a move to explore"},
+    {"de":"Zugfolge · Stellung zum Anschauen anklicken","en":"Move history · click to explore"},
+    {"de":"Branch anzeigen","en":"Show branches"},
+    {"de":"Weiterspielen  ↵","en":"Continue playing  ↵"},
+    {"de":"Nächste Karte  [Leertaste]","en":"Next card  [Space]"},
+    {"de":"Nächstes Rätsel  ↵","en":"Next puzzle  ↵"},
+    {"de":"Noch einmal – wähle deinen Zug.","en":"Try again — choose your move."},
+    {"de":"Spiele dein Repertoire.","en":"Play your repertoire."},
+    {"de":"Für heute ist alles erledigt. Neue Wiederholungen werden mit Abstand fällig.","en":"All done for now. Further reviews become due after an interval."},
+    {"de":"Dein Lernzug","en":"Your training move"},
+    {"de":"Bewertung nach deiner Antwort","en":"Evaluation after your answer"},
+    {"de":"✕  Nicht die Lösung. Versuche es erneut oder lass sie anzeigen.","en":"✕ Not the solution. Try again or reveal the move."},
+    {"de":"✓ Richtig! Leertaste: nächste Karte · Enter: Weiterspielen.","en":"✓ Correct! Space: next card · Enter: continue playing."},
+    {"de":"Dein Zug: {0}","en":"Your move: {0}"},
+    {"de":"Lösung: {0}","en":"Solution: {0}"},
+    {"de":"Engine konnte keinen Zug liefern: {0}","en":"Engine could not provide a move: {0}"},
+    {"de":"Im Opening-Spielbaum","en":"Inside the opening tree"},
+    {"de":"Ende dieser Buchvariante","en":"End of this book line"},
+    {"de":"Außerhalb des Baums · Stockfish","en":"Outside the tree · Stockfish"},
+    {"de":"Lösen","en":"Solving"},
+    {"de":"Gelöst","en":"Solved"},
+    {"de":"Freie Analyse · beide Seiten spielbar · Training bleibt unverändert","en":"Free analysis · play either side · training remains unchanged"},
+    {"de":"Freie Analyse · beide Seiten spielbar · Partie bleibt unverändert","en":"Free analysis · play either side · game remains unchanged"},
+    {"de":"Keine legalen Folgezüge","en":"No legal continuation"},
+    {"de":"Analysiere angezeigte Stellung … · + Weiß / − Schwarz","en":"Analyzing displayed position … · + White / − Black"},
+    {"de":"Angezeigte Stellung · + Weiß / − Schwarz · lokal zwischengespeichert","en":"Displayed position · + White / − Black · cached locally"},
+    {"de":"Kurze Varianten werden fortgesetzt …","en":"Extending short variations …"},
+    {"de":"Weiß-Sicht · kurze PVs ab Endpunkt weiter analysiert","en":"White's perspective · short PVs extended from their endpoint"},
+    {"de":"✕ Dieser Zug erzwingt kein Matt innerhalb des Zuglimits.","en":"✕ This move does not force mate within the move limit."},
+    {"de":"Keine gültige Verteidigung geliefert.","en":"No legal defense provided."},
+    {"de":"✓ Gültiger Mattweg · noch höchstens {0} eigene Züge.","en":"✓ Valid mating line · at most {0} more moves of your own."},
+    {"de":"✓ Rätsel gelöst!","en":"✓ Puzzle solved!"},
+    {"de":"✓  Rätsel gelöst! Die Schlussstellung ist erreicht.","en":"✓ Puzzle solved! Final position reached."},
+    {"de":"✓  Rätsel gelöst! Du kannst die Enginevarianten jetzt anklicken.","en":"✓ Puzzle solved! You can now explore the engine lines."},
+    {"de":"✓  Richtig. Finde den nächsten Zug.","en":"✓ Correct. Find the next move."},
+    {"de":"Rätselstellung","en":"Puzzle position"},
+    {"de":"Matt in {0}","en":"Mate in {0}"},
+    {"de":"Materialgewinn","en":"Material gain"},
+    {"de":"Komposition","en":"Composition"},
+    {"de":"Engine-Selbstspiel","en":"Engine self-play"},
+    {"de":"Finde die beste Fortsetzung. Mehrere eigene Züge sind nötig.","en":"Find the best continuation. Several moves of your own are required."},
+    {"de":"Freies Spiel · unabhängig vom Opening","en":"Free play · independent of an opening"},
+    {"de":"Engine spielt den Gegner","en":"Engine plays the opponent"},
+    {"de":"Brett drehen","en":"Flip board"},
+    {"de":"Neue Partie","en":"New game"},
+    {"de":"Zug zurück","en":"Undo move"},
+    {"de":"Bewertung","en":"Evaluation"},
+    {"de":"Engine / Bewegung","en":"Engine / animation"},
+    {"de":"Noch kein gespeichertes Opening erkannt.","en":"No saved opening recognized yet."},
+    {"de":"im Baum","en":"inside the tree"},
+    {"de":"verlassen bei Halbzug {0}","en":"left the tree at ply {0}"},
+    {"de":"Gesamter Graph","en":"Fit entire graph"},
+    {"de":"Aktuelle Stellung","en":"Current position"},
+    {"de":"Ziehen: Kamera · Mausrad: Zoom · Knoten anklicken","en":"Drag: pan · Mouse wheel: zoom · Click a node"},
+    {"de":"Grün: gelernt · Orange: fällig · Blau: angeschaut · Grau: unbekannt · Gegnerzüge: dunkler","en":"Green: learned · Orange: due · Blue: seen · Gray: unknown · Opponent moves: darker"},
+    {"de":"Aktiv","en":"Active"},
+    {"de":"Später","en":"Later"},
+    {"de":"Ausgeschlossen","en":"Excluded"},
+    {"de":"Der Folgeast enthält unterschiedliche Prioritäten.","en":"The continuation contains mixed priorities."},
+    {"de":"Priorität gespeichert (inklusive gemeinsamer Folgekarten). Wirksam ab nächster Lernkarte. Wieder aktivierbar.","en":"Priority saved, including shared follow-up cards. Applies from the next card; can be reactivated."},
+    {"de":"Engine-untypische Züge ausblenden","en":"Hide moves flagged by the human-move heuristic"},
+    {"de":"Gleiche Antworten als Varianten bündeln","en":"Group identical replies as variations"},
+    {"de":"Ausgewählter Knoten","en":"Selected node"},
+    {"de":"Stockfish analysiert …","en":"Stockfish is analyzing …"},
+    {"de":"Knotenstellung · Bewertung aus Weiß-Sicht","en":"Node position · evaluation from White's perspective"},
+    {"de":"Startsequenz: beide Seiten selbst spielen.","en":"Starting sequence: play both sides yourself."},
+    {"de":"Lernperspektive","en":"Learning perspective"},
+    {"de":"Schwarz lernen","en":"Learn as Black"},
+    {"de":"Weiß lernen","en":"Learn as White"},
+    {"de":"Anzahl Tiefenabschnitte","en":"Number of depth sections"},
+    {"de":"Parameter","en":"Parameter"},
+    {"de":"Abschnittstiefengrenze","en":"Section depth limit"},
+    {"de":"Komplexitätsgrenze","en":"Complexity threshold"},
+    {"de":"Leichtigkeitsgrenze","en":"Ease threshold"},
+    {"de":"Enginesuchtiefe","en":"Engine search depth"},
+    {"de":"Maximaler gegnerischer Verlust","en":"Maximum opponent loss"},
+    {"de":"Maximaler Kompressionsverlust","en":"Maximum compression loss"},
+    {"de":"Komplexitätsprüfung ab Tiefe (Halbzüge)","en":"Start complexity checks at depth (plies)"},
+    {"de":"Kartenlimit je Bestätigungsblock","en":"Card limit per confirmation block"},
+    {"de":"Parallele Arbeiter (dauerhafte Engines)","en":"Parallel workers (persistent engines)"},
+    {"de":"Threads je Arbeiter","en":"Threads per worker"},
+    {"de":"Transpositionen über alle Tiefen vereinen","en":"Merge transpositions across depths"},
+    {"de":"Human-Moves-Labels vorbereiten (keine Züge entfernen)","en":"Prepare human-move labels (do not remove moves)"},
+    {"de":"Human-Labels: flache Engine-Suchtiefe","en":"Human labels: shallow engine depth"},
+    {"de":"Lernkarten generieren","en":"Generate learning cards"},
+    {"de":"Kartenzahl neu schätzen","en":"Estimate card count"},
+    {"de":"Exakt zählen (langsam)","en":"Count exactly (slow)"},
+    {"de":"Abbrechen / Teilbaum behalten","en":"Cancel / keep partial tree"},
+    {"de":"Abbruch läuft; danach kannst du das Fenster schließen.","en":"Canceling; you can close the window afterwards."},
+    {"de":"Schätzung veraltet. Neu schätzen berücksichtigt diese Startstellung und die Filter.","en":"Estimate outdated. Recalculate for this starting position and settings."},
+    {"de":"Stockfish bewertet die Startstellung …","en":"Stockfish is evaluating the starting position …"},
+    {"de":"+ Weiß / − Schwarz","en":"+ White / − Black"},
+    {"de":"{0} vorgegebene Halbzüge","en":"{0} predefined plies"},
+    {"de":"Kurze Graphprobe mit Startsequenz und Kompression …","en":"Sampling complete paths through the depth sections …"},
+    {"de":"Noch kein vollständiger Probenpfad. Exakt zählen oder erneut versuchen.","en":"No complete sample path yet. Count exactly or try again."},
+    {"de":"Schätzung abgebrochen.","en":"Estimate canceled."},
+    {"de":"Zählung abgebrochen.","en":"Count canceled."},
+    {"de":"Mindestens 10.000 Karten; Zählgrenze erreicht.","en":"At least 10,000 cards; counting limit reached."},
+    {"de":"Exakte Zählung: {0} Karten mit diesen Einstellungen.","en":"Exact count: {0} cards with these settings."},
+    {"de":"{0} Karten gezählt · {1} offen","en":"{0} cards counted · {1} pending"},
+    {"de":"{0} Karten erstellt. Weitere {1} Karten erlauben?","en":"{0} cards created. Allow another {1} cards?"},
+    {"de":"Kartenlimit","en":"Card limit"},
+    {"de":"Keine Karten: Startstellung, Tiefe oder Filter prüfen.","en":"No cards: check the starting position, depth, and filters."},
+    {"de":"Teilbaum mit {0} Karten speichern?","en":"Save the partial tree with {0} cards?"},
+    {"de":"Abgebrochen","en":"Canceled"},
+    {"de":"Generierung fehlgeschlagen: {0}","en":"Generation failed: {0}"},
+    {"de":"Generierung aktiv","en":"Generation in progress"},
+    {"de":"Die Generierung läuft noch. Bitte im Generator zuerst abschließen oder abbrechen und den Teilbaum speichern.","en":"Generation is still running. Finish it first, or cancel and save the partial tree in the generator."},
+    {"de":"Bauer umwandeln","en":"Promote pawn"},
+    {"de":"Gegenvariante {0} · gleiche Antwort","en":"Opponent variation {0} · same reply"},
+    {"de":"Tiefengrenze: mögliche Gegenantworten","en":"Depth limit: possible opponent replies"},
+    {"de":"Komplexitätsgrenze: mögliche Gegenantworten","en":"Complexity limit: possible opponent replies"},
+    {"de":"Exklusive Endtiefe dieses Abschnitts in Halbzügen ab Startstellung. Grenzen müssen ansteigen.","en":"Exclusive end depth of this section, in plies from the starting position. Limits must increase."},
+    {"de":"Ab dieser Anzahl plausibler Gegnerzüge endet die Fortsetzung, sobald die Mindesttiefe erreicht ist.","en":"Stop continuation at this many plausible opponent replies, once the minimum depth is reached."},
+    {"de":"Gegnerzüge mit dieser oder schlechterer Bewertung aus Gegnersicht werden nicht gelernt (Bauern).","en":"Opponent moves at or below this evaluation, from the opponent's perspective, are omitted (pawns)."},
+    {"de":"Stockfish-Suchtiefe pro Stellung. Höher bedeutet mehr Rechenzeit; unabhängig von der Baumtiefe.","en":"Stockfish search depth per position. Higher means more computation; independent of tree depth."},
+    {"de":"Maximaler Bewertungsverlust einer Gegnerantwort gegenüber deren bestem Zug (Bauern).","en":"Maximum evaluation loss of an opponent reply compared with their best move (pawns)."},
+    {"de":"Maximal erlaubter eigener Bewertungsverlust für das Zusammenführen von Ästen (Bauern).","en":"Maximum allowed loss for your own move when merging branches (pawns)."},
+    {"de":"Grobe Baumprognose ≈ {0} Karten ({1} vollständige Pfade; Streuung {2}–{3}). Suchtiefe ≤ 8; Kompression kann die Zahl reduzieren. Blocklimit: {4}.","en":"Approximate tree forecast ≈ {0} cards ({1} complete paths; range {2}–{3}). Search depth ≤ 8; compression can reduce this. Block limit: {4}."},
+    {"de":"{0} Karten gespeichert. Nach Schließen auf der Opening-Auswahl verfügbar.\n{1}","en":"{0} cards saved. Reload the opening list to use them.\n{1}"},
+    {"de":"{0} Karten · {1} offene Knoten","en":"{0} cards · {1} pending nodes"},
+    {"de":"Tiefe {0}/{1} · {2}/{3} aktive Arbeiter × {4} Threads · Engine {5}","en":"Depth {0}/{1} · {2}/{3} active workers × {4} threads · engine depth {5}"},
+    {"de":"Fertig · {0} eindeutige Lernkarten","en":"Finished · {0} unique learning cards"},
+    {"de":"Kartenlimit: Bestätigung nötig (inklusive Startsequenz)","en":"Card limit: confirmation required (including setup sequence)"},
+    {"de":"Enginegeprüft (Tiefe ≥ {0}) · Bewertung nach dem Lösen","en":"Engine-checked (depth ≥ {0}) · evaluation after solving"},
+    {"de":"Für diesen Schwierigkeitsfilter fehlt derzeit ein Rätsel. Wähle auf der Startseite „Alle“ oder warte auf Nachschub. {0}","en":"No puzzle is currently ready at this difficulty. Choose All on the home screen or wait for more. {0}"},
+    {"de":"Analyse abgebrochen","en":"Analysis canceled"},
+    {"de":"Stockfish fehlt","en":"Stockfish is missing"},
+    {"de":"Keine Engineantwort","en":"No engine response"},
+    {"de":"Keine weitere PV geliefert","en":"No further PV provided"},
+    {"de":"Dreifache Wiederholung in der Variante","en":"Threefold repetition in this variation"},
+    {"de":"Abschnittsgrenzen müssen aufsteigend sein; Wertebereich prüfen.","en":"Section depth limits must increase; check the value ranges."},
+    {"de":"Höchstens fünf Tiefenabschnitte.","en":"At most five depth sections."},
+    {"de":"Mein Repertoire","en":"My repertoire"},
+    {"de":"Remis: 50-Züge-Regel","en":"Draw: fifty-move rule"},
+    {"de":"Remis: dreifache Stellungswiederholung","en":"Draw: threefold repetition"},
+    {"de":"Remis: unzureichendes Material","en":"Draw: insufficient material"},
+    {"de":"Jetzt diesen Branch lernen","en":"Study this branch now"},
+    {"de":"Schnelles Spiel mit alten Einstellungen","en":"Quick game with last settings"},
+    {"de":"Rätsel · Training und Presets","en":"Puzzles · Training and presets"},
+    {"de":"Rätsel-Einstellungen","en":"Puzzle settings"},
+    {"de":"Training","en":"Training"},
+    {"de":"Preset auswählen · Änderungen werden als neues Preset gespeichert, damit Highscores vergleichbar bleiben.","en":"Select a preset · Changes create a new preset so high scores remain comparable."},
+    {"de":"Name des Presets","en":"Preset name"},
+    {"de":"Rätsel-Schwierigkeit (Taktikfilter)","en":"Puzzle difficulty (tactics filter)"},
+    {"de":"Zeit pro eigenem Zug (Sekunden, 0 = ohne Limit)","en":"Time per player move (seconds, 0 = unlimited)"},
+    {"de":"Zeit insgesamt (Sekunden, 0 = ohne Limit)","en":"Total time (seconds, 0 = unlimited)"},
+    {"de":"Leben (0 = unbegrenzt)","en":"Lives (0 = unlimited)"},
+    {"de":"Bei Fehler Lösungszug anzeigen","en":"Show the solution move after a mistake"},
+    {"de":"Aufgabentypen für Taktik · unabhängig vom Endspieltraining unten","en":"Tactical themes · independent of the endgame training below"},
+    {"de":"Taktikrätsel einbeziehen","en":"Include tactical puzzles"},
+    {"de":"Matt in N","en":"Mate in N"},
+    {"de":"Remis erzwingen (König + Bauer gegen König)","en":"Force a draw (king and pawn versus king)"},
+    {"de":"Zusätzliches Endspieltraining (unabhängig von den Typfiltern)","en":"Additional endgame training (independent of theme filters)"},
+    {"de":"Figurenendspiele ganz bis zum Matt ausspielen (sonst kurze Mattaufgaben)","en":"Play piece endgames all the way to mate (otherwise short mate puzzles)"},
+    {"de":"Bauernverteidigung: eigene Züge ohne Bauernbewegung","en":"Pawn defence: player moves without a pawn move"},
+    {"de":"KPK wird exakt lokal gelöst. Kurze Mattaufgaben werden vollständig geprüft; Ausspieltraining endet erst bei echtem Matt. Komplexe Bauernaufgaben prüfen eine sichere Umwandlung, nicht den gesamten Partiegewinn.","en":"KPK is solved exactly offline. Short mates are exhaustively verified; full endgame practice requires actual mate. Complex pawn puzzles prove safe promotion, not a complete game win."},
+    {"de":"Als neues Preset speichern","en":"Save as a new preset"},
+    {"de":"Training starten","en":"Start training"},
+    {"de":"Damenmatt","en":"Queen mate"},
+    {"de":"Turmmatt","en":"Rook mate"},
+    {"de":"Zwei Läufer","en":"Two bishops"},
+    {"de":"Läufer + Springer","en":"Bishop and knight"},
+    {"de":"Bauernverteidigung","en":"Pawn defence"},
+    {"de":"Bauernumwandlung","en":"Pawn promotion"},
+    {"de":"Komplexe Bauernendspiele","en":"Complex pawn endings"},
+    {"de":"Gelöste Rätsel insgesamt: {0}","en":"Total completed puzzles: {0}"},
+    {"de":"Ohne Verlustbedingung: kein Highscore","en":"No losing condition: no high score"},
+    {"de":"Bitte mindestens einen Aufgabentyp oder ein Endspiel wählen.","en":"Please select at least one puzzle theme or endgame."},
+    {"de":"Aufgabe wird vorbereitet und geprüft …","en":"Preparing and verifying the exercise …"},
+    {"de":"Keine Aufgabentypen gewählt.","en":"No exercise types selected."},
+    {"de":"Für diesen Taktikfilter ist noch kein vorbereitetes Rätsel vorhanden. Andere Schwierigkeit wählen oder auf Nachschub warten.","en":"No prepared puzzle matches this filter yet. Choose another difficulty or wait for more puzzles."},
+    {"de":"Matt setzen · freie Technikübung","en":"Deliver mate · free technique practice"},
+    {"de":"Zufällige legale Materialstellung · Stockfish-Verteidigung","en":"Random legal material position · Stockfish defence"},
+    {"de":"Exakte lokale KPK-Tablebase","en":"Exact offline KPK tablebase"},
+    {"de":"Endspielkomposition · vollständig bewiesener Mattbaum","en":"Composed endgame · fully proven mate tree"},
+    {"de":"Komposition · vollständige Zielprüfung","en":"Composition · exhaustive objective verification"},
+    {"de":"Sichere Umwandlung in höchstens 3 Zügen","en":"Safe promotion within 3 player moves"},
+    {"de":"Remis erzwingen","en":"Force a draw"},
+    {"de":"Halte das exakte Remis: {0} eigene Züge ohne Bauernbewegung, oder gewinne den Bauern.","en":"Maintain the exact draw for {0} player moves without a pawn move, or capture the pawn."},
+    {"de":"Gesamtzeit abgelaufen.","en":"Total time expired."},
+    {"de":"Zugzeit abgelaufen.","en":"Move time expired."},
+    {"de":"Keine Leben mehr.","en":"No lives left."},
+    {"de":"Rätsel übersprungen.","en":"Puzzle skipped."},
+    {"de":"Sitzung beendet · {0} Punkte","en":"Session finished · {0} points"},
+    {"de":"Punkte: {0}","en":"Score: {0}"},
+    {"de":"Leben: {0}","en":"Lives: {0}"},
+    {"de":"Zug: {0}s","en":"Move: {0}s"},
+    {"de":"Gesamt: {0}s","en":"Total: {0}s"},
+    {"de":"✕ Dieser Zug erhält das Aufgabenziel nicht.","en":"✕ This move does not preserve the objective."},
+    {"de":"Weiter bis zum Matt · Material erhalten · 50-Züge-Regel beachten","en":"Continue to mate · preserve your pieces · observe the fifty-move rule"},
+    {"de":"✓ Richtig · nächster eigener Zug","en":"✓ Correct · your next move"},
+    {"de":"{0}/{1} ohne Bauernbewegung","en":"{0}/{1} without a pawn move"},
+    {"de":"Remis statt Matt. Wähle eine neue Aufgabe.","en":"Draw instead of mate. Choose another exercise."},
+    {"de":"Kein materialerhaltender Zug ohne Remis mehr. Neue Aufgabe wählen.","en":"No material-preserving non-drawing move remains. Choose another exercise."},
+    {"de":"✓ Abgeschlossen mit Hilfe · kein Punkt","en":"✓ Completed with help · no point"},
+    {"de":"✓ Gelöst · +1 Punkt","en":"✓ Solved · +1 point"},
+    {"de":"CPU-Suchthreads innerhalb jeder Stockfish-Engine, nicht fest 2. Mehr Threads können eine einzelne Stellung schneller untersuchen; mehr Arbeiter untersuchen verschiedene Stellungen gleichzeitig. Gesamtbudget = Arbeiter × Threads. Zu viele Threads können durch Konkurrenz langsamer sein.","en":"CPU search threads inside each Stockfish engine; not fixed at 2. More threads may search one position faster; more workers search separate positions concurrently. Total budget = workers × threads. Too many competing threads may reduce performance."}
+    ,{"de":"Eigene Spiele","en":"My games"}
+    ,{"de":"Eigene Spiele · PGN und Analyse","en":"My games · PGN and analysis"}
+    ,{"de":"PGN importieren","en":"Import PGN"}
+    ,{"de":"PGN einfügen","en":"Paste PGN"}
+    ,{"de":"Manuell eingeben","en":"Enter manually"}
+    ,{"de":"Partie analysieren","en":"Analyze game"}
+    ,{"de":"Alle offenen Partien analysieren","en":"Analyze all pending games"}
+    ,{"de":"Analyse abbrechen","en":"Cancel analysis"}
+    ,{"de":"Partie speichern","en":"Save game"}
+    ,{"de":"Zur Partie","en":"Return to game"}
+    ,{"de":"Lektion","en":"Lesson"}
+    ,{"de":"Bester Zug","en":"Best move"}
+    ,{"de":"Patzer","en":"Blunder"}
+    ,{"de":"Gut","en":"Good"}
+    ,{"de":"Schlecht","en":"Mistake"}
+    ,{"de":"Verpasste Chance","en":"Missed opportunity"}
+    ,{"de":"Eigene Fehler","en":"My mistakes"}
+    ,{"de":"Aus eigenen Fehlern lernen","en":"Learn from my mistakes"}
+    ,{"de":"Letzte X Partien ausschließen","en":"Exclude the latest X games"}
+    ,{"de":"Spiele importieren / analysieren","en":"Import / analyze games"}
+    ,{"de":"Eigene Patzer und verpasste Chancen trainieren","en":"Practice my blunders and missed opportunities"}
+    ,{"de":"Mittelspiel: ruhige Stellungszüge","en":"Middlegame: quiet positional moves"}
+    ,{"de":"Mittelspiel: mindestens gute Züge","en":"Middlegame: minimum good moves"}
+    ,{"de":"Mittelspiel: höchstens gute Züge","en":"Middlegame: maximum good moves"}
+    ,{"de":"Kürzesten Lösungsweg verlangen (Engine-Näherung)","en":"Require shortest solution (engine approximation)"}
+    ,{"de":"Stellungsgefühl","en":"Positional intuition"}
+    ,{"de":"Human Moves neu generieren","en":"Regenerate human-move labels"}
+    ,{"de":"Subbranch-Status umschalten","en":"Toggle subbranch status"}
+    ,{"de":"Subbranches einklappen","en":"Collapse subbranches"}
+    ,{"de":"Mit anderem Opening kombinieren","en":"Combine with another opening"}
+    ,{"de":"Tiefer erforschen","en":"Explore deeper"}
+    ,{"de":"Bei Komplexität: Top X behalten","en":"On complexity: retain top X"}
+    ,{"de":"Nur ab Bewertung Y (Weißsicht)","en":"Minimum score Y (White's view)"}
+    ,{"de":"Du spielst Weiß","en":"You play White"}
+    ,{"de":"Du spielst Schwarz","en":"You play Black"}
+    ,{"de":"Anonym spielen · nicht speichern","en":"Play anonymously · do not save"}
+    ,{"de":"Anonymes Spiel · wird nicht gespeichert.","en":"Anonymous game · will not be saved."}
+    ,{"de":"Spiel analysieren","en":"Analyze game"}
+    ,{"de":"Analyse wird vorbereitet …","en":"Preparing analysis …"}
+    ,{"de":"Künstliche Materialverteilung: Stockfish unterstützt diese Stellung nicht. Spielen mit beiden Seiten ist möglich; Engine und Bewertung sind ausgeschaltet.","en":"Artificial material: Stockfish does not support this position. You can play both sides manually; the engine and evaluation are disabled."}
+    ,{"de":"Schachblick","en":"Chess vision"}
+    ,{"de":"Angreifer & Verteidiger","en":"Attackers & defenders"}
+    ,{"de":"Angriffe im nächsten Zug","en":"Attacks on the next move"}
+    ,{"de":"Gegnerische Angriffe","en":"Opponent's attacks"}
+    ,{"de":"Bestätigen · Leertaste","en":"Confirm · Space"}
+    ,{"de":"Rekord {0}/s","en":"Best {0}/s"}
+    ,{"de":"Neue Schachblick-Aufgabe wird vorbereitet …","en":"Preparing a new chess vision exercise …"}
+    ,{"de":"Markiere alle Figuren beider Farben, die das grüne Zielfeld angreifen oder verteidigen.","en":"Mark every piece of either color attacking or defending the green target square."}
+    ,{"de":"Markiere Figuren, die das Zielfeld noch nicht angreifen, aber nach einem legalen Zug ihrer Seite dort wirken können – auch durch Freiziehen.","en":"Mark pieces not yet attacking the target that could attack it after one legal move by their side, including discovered attacks."}
+    ,{"de":"Zeichne alle Pfeile von gegnerischen Figuren auf deine angegriffenen Figuren. Deine Seite steht unten.","en":"Draw every arrow from an opposing piece to your attacked pieces. Your side is at the bottom."}
+    ,{"de":"30 Aufgaben pro Runde. Markiere mit Links- oder Rechtsklick; Pfeile mit Ziehen. Leertaste bestätigt.","en":"30 exercises per session. Mark with either mouse button; drag to draw arrows. Space confirms."}
+    ,{"de":"Gezählt werden korrekte Markierungen pro Sekunde, abzüglich Fehler. Geometrische Angriffe zählen auch bei gefesselten Figuren.","en":"Score: correct markings per second, minus errors. Geometric attacks count even for pinned pieces."}
+    ,{"de":"Dieser Zug verschenkte einen entscheidenden Vorteil. Suche eine bessere Fortsetzung.","en":"This move gave away a decisive advantage. Look for a better continuation."}
+    ,{"de":"Nach dem Fehler des Gegners konntest du den gewonnenen Vorteil nicht festhalten.","en":"You missed the opportunity to keep the advantage gained from your opponent's mistake."}
+    ,{"de":"Dieser Zug verschlechterte deine Stellung. Vergleiche ihn mit der besten Fortsetzung.","en":"This move worsened your position. Compare it with the best continuation."}
+    ,{"de":"Dieser Zug war die einzige Möglichkeit, deine Stellungsbewertung zu behalten.","en":"This was the only move that preserved your position's evaluation."}
+    ,{"de":"Du hast den besten Zug der gespeicherten Analyse gefunden.","en":"You found the best move in the saved analysis."}
+    ,{"de":"Hier endet die bekannte Opening-Theorie dieser Partie.","en":"This is the last move in the saved opening theory for this game."}
+    ,{"de":"Ein guter Zug, der die Stellung weitgehend erhält.","en":"A good move that largely preserves the position."}
+    ,{"de":"Endstellung der Partie","en":"Final position"}
+    ,{"de":"Rätselvorrat je Typ und Schwierigkeit","en":"Puzzle stock per type and difficulty"}
+    ,{"de":"Maximale parallele Rätsel-Engines","en":"Maximum concurrent puzzle engines"}
+    ,{"de":"Threads je Rätsel-Engine","en":"Threads per puzzle engine"}
+    ,{"de":"Alle Subbranches einklappen","en":"Collapse all subbranches"}
+    ,{"de":"Beta-Positionierung","en":"Beta layout"}
+    ,{"de":"Branches","en":"Branches"}
+    ,{"de":"Verbesserte Branchpositionierung (Beta)","en":"Improved branch layout (beta)"}
+    ,{"de":"Standardmäßig bleibt die bisherige Positionierung aktiv. Die Beta ordnet Geschwister gemeinsam, zentriert Abzweigungen und bevorzugt horizontale Gegnerzug–Antwort-Verbindungen. Offene Branchfenster übernehmen die Änderung beim nächsten Aufbau.","en":"The previous layout remains the default. The beta groups siblings, centers forks and favors horizontal opponent-move-to-answer connections. Open branch windows apply the change when rebuilt."}
+    ,{"de":"Messung läuft …","en":"Measurement in progress …"}
+    ,{"de":"Nach {0} s: Tiefe {1}","en":"After {0} s: depth {1}"}
+    ,{"de":"Abgeschlossen nach {0} s.","en":"Completed after {0} s."}
+    ,{"de":"Liniengraph","en":"Line graph"}
+    ,{"de":"Balken verbinden","en":"Connect bars"}
+    ,{"de":"Summenlinie","en":"Sum line"}
+    ,{"de":"Alle Fehlertypen","en":"All error types"}
+    ,{"de":"Gesamte Fehler","en":"Total errors"}
+    ,{"de":"Gestrichelt: Summe der Auswahl","en":"Dashed: selected total"}
+    ,{"de":"Keine Fehlertypen ausgewählt.","en":"No error types selected."}
+    ,{"de":"Datum auswählen","en":"Select date"}
+    ,{"de":"Fehlerarten und Lernverlauf","en":"Error types and training history"}
+    ,{"de":"Leicht (4–8 Figuren)","en":"Easy (4–8 pieces)"}
+    ,{"de":"Mittel (9–16 Figuren)","en":"Medium (9–16 pieces)"}
+    ,{"de":"Schwer (17–32 Figuren)","en":"Hard (17–32 pieces)"}
+    ,{"de":"Legende: Fehlertypen per Klick ein-/ausblenden. Prozentwerte beziehen sich immer auf sämtliche Fehler.","en":"Legend: click to select error types. Percentages always refer to all errors."}
+    ,{"de":"Gleichgerichtete Läufer, Türme oder Damen hinter einer verteidigenden Figur zählen ebenfalls als Verteidiger. Diese Option gilt für Angreifer & Verteidiger und Gegnerische Angriffe.","en":"Bishops, rooks or queens on the same ray behind a defending piece also count as defenders. This option applies to Attackers & Defenders and Opponent attacks."}
+    ,{"de":"Rekord {0} Fehler · {1}/s","en":"Record: {0} errors · {1}/s"}
+    ,{"de":"Noch kein Rekord","en":"No record yet"}
+    ,{"de":"Fehlerzusammensetzung (%)","en":"Error composition (%)"}
+    ,{"de":"Fehler pro Durchgang","en":"Errors per run"}
+    ,{"de":"Geschwindigkeit (Figuren/s)","en":"Speed (pieces/s)"}
+    ,{"de":"Durchgänge","en":"Runs"}
+    ,{"de":"Subbranch entfernen","en":"Remove subbranch status"}
+    ,{"de":"Laufzeit am Beispiel messen","en":"Measure example analysis time"}
+    ,{"de":"Ab hier weiterspielen","en":"Continue playing from here"}
+    ,{"de":"Beste Züge %","en":"Best moves %"}
+    ,{"de":"Figur retten","en":"Save the piece"}
+    ,{"de":"Figuren merken","en":"Remember the pieces"}
+    ,{"de":"Zugvergleich","en":"Compare moves"}
+    ,{"de":"Statistik","en":"Statistics"}
+    ,{"de":"Übersehene Figurentypen","en":"Missed piece types"}
+    ,{"de":"Pause","en":"Pause"}
+    ,{"de":"Fortsetzen","en":"Resume"}
+    ,{"de":"Aufbau bestätigen","en":"Confirm reconstruction"}
+    ,{"de":"Beide Ausgangsstellungen anzeigen","en":"Show both original positions"}
+    ,{"de":"Indirekte Verteidiger (Röntgenlinien) mitzählen","en":"Include indirect defenders (X-ray lines)"}
+    ,{"de":"Engine-untypische Züge neu generieren","en":"Regenerate engine-untypical move labels"}
+    ,{"de":"Zurück / Training abbrechen","en":"Back / stop training"}
+    ,{"de":"Mögliche Zielfelder ausblenden","en":"Hide possible destination squares"}
+    ,{"de":"◀ Einstellungen","en":"◀ Settings"}
+    ,{"de":"▶ Einstellungen","en":"▶ Settings"}
+    ,{"de":"Figuren merken: leicht (4–8)","en":"Remember pieces: easy (4–8)"}
+    ,{"de":"Figuren merken: mittel (9–16)","en":"Remember pieces: medium (9–16)"}
+    ,{"de":"Figuren merken: schwer (17–32)","en":"Remember pieces: hard (17–32)"}
+    ,{"de":"Schachblick · Statistik","en":"Chess vision · statistics"}
+    ,{"de":"Noch keine Fehler erfasst.","en":"No mistakes recorded yet."}
+    ,{"de":"Mit den letzten Einstellungen starten","en":"Start with the previous settings"}
+    ,{"de":"Matt, Materialgewinn und Stellungsgefühl","en":"Checkmate, material gains and positional judgement"}
+    ,{"de":"Matttechnik und Bauernendspiele","en":"Mating technique and pawn endgames"}
+    ,{"de":"Eigene Partien gezielt verbessern","en":"Improve your own games"}
+    ,{"de":"Abweichungen deiner Openings bestrafen","en":"Punish deviations from your openings"}
+    ,{"de":"Gestrichelt: gesamte Fehler pro Durchgang","en":"Dashed: total errors per run"}
+    ,{"de":"Laufenden Durchgang wirklich verlassen?","en":"Really leave this run?"}
+    ,{"de":"Training verlassen","en":"Leave training"}
+    ,{"de":"Mindestens ein König je Seite ist erforderlich.","en":"At least one king per side is required."}
+    ,{"de":"Weiß verliert nach Verlust von:","en":"White loses after losing:"}
+    ,{"de":"Schwarz verliert nach Verlust von:","en":"Black loses after losing:"}
+    ,{"de":"Allen Königen","en":"All kings"}
+    ,{"de":"Einem König","en":"One king"}
+    ,{"de":"Mehrkönig-Spiel: Stockfish unterstützt diese Stellung nicht. Engine und Bewertung sind ausgeschaltet. Könige werden geschlagen; es gibt kein Schach und keine Rochade.","en":"Multiple kings: Stockfish does not support this position. Engine and evaluation are disabled. Kings can be captured; there is no check or castling."}
+    ,{"de":"Weiß gewinnt durch Königsschlag","en":"White wins by king capture"}
+    ,{"de":"Schwarz gewinnt durch Königsschlag","en":"Black wins by king capture"}
+    ,{"de":"Remis: keine möglichen Züge","en":"Draw: no possible moves"}
+    ,{"de":"Bisherige Branchpositionierung verwenden","en":"Use legacy branch layout"}
+    ,{"de":"Standardmäßig ordnet die verbesserte Positionierung Geschwister gemeinsam, zentriert Abzweigungen und bevorzugt horizontale Gegnerzug–Antwort-Verbindungen. Die bisherige Positionierung bleibt optional verfügbar. Offene Branchfenster übernehmen die Änderung sofort.","en":"The improved layout is now the default: it groups siblings, centers forks and favors horizontal opponent-move-to-answer edges. The legacy layout remains available. Open branch windows apply changes immediately."}
+    ,{"de":"Horizontaler Spaltenabstand","en":"Horizontal column spacing"}
+    ,{"de":"Vergrößert nur den horizontalen Abstand der Graphspalten auf das 1- bis 5-Fache. Knotengröße, Zoom und Kameraposition am Startknoten bleiben erhalten.","en":"Increase only the horizontal spacing between graph columns from 1 to 5 times. Node sizes, zoom and camera position relative to the first node are preserved."}
+    ,{"de":"Noch kein vollständiger Probenpfad. Erneut schätzen oder Einstellungen anpassen.","en":"No complete sampled path yet. Estimate again or adjust the settings."}
+    ,{"de":"Auf Standard zurücksetzen","en":"Reset to default"}
+    ,{"de":"Diesen Parameter auf den Standard zurücksetzen","en":"Reset this setting to its default"}
+    ,{"de":"Fehler analysieren","en":"Analyze mistakes"}
+    ,{"de":"Laufende Partieanalyse wird übernommen …","en":"Using the ongoing game analysis …"}
+    ,{"de":"Zurück zu Openings","en":"Back to openings"}
+    ,{"de":"Dein Lernzug","en":"Your training move"}
+    ,{"de":"Zugzeit","en":"Move time"}
+    ,{"de":"Gesamtzeit","en":"Total time"}
+    ,{"de":"Punkte","en":"Score"}
+    ,{"de":"Neuer Durchgang","en":"New run"}
+    ,{"de":"Zugzeit abgelaufen: −1 Punkt statt Abbruch","en":"Move timeout: lose 1 point instead of ending the run"}
+    ,{"de":"Wenn beide Uhren aktiv sind: bei Ablauf der Zugzeit einen Punkt abziehen und mit dem nächsten Rätsel fortfahren. Ausgeschaltet endet der Durchgang sofort.","en":"With both clocks enabled: deduct one point on move timeout and continue with the next puzzle. When disabled, the run ends immediately."}
+    ,{"de":"Lösung angezeigt · ein Leben verloren.","en":"Solution revealed · one life lost."}
+    ,{"de":"Wird in der PGN als Owner/OwnerColor gespeichert und wählt die anfängliche Perspektive für Highlights. Die Engine analysiert trotzdem beide Seiten.","en":"Saved in the PGN as Owner/OwnerColor to select the initial highlight perspective. The engine still analyzes both sides."}
+    ,{"de":"Zurück zum Menü","en":"Back to menu"}
+    ,{"de":"Neuer Highscore!","en":"New high score!"}
+    ,{"de":"Animation beim Verlust eines Herzens","en":"Heart loss animation"}
+    ,{"de":"Vergrößern und ausblenden","en":"Grow and fade"}
+    ,{"de":"Zerbrechen und herunterfallen","en":"Break and fall"}
+    ,{"de":"Partie während des Spielens analysieren","en":"Analyze the game while playing"}
+    ,{"de":"Lokales Spiel während der Partie analysieren","en":"Analyze local games while playing"}
+    ,{"de":"Schachblick: parallele Engines","en":"Chess vision: parallel engines"}
+    ,{"de":"Threads je Schachblick-Engine","en":"Threads per chess vision engine"}
+    ,{"de":"Maximale gleichzeitige Engine-Suchen für den Zugvergleich-Vorrat. Unabhängig von Taktikrätseln und Partieanalysen.","en":"Maximum simultaneous engine searches for the move comparison reserve, separate from tactical puzzles and game analyses."}
+    ,{"de":"CPU-Threads pro Schachblick-Engine. Mehr Threads beschleunigen eine einzelne Suche, verwenden aber mehr CPU. Änderungen gelten für die nächsten Suchläufe.","en":"CPU threads per chess vision engine. More threads accelerate individual searches but consume more CPU. Changes apply to subsequent searches."}
+    ,{"de":"Rette die markierte Figur auf ein sicheres Feld, das keine gegnerische Figur angreift.","en":"Move the marked piece to a safe square where it cannot be attacked."}
+    ,{"de":"Merke dir die Figuren und ihre Felder. Baue die Stellung anschließend möglichst genau wieder auf.","en":"Remember the pieces and their squares, then reconstruct the position as accurately as possible."}
+    ,{"de":"Vergleiche die beiden Züge. Welche Stellung ist für die Seite am Zug besser?","en":"Compare the two moves. Which resulting position is better for the side to move?"}
+    ,{"de":"Finde alle Figuren, die das markierte Feld angreifen oder verteidigen.","en":"Find all pieces that attack or defend the marked square."}
+    ,{"de":" Auch Verteidiger hinter gleichgerichteten Figuren zählen.","en":" Defenders behind aligned pieces also count."}
+    ,{"de":"Finde die Figuren, die das markierte Feld nach einem Zug angreifen könnten – durch Umpositionierung oder Freiziehen.","en":"Find pieces that could attack the marked square after one move, by moving or clearing a line."}
+    ,{"de":"Finde alle Angriffe der gegnerischen Figuren auf deine Figuren.","en":"Find all attacks by enemy pieces on your own pieces."}
+    ,{"de":"Lernmodus","en":"Learning mode"}
+    ,{"de":"Bearbeitungsmodus","en":"Editing mode"}
+    ,{"de":"Analysemodus","en":"Analysis mode"}
+    ,{"de":"Kreuzungen vorsichtig reduzieren (Beta)","en":"Conservatively reduce crossings (Beta)"}
+    ,{"de":"Leichtigkeitsgrenze (Gegnersicht)","en":"Easy-play threshold (opponent view)"}
+    ,{"de":"Besten Enginezug spielen (nur Entwurf)","en":"Play best engine move (draft only)"}
+    ,{"de":"Plausible Gegnerantworten vorbereiten","en":"Prepare plausible opponent replies"}
+    ,{"de":"Bestätigen · Zugfolge übernehmen","en":"Confirm · save move sequence"}
+    ,{"de":"Entwurf zurücksetzen","en":"Reset draft"}
+    ,{"de":"Bearbeitung bestätigen · normales Layout","en":"Finish editing · normal layout"}
+    ,{"de":"Knoten löschen","en":"Delete node"}
+    ,{"de":"Ausgewählte Stellungsvariante löschen","en":"Delete selected position variation"}
+    ,{"de":"Ausgewählten Zugweg löschen","en":"Delete selected move path"}
+    ,{"de":"Alle Zugwege zur ausgewählten Stellung","en":"All move paths to selected position"}
+    ,{"de":"Standardspieler · letzte gemeinsame Theoriestellung","en":"Default player · last shared opening position"}
+    ,{"de":"Eigene Partien neu einlesen","en":"Reload personal games"}
+    ,{"de":"Ausgewählte Partie öffnen","en":"Open selected game"}
+    ,{"de":"Bearbeitung wechseln","en":"Switch editing mode"}
+    ,{"de":"Transpositionen zusammenführen","en":"Merge transpositions"}
+    ,{"de":"Zugfolge bestätigen","en":"Confirm move sequence"}
+    ,{"de":"Eigene Abweichung","en":"Your deviation"}
+    ,{"de":"Gegnerabweichung","en":"Opponent deviation"}
+    ,{"de":"Partieende in Theorie","en":"Game ended in theory"}
+    ,{"de":"Beide Seiten spielen. Erst Bestätigen ändert das Opening. Eine bestehende Stellung wird wiederverwendet.","en":"Play both sides. The opening changes only after confirmation. Existing positions are reused."}
+    ,{"de":"Unbestätigte Züge verwerfen? Das gespeicherte Opening bleibt unverändert.","en":"Discard unconfirmed moves? The stored opening remains unchanged."}
+    ,{"de":"Noch kein unbestätigter Zug.","en":"No unconfirmed move yet."}
+    ,{"de":"Engine sucht im Hintergrund …","en":"Engine searching in background …"}
+    ,{"de":"Mindestens eine Gegnerantwort auswählen.","en":"Select at least one opponent reply."}
+    ,{"de":"Keine Antwort erfüllt diese Grenzen. Das Opening wurde nicht verändert.","en":"No reply meets these thresholds. The opening was not changed."}
+    ,{"de":"Suchtiefe für den besten Zug und alle Gegnerantworten. Die Suche arbeitet im Hintergrund; höchstens 15 Sekunden je Auftrag.","en":"Search depth for the best move and opponent replies. Searches run in the background, with a maximum of 15 seconds per request."}
+    ,{"de":"Gegnerantworten unter dieser Bewertung aus Gegnersicht sind zu leicht und werden nicht vorgeschlagen.","en":"Opponent replies below this evaluation from the opponent's view are too easy and will not be suggested."}
+    ,{"de":"Eine Antwort darf höchstens so viele Bauerneinheiten schlechter als der beste Gegnerzug sein.","en":"A reply may lose at most this many pawn units compared with the opponent's best move."}
+    ,{"de":"Maximale Zugvariation","en":"Maximum move variation"}
+    ,{"de":"Lösung zeigen - Leertaste","en":"Show solution - Space"}
+    ,{"de":"Nächste Karte - Leertaste","en":"Next card - Space"}
+    ,{"de":"Aktuelle Stellung neu setzen","en":"Set new current position"}
+    ,{"de":"Evaluationsgraph anzeigen","en":"Show evaluation graph"}
+    ,{"de":"Evaluationsgraph","en":"Evaluation graph"}
+    ,{"de":"Partie zuerst vollständig analysieren.","en":"Analyze the complete game first."}
+    ,{"de":"Weißsicht","en":"White perspective"}
+    ,{"de":"Gesamter Knoten löschen","en":"Delete entire node"}
+    ,{"de":"Gesamten Knoten löschen","en":"Delete entire node"}
+    ,{"de":"✓ Richtig","en":"✓ Correct"}
+    ,{"de":"✕ Falsch","en":"✕ Incorrect"}
+    ,{"de":"Lösung","en":"Solution"}
+    ,{"de":"Ändert nur den horizontalen Abstand der Graphspalten auf das 0,25- bis 5-Fache. Knotengröße, Zoom und Kameraposition am Startknoten bleiben erhalten.","en":"Changes only horizontal graph-column spacing to 0.25–5 times its normal value. Node size, zoom and the camera offset from the start node are preserved."}
+    ,{"de":"Automatisches Engine-Spiel","en":"Automatic engine play"}
+    ,{"de":"Engine-Suchtiefe","en":"Engine search depth"}
+    ,{"de":"Stellungsvarianten","en":"Position variants"}
+    ,{"de":"Besten Zug zeigen","en":"Show best move"}
+    ,{"de":"Selbst verbessern","en":"Find a better move"}
+    ,{"de":"Nächster Zug","en":"Next move"}
+    ,{"de":"Vorheriger Zug","en":"Previous move"}
+    ,{"de":"Zurück","en":"Back"}
+    ,{"de":"Bearbeiten","en":"Edit"}
+    ,{"de":"Figur wählen und Feld anklicken. Ziehen verschiebt Figuren. Rechtsklick löscht.","en":"Choose a piece and click a square. Drag to move pieces. Right-click to remove them."}
+    ,{"de":"Figuren ziehen, um sie zu versetzen.","en":"Drag pieces to move them."}
+    ,{"de":"Setzen: {0}","en":"Place: {0}"}
+    ,{"de":"Weiß kurze Rochade","en":"White kingside castling"}
+    ,{"de":"Weiß lange Rochade","en":"White queenside castling"}
+    ,{"de":"Schwarz kurze Rochade","en":"Black kingside castling"}
+    ,{"de":"Schwarz lange Rochade","en":"Black queenside castling"}
+    ,{"de":"Genau ein König je Seite ist erforderlich.","en":"Exactly one king per side is required."}
+    ,{"de":"Bauern dürfen nicht auf der ersten oder achten Reihe stehen.","en":"Pawns cannot be placed on the first or eighth rank."}
+    ,{"de":"Höchstens 16 Figuren und 8 Bauern je Seite.","en":"At most 16 pieces and 8 pawns per side."}
+    ,{"de":"Die Seite, die zuletzt gezogen hat, darf nicht im Schach stehen.","en":"The side that moved last cannot be in check."}
+    ,{"de":"Stellung bearbeiten","en":"Edit position"}
+    ,{"de":"Engine lieferte keinen Zug.","en":"The engine returned no move."}
+    ,{"de":"Premove verworfen: nach der Antwort nicht legal.","en":"Premove discarded: illegal after the opponent's reply."}
+    ,{"de":"Zieltiefe in Halbzügen. Größere Werte prüfen längere Folgen; maximal 2,5 Sekunden pro Gegnerzug.","en":"Target depth in plies. Higher values examine longer lines; at most 2.5 seconds per opponent move."}
+    ,{"de":"Rätsel-Schwierigkeit","en":"Puzzle difficulty"}
+    ,{"de":"Zeit pro eigenem Zug","en":"Time per player move"}
+    ,{"de":"Zeit insgesamt","en":"Total time"}
+    ,{"de":"Leben","en":"Lives"}
+    ,{"de":"Mattaufgaben mit einer vorgegebenen Zugzahl.","en":"Checkmate puzzles with a specified move limit."}
+    ,{"de":"Taktische Zugfolgen, die Material gewinnen.","en":"Tactical sequences that win material."}
+    ,{"de":"Ruhige Mittelspielzüge mit einem deutlichen Bewertungsvorsprung gegenüber Alternativen.","en":"Quiet middlegame moves with a clear evaluation advantage over the alternatives."}
+    ,{"de":"Ruhige Mittelspielzüge mit kleineren, tiefer geprüften Vorteilen.","en":"Quiet middlegame moves with subtler advantages verified by a deeper search."}
+    ,{"de":"Nach einem Fehler den Lösungszug für die aktuelle Stellung anzeigen.","en":"Reveal the solution move for the current position after a mistake."}
+    ,{"de":"{0} Rätsel","en":"{0} puzzles"}
+    ,{"de":"Exakt bei kurzen Mattaufgaben und KPK-Umwandlung; sonst kürzestes bekanntes Engine-Matt oder gleichwertige Topzüge (Toleranz 0,10). Kein Beweis globaler Minimalität.","en":"Exact for short mate puzzles and KPK promotion; otherwise the shortest known engine mate or equally good top moves (0.10 tolerance). Not a proof of a globally shortest solution."}
+    ,{"de":"Zuerst Partien im Bereich Eigene Spiele analysieren. Dann deinen Spielernamen auswählen.","en":"First analyze your games in My games, then select your player name."}
+    ,{"de":"Ausgelassene, schwache Gegnerzüge deines Repertoires bestrafen. Fortsetzung bis zur nächsten nicht eindeutigen Entscheidung; Vorbereitung kann bis zu drei Minuten dauern.","en":"Punish weak opponent moves omitted from your repertoire. Continue until the next non-forcing decision; preparation can take up to three minutes."}
+    ,{"de":"Keine analysierten eigenen Fehler für diese Auswahl. Namen, Analyse und Ausschluss prüfen.","en":"No analyzed personal mistakes match this selection. Check the player name, analysis and excluded games."}
+    ,{"de":"Fehlende Analysen fertig. Training neu starten, um alle Fehler zu mischen.","en":"Missing analyses are complete. Restart training to shuffle all mistakes."}
+    ,{"de":"Partie {0}/{1}: {2}","en":"Game {0}/{1}: {2}"}
+    ,{"de":"Damals in deiner Partie gespielt: {0}","en":"Played in your game: {0}"}
+    ,{"de":"Realer Test auf diesem PC: Stellung nach 1. e4 e5 2. Sf3. Die Dauer hängt von Stellung, Tiefe und CPU-Auslastung ab.","en":"Real test on this PC: the position after 1. e4 e5 2. Nf3. Duration depends on the position, depth and CPU load."}
+    ,{"de":"Standardmäßig ordnet die verbesserte Positionierung Geschwister gemeinsam, zentriert Abzweigungen und bevorzugt horizontale Gegnerzug–Antwort-Verbindungen. Zusätzlich werden Kreuzungen nur bei einer globalen Verbesserung reduziert. Die bisherige Grundpositionierung bleibt optional verfügbar. Offene Branchfenster übernehmen die Änderung sofort.","en":"The improved layout groups siblings, centers forks and favors horizontal opponent-move-to-answer connections. Crossings are reduced only when the overall layout improves. The legacy base layout remains optional. Open branch windows apply changes immediately."}
+    ,{"de":"Gemeinsames Enginebudget für Taktik, Endspiel, Mittelspiel und Openingfehler. Nachschub läuft ab App-Start; gelöste und übersprungene Aufgaben werden nicht erneut ausgegeben. KPK- und freie Matttechnik-Stellungen entstehen direkt. Neue Filter und große Vorräte benötigen beim ersten Vorbereiten Rechenzeit. Änderungen gelten ab dem nächsten Suchlauf; laufende Arbeiter werden nicht gewaltsam beendet.","en":"Shared engine budget for tactics, endgames, middlegames and opening mistakes. Refilling starts when the app opens; solved and skipped exercises are not offered again. KPK and free mating-technique positions are generated directly. New filters and large reserves require initial computation time. Changes apply to the next search; running workers are not forcibly stopped."}
+    ,{"de":"Persistente Stockfish-Prozesse für gleichzeitig untersuchte Stellungen. Je Arbeiter bis zu 256 MB Hashspeicher.","en":"Persistent Stockfish processes analyzing different positions in parallel. Up to 256 MB of hash memory per worker."}
+    ,{"de":"CPU-Suchthreads einer Engine. Gesamtbudget = Arbeiter × Threads; nicht fest zwei.","en":"CPU search threads within one engine. Total budget = workers × threads; not fixed at two."}
+    ,{"de":"Alle legalen Antworten werden bis zu dieser Tiefe untersucht. Kein kurzes Zeitlimit; höhere Werte brauchen erheblich länger.","en":"All legal replies are searched to this depth. No short time limit; higher values take considerably longer."}
+    ,{"de":"Negativer Schwellenwert. Muss negativer als der Schlecht-Schwellenwert sein.","en":"Negative threshold. Must be lower than the mistake threshold."}
+    ,{"de":"Zwischen diesem Schwellenwert und dem besten Zug gilt der Zug als Gut.","en":"Moves between this threshold and the best move are classified as Good."}
+    ,{"de":"Nähe zur Stellung vor dem gegnerischen Patzer und Toleranz für gleichwertige gute Antworten, in Bauern.","en":"Tolerance around the evaluation before the opponent's blunder and for equally good replies, in pawns."}
+    ,{"de":"Nur wenn höchstens so viele Züge den neuen Vorteil erhalten, wird eine Rückkehr zum alten Niveau als verpasste Chance gewertet.","en":"A return to the earlier evaluation is a missed opportunity only when at most this many moves preserve the new advantage."}
+    ,{"de":"Gewichteter Verlust = Rohverlust / (1 + Dämpfung × Randwert²). Randwert ist die kleinere absolute Bewertung, nur bei gleichem Vorzeichen. 0 schaltet die Dämpfung aus.","en":"Weighted loss = raw loss / (1 + damping × edge value²). The edge value is the smaller absolute evaluation, only when both evaluations have the same sign. 0 disables damping."}
+    ,{"de":"Trotz Komplexitätsabbruch bis zu X beste Gegnerzüge weiterführen. 0 = aus; Maximal-Tiefe bleibt verbindlich.","en":"Continue up to X best opponent replies despite the complexity cutoff. 0 = disabled; the maximum depth still applies."}
+    ,{"de":"Mindestbewertung der Fortsetzung aus Weißsicht wie in der Bewertungsleiste. 0 = ausgeglichen.","en":"Minimum continuation score from White's perspective, as on the evaluation bar. 0 = equal."}
+    ,{"de":"Die Partieanalyse wird im Hintergrund vorbereitet.","en":"Game analysis is being prepared in the background."}
+    ,{"de":"Stellungsvariante {0}/{1} · {2}","en":"Position variant {0}/{1} · {2}"}
+    ,{"de":"Stellungsvariante {0}/{1}","en":"Position variant {0}/{1}"}
+    ,{"de":"Lernkarten insgesamt: {0}","en":"Total learning cards: {0}"}
+    ,{"de":"{0} Lernkarten insgesamt","en":"{0} total learning cards"}
+    ,{"de":"Arbeitskopie · vorhandene Stellung ausgewählt, kein doppelter Knoten.","en":"Working copy · selected an existing position; no duplicate node."}
+    ,{"de":"Arbeitskopie geändert · andere gemeinsam erreichbare Knoten bleiben erhalten. Erst Bearbeitung bestätigen speichert das Original.","en":"Working copy changed · other shared reachable nodes are preserved. Only Confirm edits saves the original."}
+    ,{"de":"Engine-Einstellungen","en":"Engine settings"}
+    ,{"de":"In dieser Stellung gibt es keinen legalen Zug.","en":"There is no legal move in this position."}
+    ,{"de":"Engine lieferte keinen legalen Zug.","en":"The engine returned no legal move."}
+    ,{"de":"Letzten Entwurfzug zurücknehmen","en":"Undo the last draft move"}
+    ,{"de":"Stellung bereits vorhanden; zyklischer Rückverweis nicht gespeichert.","en":"Position already exists; cyclic reference not saved."}
+    ,{"de":"Subbranches können nur an eigenen Zugknoten markiert werden.","en":"Subbranches can only be marked on your own move nodes."}
+    ,{"de":"Gespeichertes Opening auswählen","en":"Select a saved opening"}
+    ,{"de":"Einzelnen Zugweg löschen","en":"Delete one move path"}
+    ,{"de":"Partien konnten nicht geladen werden: ","en":"Games could not be loaded: "}
+    ,{"de":"Partien konnten nicht geladen werden: {0}","en":"Games could not be loaded: {0}"}
+    ,{"de":"{0} passende Partien · Abweichungen und Partieenden am Theorieende.","en":"{0} matching games · deviations and game endings at the end of theory."}
+    ,{"de":"Zwischenstand konnte nicht gespeichert werden: {0}","en":"Could not save the draft: {0}"}
+    ,{"de":"Partie importieren oder PGN schreiben.","en":"Import a game or write PGN."}
+    ,{"de":"Zug in der Historie auswählen oder Highlights durchgehen.","en":"Select a move in the history or review highlights."}
+    ,{"de":"Bestzug {0} → gespielt {1} (Weißsicht)","en":"Best {0} → played {1} (White perspective)"}
+    ,{"de":"Verlust {0}","en":"Loss {0}"}
+    ,{"de":"gewichtet {0}","en":"weighted {0}"}
+    ,{"de":"Gespeicherte Tiefe {0}","en":"Saved depth {0}"}
+    ,{"de":"alt","en":"legacy"}
+    ,{"de":"✓ Verbesserung gefunden. Die Originalpartie bleibt unverändert.","en":"✓ Improvement found. The original game remains unchanged."}
+    ,{"de":"Dieser Zug gehört nicht zu den gespeicherten gleichwertigen Verbesserungen. Erneut versuchen.","en":"This move is not among the saved equally good improvements. Try again."}
+    ,{"de":"Finde eine Verbesserung für diesen Zug. Alle gespeicherten gleichwertigen Antworten werden akzeptiert.","en":"Find an improvement for this move. All saved equally good replies are accepted."}
+    ,{"de":"{0} Partien in Arbeit / Warteschlange","en":"{0} games running / queued"}
+    ,{"de":"Perspektive: {0}","en":"Perspective: {0}"}
+    ,{"de":"{0} neue Partien importiert. Doppelte übersprungen.","en":"Imported {0} new games. Duplicates skipped."}
+    ,{"de":"{0}/{1} Stellungen","en":"{0}/{1} positions"}
+    ,{"de":"Tiefe {0}","en":"Depth {0}"}
+    ,{"de":"{0} Arbeiter × {1} Threads","en":"{0} workers × {1} threads"}
+    ,{"de":"Partie übernehmen","en":"Save game"}
+    ,{"de":"{0} legale Halbzüge","en":"{0} legal plies"}
+    ,{"de":"Beide Seiten am Brett spielbar.","en":"Both sides can be played on the board."}
+    ,{"de":"Tag-Vorschlag: ↑/↓ auswählen, Tab übernehmen.","en":"Tag suggestion: select with ↑/↓, accept with Tab."}
+    ,{"de":"Partie {0}, Halbzug {1}: ungültiger oder mehrdeutiger Zug '{2}'.","en":"Game {0}, ply {1}: illegal or ambiguous move '{2}'."}
+    ,{"de":"Endstellung der Partie · {0}","en":"Final position · {0}"}
+    ,{"de":"Stellung","en":"Position"}
+    ,{"de":"Schachblick-Einstellungen","en":"Chess vision settings"}
+    ,{"de":"Nächste Aufgabe · Leertaste","en":"Next exercise · Space"}
+    ,{"de":"Start · Leertaste","en":"Start · Space"}
+    ,{"de":"Aufgabe {0}/30","en":"Exercise {0}/30"}
+    ,{"de":"Fehler {0}","en":"Errors {0}"}
+    ,{"de":"{0}/30 · Fehler {1}","en":"{0}/30 · Errors {1}"}
+    ,{"de":"Fehler: {0}","en":"Errors: {0}"}
+    ,{"de":"Gesamt: {0}","en":"Total: {0}"}
+    ,{"de":"Übersehen (orange): {0}","en":"Missed (orange): {0}"}
+    ,{"de":"Übersehen (rot): {0}","en":"Missed (red): {0}"}
+    ,{"de":"Leertaste: nächste Aufgabe","en":"Space: next exercise"}
+    ,{"de":"Leertaste: erneut vorbereiten","en":"Space: prepare again"}
+    ,{"de":"Leertaste: erneut versuchen","en":"Space: try again"}
+    ,{"de":"Vorbereitung: {0}","en":"Preparation: {0}"}
+    ,{"de":"Stellung wird vorbereitet …","en":"Preparing position …"}
+    ,{"de":"Aufgabe wird vorbereitet …","en":"Preparing exercise …"}
+    ,{"de":"Training beendet","en":"Training finished"}
+    ,{"de":"Im Zeitbudget wurde keine passende Aufgabe gefunden.","en":"No suitable exercise was found within the time limit."}
+    ,{"de":"Im Zeitbudget wurde keine passende Aufgabe gefunden.\nLeertaste: erneut vorbereiten","en":"No suitable exercise was found within the time limit.\nSpace: prepare again"}
+    ,{"de":"Links ist besser: {0}. Unterschied {1} Bauern laut Engine.","en":"Left is better: {0}. Difference: {1} pawns according to the engine."}
+    ,{"de":"Rechts ist besser: {0}. Unterschied {1} Bauern laut Engine.","en":"Right is better: {0}. Difference: {1} pawns according to the engine."}
+    ,{"de":"Zugvergleich: {0}/30 Aufgaben vorbereitet. Die Uhr startet erst mit der fertigen Runde.","en":"Move comparison: {0}/30 exercises prepared. The clock starts only when the full run is ready."}
+    ,{"de":"Baue die gemerkte Stellung wieder auf und bestätige den Aufbau.","en":"Reconstruct the memorized position and confirm it."}
+    ,{"de":"Merken: {0} s","en":"Memorize: {0} s"}
+    ,{"de":"{0} Felder falsch. Die Originalstellung ist sichtbar; abweichende Felder sind rot.","en":"{0} incorrect squares. The original position is shown; differences are marked in red."}
+    ,{"de":"{0} richtige Markierungen","en":"{0} correct markings"}
+    ,{"de":"{0} Fehler","en":"{0} errors"}
+    ,{"de":"Score {0} Fehler","en":"Score: {0} errors"}
+    ,{"de":"Ergebnis {0} Fehler","en":"Result: {0} errors"}
+    ,{"de":"{0}/s. Rekord: {1} Fehler","en":"{0}/s. Record: {1} errors"}
+    ,{"de":"Statistik konnte nicht gespeichert werden: {0}","en":"Could not save statistics: {0}"}
+    ,{"de":"Bewertung wird vorbereitet …","en":"Preparing evaluation …"}
+    ,{"de":"Zeitraum: {0} Durchgänge","en":"Date range: {0} runs"}
+    ,{"de":"Ø {0} Fehler/Durchgang","en":"Average: {0} errors/run"}
+    ,{"de":"Ø {0} Figuren/s","en":"Average: {0} pieces/s"}
+    ,{"de":"Gesamte datierte Durchgänge: {0}. {1}","en":"Total dated runs: {0}. {1}"}
+    ,{"de":"DEMO – ausschließlich synthetische Testdaten; echte Ergebnisse bleiben unverändert.","en":"DEMO – synthetic test data only; your real results remain unchanged."}
+    ,{"de":"Rekord: {0} Fehler · {1}/s. Ältere Summen besitzen kein Datum.","en":"Record: {0} errors · {1}/s. Older totals have no date."}
+    ,{"de":"Eigener Demo-Datensatz: Aktivitätsphasen, Pausen und Lernkurven für 400 Tage. Er wird nie in deine Statistik geschrieben.","en":"Separate demo dataset: activity phases, breaks and learning curves over 400 days. It is never saved to your statistics."}
+    ,{"de":"Übersehen","en":"Missed"}
+    ,{"de":"Linienangriff","en":"Sliding attack"}
+    ,{"de":"Springersprung","en":"Knight attack"}
+    ,{"de":"Bauernangriff","en":"Pawn attack"}
+    ,{"de":"Königsnähe","en":"King proximity"}
+    ,{"de":"Umpositionierung übersehen","en":"Repositioning missed"}
+    ,{"de":"Freiziehen übersehen","en":"Discovered attack missed"}
+    ,{"de":"Röntgenlinie übersehen","en":"X-ray attack missed"}
+    ,{"de":"Nicht vorhandenen Angriff markiert","en":"Marked a nonexistent attack"}
+    ,{"de":"Falsche Figur markiert","en":"Marked the wrong piece"}
+    ,{"de":"Angriff übersehen","en":"Attack missed"}
+    ,{"de":"Verteidiger übersehen","en":"Defender missed"}
+    ,{"de":"Falsches Zielfeld","en":"Wrong destination square"}
+    ,{"de":"Falsches Startfeld","en":"Wrong source square"}
+    ,{"de":"Illegales Zielfeld","en":"Illegal destination"}
+    ,{"de":"Zielfeld bleibt angegriffen","en":"Destination is still attacked"}
+    ,{"de":"Schlechterer Vergleichszug","en":"Inferior comparison move"}
+    ,{"de":"Figur nicht wiederaufgebaut","en":"Piece not reconstructed"}
+    ,{"de":"Falscher Figurentyp","en":"Wrong piece type"}
+    ,{"de":"Zusätzliche Figur auf leerem Feld","en":"Extra piece on an empty square"}
+    ,{"de":"Lernzüge","en":"learning moves"}
+    ,{"de":"Nächster Lernzug  ↵","en":"Next training move  ↵"}
+    ,{"de":"Nächstes Rätsel","en":"Next puzzle"}
+    ,{"de":"Neue Aufgabe wird generiert und geprüft","en":"Generating and verifying a new exercise"}
+    ,{"de":"Keine zielerhaltende Antwort in der vorbereiteten Suche. Neue Aufgabe wählen.","en":"No reply preserving the objective was found in the prepared search. Choose a new exercise."}
+    ,{"de":"Vorbereitung hat ihr Rechenzeitbudget erreicht. Erneut starten; keine triviale Ersatzaufgabe.","en":"Preparation reached its computation time limit. Try again; no trivial substitute exercise will be used."}
+    ,{"de":"Endspiel weiter ausspielen · 50-Züge-Regel beachten","en":"Continue the endgame · observe the fifty-move rule"}
+    ,{"de":"Remis halten · 50-Züge-Regel beachten","en":"Hold the draw · observe the fifty-move rule"}
+    ,{"de":"Stellungsfilter prüft Selbstspiel …","en":"Position filter is checking self-play …"}
+    ,{"de":"Startprognose: dieselbe Graphprobe wie bei Kartenzahl neu schätzen …","en":"Initial forecast: the same graph sampling as Estimate card count …"}
+    ,{"de":"Startstellung · Hintergrundanalyse · + Weiß / − Schwarz","en":"Starting position · background analysis · + White / − Black"}
+    ,{"de":"Zwischenstand","en":"Draft"}
+    ,{"de":"Bearbeitung","en":"Editing"}
+    ,{"de":"Bearbeitung speichern","en":"Save edits"}
+    ,{"de":"Bearbeitung gespeichert","en":"Edits saved"}
+    ,{"de":"Bearbeitung ohne Übernehmen verlassen? Der Zwischenstand bleibt separat gespeichert.","en":"Leave editing without applying changes? Your draft remains saved separately."}
+    ,{"de":"Unbestätigte Zugfolge verwerfen? Hinzugefügte Knoten bleiben in der Arbeitskopie erhalten.","en":"Discard the unconfirmed move sequence? Added nodes remain in the working copy."}
+    ,{"de":"Separat gespeicherte Bearbeitung wieder aufnehmen? Das Original wird erst beim Bestätigen verändert.","en":"Resume the separately saved editing session? The original changes only when you confirm."}
+    ,{"de":"Änderungen übernommen. Der Zwischenstand konnte nicht abgeschlossen werden: {0}","en":"Changes applied. The draft could not be finalized: {0}"}
+    ,{"de":"Die vorhandene eigene Antwort und ihre ausschließlich daran hängenden Folgezüge ersetzen? Gemeinsam erreichbare Stellungen bleiben erhalten.","en":"Replace your existing reply and the continuations reachable only through it? Shared positions are preserved."}
+    ,{"de":"{0}? Nur noch von dort erreichbare Folgeknoten verschwinden ebenfalls; andere Transpositionswege bleiben erhalten.","en":"{0}? Continuations reachable only from there will also be removed; other transposition paths are preserved."}
+    ,{"de":"{0} unterschiedliche eigene Antworten erreichen dieselbe Stellung. Beim Zusammenführen hat die zuerst gespeicherte Antwort Vorrang. Bestätigen?","en":"{0} different replies by your side reach the same position. When merging, the first saved reply takes priority. Confirm?"}
+    ,{"de":"Röntgenlinie","en":"X-ray attack"}
+    ,{"de":"Falsch markiert · kein möglicher Folgeangriff","en":"Incorrect mark · no possible follow-up attack"}
+    ,{"de":"Falsch markiert · kein Angriff auf das Zielfeld","en":"Incorrect mark · no attack on the target square"}
+    ,{"de":"Falsch markiert","en":"Incorrect mark"}
+    ,{"de":"kein möglicher Folgeangriff","en":"no possible follow-up attack"}
+    ,{"de":"kein Angriff auf das Zielfeld","en":"no attack on the target square"}
+    ,{"de":"Eigene Figur als Angreifer markiert","en":"Own piece marked as an attacker"}
+    ,{"de":"Gegnerische Figur als Ziel markiert","en":"Enemy piece marked as the target"}
+    ,{"de":"Nicht vorhandene Angriffslinie markiert","en":"Marked a nonexistent attack line"}
+    ,{"de":"Falsche Figurenfarbe","en":"Wrong piece color"}
+    ,{"de":"Fehlende Figur","en":"Missing piece"}
+    ,{"de":"Falsche Farbe","en":"Wrong color"}
+    ,{"de":"Neue Aufgabe wird generiert und geprüft{0}","en":"Generating and verifying a new exercise{0}"}
+    ,{"de":"Du kannst mit Zurück die Einstellungen wechseln.","en":"Use Back to change the settings."}
+    ,{"de":"Aktive Stockfish-Suchen (alle Rätselquellen): {0}","en":"Active Stockfish searches (all puzzle sources): {0}"}
+    ,{"de":"Threads je Suche: {0}","en":"Threads per search: {0}"}
+    ,{"de":"Regel-/Mattprüfungen laufen direkt in der App, ohne Stockfish-Prozess.","en":"Rule and mate checks run directly in the app, without a Stockfish process."}
+    ,{"de":"Hintergrundanalyse wird vervollständigt …","en":"Completing the background analysis …"}
+    ,{"de":"Partieanalyse bereit.","en":"Game analysis ready."}
+    ,{"de":"Analyse nicht abgeschlossen: {0}","en":"Analysis incomplete: {0}"}
+    ,{"de":"In der Partienansicht erneut starten.","en":"Try again from the game review."}
+    ,{"de":"Remis","en":"Draw"}
+    ,{"de":"Verloren","en":"Lost"}
+    ,{"de":"Matt gesetzt","en":"Checkmate delivered"}
+    ,{"de":"Pausiert","en":"Paused"}
+    ,{"de":"Highscore","en":"High score"}
+    ,{"de":"Highscore: {0}","en":"High score: {0}"}
+    ,{"de":"Fehler/Durchgang","en":"Errors/run"}
+    ,{"de":"Noch kein Rekord.","en":"No record yet."}
+    ,{"de":"Umpositionierung / Freiziehen","en":"Repositioning / discovered attack"}
+    ,{"de":"Dieses gespeicherte Preset samt Statistik löschen?","en":"Delete this saved preset and its statistics?"}
+    ,{"de":"Startprognose ≈ {0} Lernkarten","en":"Initial forecast ≈ {0} learning cards"}
+    ,{"de":"{0} / ≈ {1} Lernkarten","en":"{0} / ≈ {1} learning cards"}
+    ,{"de":"{0} Knoten","en":"{0} nodes"}
+    ,{"de":"{0} offen","en":"{0} pending"}
+    ,{"de":"Fortschritt ≈ {0}%","en":"Progress ≈ {0}%"}
+    ,{"de":"Dauer {0}","en":"Elapsed {0}"}
+    ,{"de":"Generierung angehalten","en":"Generation paused"}
+    ,{"de":"Teilbaum","en":"Partial tree"}
+    ,{"de":"Restzeit ≈ {0} (laufende / frühere Generierungen)","en":"Remaining ≈ {0} (current / previous generations)"}
+    ,{"de":"Engine-Suchtiefe {0}/{1}","en":"Engine search depth {0}/{1}"}
+    ,{"de":"Branch-Tiefe {0}/{1}","en":"Branch depth {0}/{1}"}
+    ,{"de":"Zeitprognose ≈ {0} aus früheren Generierungen.","en":"Estimated time ≈ {0}, based on previous generations."}
+    ,{"de":"Zeitprognose nach ersten generierten Karten verfügbar.","en":"Time estimate available after the first generated cards."}
+    ,{"de":"Grobe Baumprognose ≈ {0} Karten ({1} Pfade; Streuung {2}–{3}). {4} Stichprobe bis Engine-Tiefe 8; Kompression kann die Zahl reduzieren. Blocklimit: {5}.","en":"Approximate tree forecast ≈ {0} cards ({1} paths; range {2}–{3}). {4} Sampled to engine depth 8; compression may reduce the count. Block limit: {5}."}
+    ,{"de":"Generierung abgebrochen.","en":"Generation canceled."}
+    ,{"de":"Knotenstellung · Hintergrundanalyse","en":"Node position · background analysis"}
+    ,{"de":"Einstellungen ein-/ausklappen","en":"Expand/collapse settings"}
+    ,{"de":"Abbrechen","en":"Cancel"}
+    ,{"de":"Öffnen","en":"Open"}
+  ]
+}
