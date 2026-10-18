@@ -14,7 +14,11 @@ Windows release assets will be published separately on the Releases page.
 ## Explore
 
 ### Opening learning:
+![Learn-Mode](docs/images/learning.png)
+*Learn-Mode: Every position is presented as one index card. One needs to choose the correct next move according to the opening.*
+
 ![Branch-Mode](docs/images/branchmode.png)
+*Branch-Mode: Every opening can be visualized as a new opening as a branch system. Move sequences can be easier understood, edited and analysed.*
 
 - Use **Branch-Mode** to view and edit the moving-branches of the opening you want to learn.
 - Use **Learn-Mode** to learn your opening like index cards.
@@ -23,6 +27,7 @@ Windows release assets will be published separately on the Releases page.
 
 ### Puzzle Mode:
 ![Puzzle-Mode](docs/images/puzzlemode.png)
+*Tactics Puzzle Mode: Kind of puzzle and win/lose conditions adjustable.*
 
 - Solve engine generated puzzles (Mate in N, Material gain, ...).
 - Practise endgame positions (e.g. King+Bishop+Horse vs King).
@@ -31,6 +36,7 @@ Windows release assets will be published separately on the Releases page.
 
 ### Analysis:
 ![Analysis](docs/images/analysis.png)
+*Analysis: Move evaluation and match progress is directly shown.*
 
 - Upload/Write your previous games as PGN files and view them.
 - Analyse your games via build in engine evaluation.
@@ -38,7 +44,10 @@ Windows release assets will be published separately on the Releases page.
 
 ### Chess vision Mode:
 ![Chess vision Mode](docs/images/chessvision.png)
+*Compare moves Mode: Choose the better move to play.*
+
 ![Statistics](docs/images/statistics.png)
+*Statistics: Here, shows the median error distribution by error type.*
 
 - Play custom chess modes in which you need to mark all attacking pieces (**Attackers & defenders**), choose the better move (**Compare moves**), remember the position of pieces (**Remember pieces**), ... .
 - View statistics according of your performance.
