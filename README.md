@@ -1,0 +1,79 @@
+# Chess Opening Trainer
+
+An open-source, local-first chess training application featuring built-in engine evaluation, advanced engine-assisted opening-branch creation, interactive learning (learning tree visualized as branch-graph), automated puzzle generation, game analysis, and custom training modes.
+
+**Information:** This application was developed with the help of codex. More information about the used prompts and the methodology can be found in [docs/ai-development](docs/ai-development/README.md). Figma was used to create some icons and Audacity to edit the credited sound effects.
+
+**Current development version:** version 0.24.0.
+
+Windows release assets will be published separately on the Releases page.
+
+[Download releases](https://github.com/AdrianSomething/chess-trainer/releases) · [Windows guide](docs/INSTALLATION.md) · [Developer guide](docs/DEVELOPMENT.md) · [Architecture](docs/ARCHITECTURE.md)
+
+
+## Explore
+
+### Opening learning:
+![Branch-Mode](docs/images/branchmode.png)
+
+- Use **Branch-Mode** to view and edit the moving-branches of the opening you want to learn.
+- Use **Learn-Mode** to learn your opening like index cards.
+- Use **Freeplay-Mode** to practice the move sequences in order in a game against an engine.
+- Use **Opening Branch Generator** to customize and create your own branch with the help of an engine or just add an opening json file directly into the Opening folder.
+
+### Puzzle Mode:
+![Puzzle-Mode](docs/images/puzzlemode.png)
+
+- Solve engine generated puzzles (Mate in N, Material gain, ...).
+- Practise endgame positions (e.g. King+Bishop+Horse vs King).
+- Learn from your mistakes by uploading your games and correcting your previous blunders.
+- Punish the potential mistakes from your opponent if they deviate from your learned opening.
+
+### Analysis:
+![Analysis](docs/images/analysis.png)
+
+- Upload/Write your previous games as PGN files and view them.
+- Analyse your games via build in engine evaluation.
+- Play local games and save them directly for future analysis.
+
+### Chess vision Mode:
+![Chess vision Mode](docs/images/chessvision.png)
+![Statistics](docs/images/statistics.png)
+
+- Play custom chess modes in which you need to mark all attacking pieces (**Attackers & defenders**), choose the better move (**Compare moves**), remember the position of pieces (**Remember pieces**), ... .
+- View statistics according of your performance.
+
+
+## Download and start
+
+1. Open [Releases](https://github.com/AdrianSomething/chess-trainer/releases) and choose the latest published release.
+2. Download **ChessOpeningTrainer-0.24.0-win-x64.zip** (or its newer equivalent), not GitHub's automatic “Source code” archive.
+3. Right-click the ZIP and choose **Extract All**.
+4. Run **ChessOpeningTrainer.exe** from the extracted folder. Keep its supporting folders alongside it.
+
+It is not code-signed; Windows may warn about an unfamiliar publisher. See [installation and updates](docs/INSTALLATION.md).
+
+
+## For developers
+
+The application is a modular WinForms project using .NET 10, WPF media playback and a local UCI engine. Existing feature boundaries are preserved.
+
+On Windows with the .NET 10 SDK and PowerShell 7:
+
+    pwsh -File tools/Get-Stockfish.ps1
+    dotnet run --project src/ChessOpeningTrainer -p:PublicRelease=true
+
+See [development](docs/DEVELOPMENT.md), [architecture](docs/ARCHITECTURE.md), [contribution guidelines](CONTRIBUTING.md), [packaging](docs/DISTRIBUTION.md) and [local validation](docs/RELEASE_VALIDATION.md). The public export intentionally does not yet include the private regression harness or a GitHub Actions workflow; [CI assessment](docs/CI_ASSESSMENT.md) records the proposed approach.
+
+
+## Licensing and provenance
+
+Project code and original code-generated assets are **GPL-3.0-or-later**; the maintainer-created raster icon sheet is **CC BY 4.0**. See [LICENSE](LICENSE) and [copyright scope](COPYRIGHT.md). Stockfish 19 is a separate, unmodified GPL-3.0-or-later executable. Release assets include its license and a corresponding-source companion with the exact neural network used by this build.
+
+The complete Windows edition also contains edited Pixabay sound effects under the **Pixabay Content License**, not GPL. The source export uses project-synthesized sounds instead and does not redistribute these effects as a standalone sound collection. The Windows edition is therefore not an entirely freely relicensable asset collection. [Third-party notices](THIRD_PARTY_NOTICES.md) and [compliance evidence](docs/LICENSE_COMPLIANCE.md) explain the boundary.
+
+
+## Contributing, security and citation
+
+Read [CONTRIBUTING](CONTRIBUTING.md) and [SECURITY](SECURITY.md). Citation metadata is in [CITATION.cff](CITATION.cff). This community project comes without warranty.
+
