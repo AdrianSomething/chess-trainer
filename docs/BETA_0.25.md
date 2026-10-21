@@ -1,6 +1,10 @@
-# 0.25.2 beta testing
+# 0.25.3 beta testing
 
 Development happens on `dev/0.25.0`. The stable `main` branch and `v0.24.0` release are not replaced by this branch.
+
+## 0.25.3 tutorial corrections
+
+Revisit step 8 from step 9: cached engine variations should reappear without a new search. In steps 43 and 44, change and confirm each selector repeatedly: the dimmed chart should refresh without reopening the dropdown. Step 45 highlights the lower chart with its explanation above it, in windowed and maximized layouts.
 
 ## 0.25.2 tutorial corrections
 

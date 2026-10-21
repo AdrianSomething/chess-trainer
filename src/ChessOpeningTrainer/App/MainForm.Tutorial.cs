@@ -136,7 +136,7 @@ public sealed partial class MainForm
         int oldPeriod = -1;
         Click(() => statistics, _ => Period(), "Wähle eine andere Zeitgruppierung: Tage, Wochen oder Monate.",
             enter: () => oldPeriod = Period()?.SelectedIndex ?? -1, complete: () => Period()?.SelectedIndex != oldPeriod, autoAdvance: false);
-        Info(() => statistics, f => f, "Jetzt kannst du deine Statistik erkunden.", allowInput: true);
+        Info(() => statistics, f => TutorialSession.Of<VisionTimelineChart>(f), "Jetzt kannst du deine Statistik erkunden.", allowInput: true);
         Info(root, _ => home, "Du bist startklar. Den Überblick kannst du jederzeit oben in den allgemeinen Einstellungen erneut öffnen.");
         var lessonTargets = OpeningStore.LearningTargets(example).Take(2).ToArray();
         Position branchPosition = Position.FromFen(example.StartFen ?? Position.InitialFen);

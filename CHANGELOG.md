@@ -2,6 +2,12 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.25.3-beta — Development
+
+- Restore cached engine variations immediately when revisiting a tutorial lesson checkpoint.
+- Refresh the dimmed statistics preview after chart invalidation, including repeated committed metric and grouping changes.
+- Highlight the statistics chart in step 45 and place its explanation above the chart.
+
 ## 0.25.2-beta — Development
 
 - Blocked complete mouse-button sequences on informational tutorial steps, including double-clicks, without intercepting title-bar controls.

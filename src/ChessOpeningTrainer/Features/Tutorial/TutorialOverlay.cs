@@ -15,6 +15,8 @@ internal sealed class TutorialOverlay : Control
     private readonly Dictionary<BoardControl, (string? Fen, int Frame, string? Hint)> boardFrames = [];
     private Rectangle focus, infoBounds;
     private string? selectorState;
+    private readonly HashSet<VisionTimelineChart> watchedCharts = [];
+    private bool chartDirty, capturing;
     private (Size Host, Rectangle Focus, string Text, bool Advance)? lastView;
     public event Action? Advance;
     public event Action? Abort;
@@ -95,9 +97,12 @@ internal sealed class TutorialOverlay : Control
     private void RefreshBoards(Form host)
     {
         if (background is null) return;
+        foreach (var chart in TutorialSession.Descendants(host).OfType<VisionTimelineChart>())
+            if (watchedCharts.Add(chart)) chart.Invalidated += ChartInvalidated;
         string selectors = string.Join("|", TutorialSession.Descendants(host).Select(c => c switch
         { ComboBox combo => combo.SelectedIndex.ToString(), TabControl tabs => tabs.SelectedIndex.ToString(), _ => "" }).Where(s => s.Length > 0));
-        bool changed = selectorState != selectors; selectorState = selectors;
+        bool changed = chartDirty || selectorState != selectors; selectorState = selectors;
+        chartDirty = false;
         foreach (var board in TutorialSession.Descendants(host).OfType<BoardControl>().Where(b => b.Visible))
         {
             var frame = (board.Position?.ToFen(), board.TutorialFrame, board.HintMove?.Uci);
@@ -109,8 +114,17 @@ internal sealed class TutorialOverlay : Control
         // Refresh its snapshot, not just the board pixels, after navigation.
         if (changed) { CaptureBackground(host); Invalidate(); }
     }
+    private void ChartInvalidated(object? sender, InvalidateEventArgs e)
+    {
+        // A dropdown's final chart/layout update can follow SelectedIndexChanged.
+        // Capture on the next tour tick, after those handlers, not inside paint.
+        if (!capturing) chartDirty = true;
+    }
     private void CaptureBackground(Form host)
     {
+        capturing = true;
+        try
+        {
         background?.Dispose(); background = new Bitmap(Math.Max(1, Width), Math.Max(1, Height));
         using var g = Graphics.FromImage(background);
         g.Clear(host.BackColor);
@@ -122,6 +136,8 @@ internal sealed class TutorialOverlay : Control
             c.DrawToBitmap(bitmap, new Rectangle(Point.Empty, c.Size));
             g.DrawImageUnscaled(bitmap, c.Location);
         }
+        }
+        finally { capturing = false; }
     }
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -155,7 +171,12 @@ internal sealed class TutorialOverlay : Control
     }
     protected override void Dispose(bool disposing)
     {
-        if (disposing) background?.Dispose();
+        if (disposing)
+        {
+            foreach (var chart in watchedCharts) chart.Invalidated -= ChartInvalidated;
+            watchedCharts.Clear();
+            background?.Dispose();
+        }
         base.Dispose(disposing);
     }
 }
