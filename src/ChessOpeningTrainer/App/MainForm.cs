@@ -284,9 +284,13 @@ public sealed partial class MainForm : LocalizedForm
         Shown += (_, _) =>
         {
             if (!learningOnly)
+            {
                 _ = supply.Maintain(lifetime.Token);
+                if (!Preferences.Current.TutorialOffered) OfferTutorial();
+            }
         };
         LoadHome();
+        FormClosed += (_, _) => tutorial?.Dispose();
     }
 
     private static Label Label(float size) => new()

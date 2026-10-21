@@ -22,6 +22,7 @@ The application is a **modular monolith**: one WinForms assembly, with responsib
 | Features/Games | PGN library, analysis, highlights |
 | Features/FreePlay and Features/LocalMatch | Setup, custom games, two-player games and clocks |
 | Features/Vision | Chess vision exercises, buffers and statistics |
+| Features/Tutorial | Window-local guided tour, input policy and first-run card |
 
 All paths above are relative to src/ChessOpeningTrainer.
 
@@ -38,7 +39,8 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Puzzle source / refill | Features/Puzzles/Generation, PuzzleSupply.cs, PuzzleBank.Refill.cs |
 | Puzzle view registration | Features/Puzzles/Tabs; PuzzleTab attribute |
 | Branch feature registration | Features/Branches/Actions; IBranchFeature and BranchFeature attribute |
-| Branch layout / crossing reduction | BranchCanvas.cs, BranchBetaLayout.cs, BranchCrossingReduction.cs |
+| Branch layout / crossing reduction | BranchGraphBuilder.cs, BranchLayoutCache.cs, BranchBetaLayout.cs, BranchCrossingReduction.cs; BranchCanvas.cs renders the result |
+| Extract an opening variation | Features/Branches/BranchExtraction.cs, Actions/ExtractOpeningFeature.cs |
 | Staged branch edits / undo / persistence | BranchGraphEdit.cs, BranchForm.Editing.cs, BranchEditSession.cs |
 | Match-to-branch mapping | BranchGameAnalysis.cs, BranchGameMatchIndex.cs, BranchAnalysisCaptions.cs |
 | Learning selection / navigation | Features/Learning/MainForm.Lessons.cs, MainForm.LessonNavigation.cs |
@@ -48,6 +50,9 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Vision buffer / comparisons | Features/Vision/VisionBuffer.cs, VisionComparisonStock.cs, VisionComparisonGenerator.cs |
 | Statistics / demo switch | VisionTimelineChart.cs, VisionTimelineData.cs, VisionSettingsEditor.cs |
 | Generator sections / forecasts | Features/Generator/DepthSection.cs, GeneratorForecast.cs, GeneratorPreviewGraph.cs |
+| Generator job scheduling / approval / cooling | Features/Generator/GeneratorWorkQueue.cs; OpeningGeneratorForm.Queue.cs owns its UI lifetime |
+| Guided overview / first-run language | Features/Tutorial; App/MainForm.Tutorial.cs defines the route |
+| Opening menu bookmarks / order | App/OpeningMenuOrder.cs; UserPreferences.BookmarkedOpenings stores IDs only |
 | Audio recovery | Infrastructure/Customization/SoundVoice.cs |
 | Languages and tooltips | Infrastructure/Customization/L.cs, Customization/languages.json, UI/Common/LocalizedToolTips.cs |
 | Theme and native controls | UI/Theming/UiPalette.cs, ComboArrowSurface.cs, WindowTitleTheme.cs |
@@ -66,5 +71,7 @@ Partial form files intentionally share window state. This is not a complete MVVM
 ## Background work and compatibility
 
 Searches and generation have cancellation/lifetime ownership. Preserve puzzle preparation and analysis caches: removing them to reduce idle CPU changes the user experience. Avoid stale UI updates after a position/window changes. Native audio playback is STA-bound.
+
+Branch layout memoization stores only bounded, immutable coordinate arrays keyed by graph structure and layout options, never selections or progress. Editing the structure invalidates the key; each window receives independent vertices. Tutorial dimming is a child control of its host; live board frames update behind the dimming layer, and hover previews are not treated as separate tutorial destinations.
 
 Keep serialized names, defaults and data locations compatible. New optional settings need safe defaults. AppData, outputs and work are private; tests must use isolated directories. Publication preparation adds an allowlisted export, not a second maintained copy of application source.

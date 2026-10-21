@@ -3,13 +3,18 @@ namespace ChessOpeningTrainer;
 /// <summary>Conservative post-pass: preserve columns/families and accept only globally fewer crossings.</summary>
 public static class BranchCrossingReduction
 {
-    private sealed record Edge(int Id, BranchVertex From, BranchVertex To);
+    private sealed record Edge(int Id, BranchVertex From, BranchVertex To)
+    {
+        // X coordinates never change during this pass. Pairs in disjoint
+        // columns or sharing an endpoint can never cross, whatever their Y.
+        public List<Edge> Candidates { get; } = [];
+    }
 
     public static int CountCrossings(IReadOnlyList<BranchVertex> vertices, IReadOnlySet<BranchVertex>? focus = null)
     {
         var edges = Edges(vertices); int count = 0;
-        for (int i = 0; i < edges.Count; i++) for (int j = i + 1; j < edges.Count; j++)
-            if ((focus is null || focus.Contains(edges[i].From) || focus.Contains(edges[i].To) || focus.Contains(edges[j].From) || focus.Contains(edges[j].To)) && Crosses(edges[i], edges[j])) count++;
+        foreach (var a in edges) foreach (var b in a.Candidates)
+            if (a.Id < b.Id && (focus is null || focus.Contains(a.From) || focus.Contains(a.To) || focus.Contains(b.From) || focus.Contains(b.To)) && Crosses(a, b)) count++;
         return count;
     }
 
@@ -19,15 +24,15 @@ public static class BranchCrossingReduction
         var parents = vertices.ToDictionary(v => v, _ => new List<BranchVertex>());
         foreach (var edge in edges) parents[edge.To].Add(edge.From);
         var columns = vertices.GroupBy(v => v.Location.X).Select(g => g.OrderBy(v => v.Location.Y).ToList()).ToList();
-        int initial = CountCrossings(vertices), score = initial;
+        int initial = edges.Sum(a => a.Candidates.Count(b => a.Id < b.Id && Crosses(a, b))), score = initial;
         var primary = vertices.ToDictionary(v => v, v => parents[v].OrderByDescending(p => p.Location.X).ThenBy(p => p.Id).FirstOrDefault());
         for (int pass = 0; pass < 6 && score > 0; pass++)
         {
             bool improved = false;
             int proposals = 0;
             var involved = vertices.ToDictionary(v => v, _ => 0);
-            for (int i = 0; i < edges.Count; i++) for (int j = i + 1; j < edges.Count; j++)
-                if (Crosses(edges[i], edges[j])) { involved[edges[i].From]++; involved[edges[i].To]++; involved[edges[j].From]++; involved[edges[j].To]++; }
+            foreach (var a in edges) foreach (var b in a.Candidates)
+                if (a.Id < b.Id && Crosses(a, b)) { involved[a.From]++; involved[a.To]++; involved[b.From]++; involved[b.To]++; }
             foreach (var column in columns.OrderByDescending(c => c.Sum(v => involved[v])))
             {
                 if (proposals >= 512) break;
@@ -139,11 +144,22 @@ public static class BranchCrossingReduction
         var order = column.OrderBy(v => v.Location.Y).ToArray();
         return Enumerable.Range(1, Math.Max(0, order.Length - 1)).All(i => order[i].Location.Y - order[i - 1].Location.Y >= (order[i].Height + order[i - 1].Height) / 2 + 12);
     }
-    private static List<Edge> Edges(IReadOnlyList<BranchVertex> vertices) => vertices.SelectMany(v => v.Children.Select(c => (v, c))).Select((e, i) => new Edge(i, e.v, e.c)).ToList();
+    private static List<Edge> Edges(IReadOnlyList<BranchVertex> vertices)
+    {
+        var edges = vertices.SelectMany(v => v.Children.Select(c => (v, c))).Select((e, i) => new Edge(i, e.v, e.c)).ToList();
+        for (int i = 0; i < edges.Count; i++) for (int j = i + 1; j < edges.Count; j++)
+        {
+            var a = edges[i]; var b = edges[j];
+            if (a.From == b.From || a.To == b.To || a.From == b.To || a.To == b.From ||
+                Math.Min(a.To.Location.X, b.To.Location.X) <= Math.Max(a.From.Location.X, b.From.Location.X)) continue;
+            a.Candidates.Add(b); b.Candidates.Add(a);
+        }
+        return edges;
+    }
     private static int IncidentCrossings(List<Edge> all, Edge[] affected)
     {
         var selected = affected.ToHashSet(); int count = 0;
-        foreach (var edge in affected) foreach (var other in all)
+        foreach (var edge in affected) foreach (var other in edge.Candidates)
             if (edge != other && (!selected.Contains(other) || edge.Id < other.Id) && Crosses(edge, other)) count++;
         return count;
     }

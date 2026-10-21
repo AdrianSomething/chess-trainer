@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>ChessOpeningTrainer</AssemblyName>
-    <Version>0.24.0</Version>
+    <Version>0.25.0-beta.1</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <NoWarn>$(NoWarn);WFO1000</NoWarn>
@@ -38,6 +38,10 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <!-- Use the same curated examples in development and public packages.
+         The historical fixture remains on disk for old regression tests only. -->
+    <Content Remove="Openings\example_pirc_defense.json" />
+    <Content Include="Samples\Openings\*.json" Link="Openings\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
     <Content Include="engine\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -49,6 +53,5 @@
     <Content Remove="Openings\example_pirc_defense.json" />
     <Content Remove="Openings\OPENING_FORMAT_DE.md;Openings\AI_BRIEFING_FUER_OPENING_RECHERCHE.md;Openings\GENERATOR_README.md;engine\README_STOCKFISH_DE.md" />
     <Content Include="Samples\demo-game.pgn" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
-    <Content Include="Samples\Openings\*.json" Link="Openings\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 using System.Text.Json;
 
 namespace ChessOpeningTrainer;
-public sealed class OpeningGeneratorForm : LocalizedForm
+public sealed partial class OpeningGeneratorForm : LocalizedForm
 {
     private sealed class BufferedFlowPanel : FlowLayoutPanel
     {
@@ -32,7 +32,7 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         RefreshPosition();
     }
 
-    public bool IsWorking => operation is not null;
+    public bool IsWorking => operation is not null || workQueue.Jobs.Any(j => !j.Finished);
 
     private readonly BoardControl board = new();
     private readonly Panel boardHost = new()
@@ -114,6 +114,7 @@ public sealed class OpeningGeneratorForm : LocalizedForm
     public OpeningGeneratorForm(StockfishEngine engine, string appDirectory)
     {
         this.engine = engine;
+        workQueue = new(engine);
         _ = new InputFocusCommit(this, includeTextBoxes: true);
         // Wheel input edits neither perspective nor numbers. Route it through
         // the same scroll path everywhere in the parameter column instead.
@@ -125,7 +126,7 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         generator = new(engine);
         timingHistory = new(Environment.GetEnvironmentVariable("CHESS_TRAINER_DATA") ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ChessOpeningTrainer"));
         directory = Path.Combine(appDirectory, "Openings");
-        Text = "Custom Opening Generator";
+        Text = "Opening-Branch-Generator";
         Size = new(1400, 900);
         MinimumSize = new(1100, 760);
         BackColor = UiPalette.FromArgb(31, 35, 39);
@@ -149,16 +150,18 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         controls.Dock = DockStyle.Fill;
         right.Controls.Add(controls);
         right.Controls.Add(footer);
+        controls.BringToFront();
         Controls.Add(boardHost);
         Controls.Add(right);
         boardHost.Controls.AddRange([board, evaluation, evalInfo]);
         board.Position = position;
         void LayoutBoard()
         {
-            int size = Math.Max(360, Math.Min(boardHost.Width - 60, boardHost.Height - 70));
+            int size = Math.Max(300, Math.Min(boardHost.Width - 60, boardHost.Height - 205));
             board.SetBounds(52, 14, size, size);
             evaluation.SetBounds(4, 14, 42, size);
             evalInfo.SetBounds(52, size + 22, size, 40);
+            LayoutQueueNavigation(size);
         }
 
         boardHost.Resize += (_, _) => LayoutBoard();
@@ -171,7 +174,7 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         };
         back.Click += (_, _) =>
         {
-            if (operation is null && undo.TryPop(out var p))
+            if (operation is null && selectedJob is null && undo.TryPop(out var p))
             {
                 position = p;
                 RefreshPosition();
@@ -184,7 +187,7 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         };
         reset.Click += (_, _) =>
         {
-            if (operation is null)
+            if (operation is null && selectedJob is null)
             {
                 position = Position.FromFen(Position.InitialFen);
                 undo.Clear();
@@ -245,6 +248,7 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         Field("Komplexitätsprüfung ab Tiefe (Halbzüge)", min);
         min.ValueChanged += (_, _) => sections.ComplexityStartDepth = (int)min.Value;
         Field("Kartenlimit je Bestätigungsblock", cards);
+        controls.Controls.Add(pauseAllAtLimit);
         Field("Parallele Arbeiter (dauerhafte Engines)", workers);
         Field("Threads je Arbeiter", threads);
         Add("Threads je Arbeiter: CPU-Suchthreads innerhalb einer Engine. Nicht fest 2. Arbeiter × Threads = gesamtes CPU-Budget. Mehr Arbeiter: mehr Stellungen parallel; mehr Threads: aufwendigere Suche einer Stellung.");
@@ -271,19 +275,20 @@ public sealed class OpeningGeneratorForm : LocalizedForm
             Width = 320,
             Height = 32
         };
-        cancel.Click += (_, _) => operation?.Cancel();
+        cancelJobButton = cancel;
+        cancel.Click += (_, _) => { if (selectedJob is not null) workQueue.Cancel(selectedJob); else operation?.Cancel(); };
         footer.Controls.Add(cancel);
         footer.Controls.Add(status);
         cancel.SetBounds(12, 40, 585, 30);
         status.SetBounds(12, 108, 585, 70);
-        estimate.Click += async (_, _) => await Estimate();
+        estimate.Click += async (_, _) => { if (selectedJob is { State: GeneratorJobState.AwaitingApproval }) workQueue.Resume(selectedJob); else if (selectedJob is null) await Estimate(); };
         generate.Click += async (_, _) => await Generate();
         var navigation = new GeneratorInputNavigation(name, color, (ScrollNumber)sectionCount, sections, generate,
             (ScrollNumber)min, (ScrollNumber)cards, (ScrollNumber)workers, (ScrollNumber)threads, (ScrollNumber)humanDepth);
         Disposed += (_, _) => navigation.Dispose();
         board.SquareClicked += sq =>
         {
-            if (operation is not null || moving)
+            if (operation is not null || selectedJob is not null || moving)
                 return;
             if (selected is int from && TryBoardMove(from, sq))
                 return;
@@ -294,7 +299,7 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         };
         board.SquareDragged += (from, to) =>
         {
-            if (operation is null && !moving)
+            if (operation is null && selectedJob is null && !moving)
                 TryBoardMove(from, to, false);
         };
         board.BlankClicked += () =>
@@ -315,10 +320,15 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         };
         FormClosed += (_, _) =>
         {
+            queueClock.Stop(); queueClock.Dispose();
+            queuePreview?.Close();
+            draft?.Cancellation.Dispose();
+            _ = workQueue.DisposeAsync();
             evalCancellation.Cancel();
             presenter.Dispose();
             tips.Dispose();
         };
+        InitializeQueue(footer);
         RefreshPosition();
     }
 
@@ -403,7 +413,7 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         await board.AnimateAsync(before, move, after);
         moving = false;
         if (!IsDisposed)
-            board.InputEnabled = operation is null;
+            board.InputEnabled = operation is null && selectedJob is null;
     }
 
     private void RefreshPosition()
@@ -505,69 +515,7 @@ public sealed class OpeningGeneratorForm : LocalizedForm
         }
     }
 
-    private async Task Generate()
-    {
-        operation = new();
-        evalCancellation.Cancel();
-        Working(true);
-        GeneratorPreviewForm? preview = null;
-        try
-        {
-            var options = Options();
-            var setup = SetupMoves();
-            string key = EstimateKey(options, setup);
-            if (cachedEstimate is null || cachedEstimateKey != key)
-            {
-                status.Text = "Startprognose: dieselbe Graphprobe wie bei Kartenzahl neu schätzen …";
-                cachedEstimate = await TreeEstimator.Estimate(engine, position, options, setup, operation.Token);
-                cachedEstimateKey = key;
-            }
-            int prefixCards = setup.Select((_, i) => (i % 2 == 0) == options.LearnWhite).Count(b => b);
-            long expected = cachedEstimate.Samples > 0 ? cachedEstimate.Estimate : options.MaxPositions;
-            string configuration = GeneratorTimingHistory.Configuration(options);
-            var forecast = new GeneratorForecast(expected, prefixCards, timingHistory.SecondsPerCard(configuration));
-            preview = new GeneratorPreviewForm(forecast);
-            // No owner: minimizing the generator must not minimize the preview.
-            preview.Show();
-            var result = await generator.GenerateAsync(position, name.Text, options, count => Task.FromResult(L.Message(this, $"{count} Karten erstellt. Weitere {cards.Value} Karten erlauben?", "Kartenlimit", MessageBoxButtons.YesNo) == DialogResult.Yes), new Progress<GeneratorProgress>(p => status.Text = $"{p.Cards} Karten · {p.Pending} offene Knoten\n{p.Message}"), operation.Token, setup, new ForecastProgress(forecast, new Progress<GeneratorGraphSnapshot>(preview.UpdateGraph)), new Progress<GeneratorSearchDepth>(preview.UpdateSearchDepth));
-            int count = OpeningStore.LearnerMoves(result).Count();
-            if (forecast.Finished && count > prefixCards)
-            {
-                try { await Task.Run(() => timingHistory.Record(configuration, count - prefixCards, forecast.Elapsed)); }
-                catch (IOException) { /* A timing hint must never invalidate a generated opening. */ }
-                catch (UnauthorizedAccessException) { }
-            }
-            if (count == 0)
-            {
-                status.Text = "Keine Karten: Startstellung, Tiefe oder Filter prüfen.";
-                return;
-            }
-
-            if (operation.IsCancellationRequested && L.Message(this, $"Teilbaum mit {count} Karten speichern?", "Abgebrochen", MessageBoxButtons.YesNo) != DialogResult.Yes)
-                return;
-            Directory.CreateDirectory(directory);
-            string path = Path.Combine(directory, result.Id + ".json");
-            OpeningStore.Save(result, path);
-            Generated?.Invoke(result);
-            status.Text = $"{count} Karten gespeichert. Nach Schließen auf der Opening-Auswahl verfügbar.\n{Path.GetFileName(path)}";
-        }
-        catch (OperationCanceledException)
-        {
-            preview?.Stop();
-            status.Text = "Generierung abgebrochen.";
-        }
-        catch (Exception ex)
-        {
-            preview?.Stop();
-            status.Text = "Generierung fehlgeschlagen: " + ex.Message;
-        }
-        finally
-        {
-            operation.Dispose();
-            operation = null;
-            Working(false);
-        }
-    }
+    private Task Generate() { SubmitSelectedJob(); return Task.CompletedTask; }
 
     private string EstimateKey(GeneratorOptions options, IReadOnlyList<string> setup) => position.ToFen() + "|" + string.Join(",", setup) + "|" + GeneratorTimingHistory.Configuration(options);
 }

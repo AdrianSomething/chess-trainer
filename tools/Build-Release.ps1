@@ -8,7 +8,9 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 . (Join-Path $PSScriptRoot 'Publication.Files.ps1')
-$version = '0.24.0'
+$project = [xml](Get-Content -LiteralPath (Join-Path $root 'src/ChessOpeningTrainer/ChessOpeningTrainer.csproj') -Raw)
+$version = [string]($project.Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1)
+if ($version -notmatch '^\d+\.\d+\.\d+(-[A-Za-z0-9.]+)?$') { throw 'Invalid application version.' }
 if (!$OutputDirectory) { $OutputDirectory = Join-Path $root "artifacts/$version" }
 $out = [IO.Path]::GetFullPath($OutputDirectory)
 if (Test-Path -LiteralPath $out) { throw "Output already exists; nothing overwritten: $out" }

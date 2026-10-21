@@ -2,7 +2,21 @@
 
 Earlier private iterations are not presented as independently published releases.
 
-## 0.24.0 — Unreleased
+## 0.25.0-beta.1 — Development
+
+- Added prioritized opening-generation jobs with shared engine workers, per-job approval and optional queue-wide pauses.
+- Added optional work/rest intervals and a single multi-job graph preview.
+- Added extraction of a selected variation, preserving its approach moves and the original repertoire.
+- Moved initial branch graph preparation off the UI thread and reused legal-move lists per node.
+- Added bounded layout caching and exact crossing-candidate pruning for faster repeated branch loading.
+- Added home-menu bookmarks and persistent unsent generator drafts, with completed-job cleanup and direct learning/branch actions.
+- Require one safe destination and a depth-10 engine quality check in Save a Piece exercises.
+- Added an English/German guided first-run overview and a restart action in General settings.
+- Embedded tutorial cards in their host windows, with live board updates, review navigation and keyboard-safe interaction steps.
+- Removed synchronous audio-dispatch waits; defer playback until media loading completes and lower background engine process priority.
+- Kept opening schemas and existing opening IDs compatible with 0.24.0.
+
+## 0.24.0 — 2026-10-18
 
 - Added English project, installation, development, privacy, contribution, security and license documentation.
 - Prepared a curated source export and Windows package without uploading either.

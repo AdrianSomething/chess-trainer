@@ -9,6 +9,7 @@ public partial class BoardControl
     private CancellationTokenSource animationLifetime = new();
     private bool animationDisposed;
     internal bool AnimationAvailable => !IsDisposed && !Disposing && !animationHandleDestroyed;
+    internal int TutorialFrame => HashCode.Combine(animationId, animationFraction, animated.Count);
 
     protected override void OnHandleCreated(EventArgs e)
     {

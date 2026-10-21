@@ -32,16 +32,46 @@ public sealed class GeneratorForecast
         Finished = snapshot.Finished;
         Stopped = snapshot.Stopped;
         if (Stopped) elapsed.Stop();
-        if (Finished) { progress = 1; elapsed.Stop(); return; }
+        if (Finished) { EstimatedCards = CompletedCards; progress = 1; elapsed.Stop(); return; }
         // A prefilled start sequence is not work already done by the engine.
         // The previous node/pending ratio could incorrectly report 30% here.
         long completed = Math.Max(0, snapshot.Cards - prefixCards);
         long pendingLowerBound = Math.Max(1, (snapshot.Pending + 1L) / 2);
-        EstimatedCards = Math.Max(EstimatedCards, snapshot.Cards + pendingLowerBound);
+        long lowerBound = snapshot.Cards + pendingLowerBound;
+        if (completed >= 8 && snapshot.Nodes.Count(n => n.Completed) >= 12)
+        {
+            // Learn continuation/termination rates from processed nodes at each
+            // depth. Unlike a maximum-only estimate this can correct an overly
+            // broad initial forecast downwards when filters close many branches.
+            var useful = snapshot.Nodes.Where(n => !n.IsTerminalCounter).ToArray();
+            var ids = useful.Select(n => n.Id).ToHashSet();
+            var outgoing = snapshot.Edges.Where(e => ids.Contains(e.To)).GroupBy(e => e.From).ToDictionary(g => g.Key, g => g.Count());
+            var rates = useful.Where(n => n.Completed).GroupBy(n => n.Depth)
+                .ToDictionary(g => g.Key, g => g.Average(n => (double)outgoing.GetValueOrDefault(n.Id)));
+            double FutureCards(int depth)
+            {
+                double population = 1, cards = 0;
+                for (int d = depth; d < snapshot.MaxDepth && population > .01; d++)
+                {
+                    population *= rates.GetValueOrDefault(d, rates.GetValueOrDefault(d - 2, 1));
+                    cards = Math.Min(1_000_000_000, cards + population * .5);
+                    if (cards >= 1_000_000_000) break;
+                }
+                return cards;
+            }
+            double projected = snapshot.Cards + useful.Where(n => !n.Completed).Sum(n => FutureCards(n.Depth));
+            long observed = (long)Math.Min(1_000_000_000, Math.Max(lowerBound, projected));
+            EstimatedCards = Math.Max(lowerBound, (long)Math.Round(.8 * EstimatedCards + .2 * observed));
+        }
+        else EstimatedCards = Math.Max(EstimatedCards, lowerBound);
         double fraction = completed / (double)Math.Max(1, EstimatedCards - prefixCards);
         progress = Math.Max(progress, Math.Min(.98, fraction));
     }
     public void Stop() { Stopped = true; elapsed.Stop(); }
+    public void SetWorking(bool active)
+    {
+        if (active && !Stopped && !Finished) elapsed.Start(); else elapsed.Stop();
+    }
 
     public TimeSpan? Remaining
     {

@@ -80,6 +80,9 @@ public sealed class SettingsForm : LocalizedForm
             AutoScroll = true
         };
         general.Controls.Add(layout);
+        var tutorial = new Button { Text = "Überblick erneut starten", Width = 480, Height = 38 };
+        tutorial.Click += (_, _) => { Close(); Application.OpenForms.OfType<MainForm>().FirstOrDefault(f => f.IsHomeWindow)?.OfferTutorial(); };
+        layout.Controls.Add(tutorial);
         var debug = new CheckBox { Text = "Debug-Informationen anzeigen", AutoSize = true, Checked = Preferences.Current.DebugInformation };
         debug.CheckedChanged += (_, _) => { Preferences.Current.DebugInformation = debug.Checked; Preferences.Save(); };
         layout.Controls.Add(SettingsReset.Wrap(debug, false));

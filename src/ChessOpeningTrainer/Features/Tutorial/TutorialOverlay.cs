@@ -1,0 +1,140 @@
+using System.Drawing.Drawing2D;
+
+namespace ChessOpeningTrainer;
+
+/// <summary>Window-local dimming with a real input hole. Movement, minimization
+/// and occlusion follow the host without synchronizing a second native window.</summary>
+internal sealed class TutorialOverlay : Control
+{
+    private readonly Label information = new() { AutoSize = false, ForeColor = Color.White, BackColor = Color.FromArgb(8, 9, 11), Font = new("Segoe UI", 12) };
+    private readonly Button next = MakeButton("Next · Space");
+    private readonly Button cancel = MakeButton("×");
+    private readonly Button previous = MakeButton("‹"), forward = MakeButton("›");
+    private Bitmap? background;
+    private readonly Dictionary<BoardControl, (string? Fen, int Frame, string? Hint)> boardFrames = [];
+    private Rectangle focus, infoBounds;
+    private (Size Host, Rectangle Focus, string Text, bool Advance)? lastView;
+    public event Action? Advance;
+    public event Action? Abort;
+    public event Action? Previous;
+    internal static Button MakeButton(string text) => new()
+    {
+        Text = text, FlatStyle = FlatStyle.Flat, TabStop = false,
+        BackColor = Color.FromArgb(36, 39, 43), ForeColor = Color.White,
+        TextAlign = ContentAlignment.MiddleCenter, Padding = Padding.Empty
+    };
+    public TutorialOverlay()
+    {
+        Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        DoubleBuffered = true; TabStop = false;
+        SetStyle(ControlStyles.Selectable, false);
+        cancel.Font = new("Segoe UI", 17, FontStyle.Regular);
+        previous.Font = forward.Font = new("Segoe UI", 18);
+        Controls.AddRange([information, next, cancel, previous, forward]);
+        next.Click += (_, _) => Advance?.Invoke(); cancel.Click += (_, _) => Abort?.Invoke();
+        previous.Click += (_, _) => Previous?.Invoke(); forward.Click += (_, _) => Advance?.Invoke();
+    }
+    public void UpdateView(Form host, Control? target, string message, bool canAdvance, bool canGoBack = false)
+    {
+        var targetBounds = target is null || !target.Visible ? Rectangle.Empty :
+            host.RectangleToClient(target.RectangleToScreen(target.ClientRectangle));
+        var key = (host.ClientSize, targetBounds, message, canAdvance);
+        previous.Visible = canGoBack; forward.Visible = canAdvance;
+        if (lastView == key) { RefreshBoards(host); return; }
+        lastView = key; Bounds = host.ClientRectangle;
+        CaptureBackground(host);
+        focus = Rectangle.Intersect(ClientRectangle, targetBounds);
+        int desiredWidth = Math.Min(520, Math.Max(220, Width - 32));
+        int height = Math.Min(host is GameEvaluationForm ? 145 : 210, Height - 24);
+        int rightSpace = Width - focus.Right - 24, leftSpace = focus.Left - 24;
+        int width = desiredWidth, x, y;
+        if (!focus.IsEmpty && Math.Max(rightSpace, leftSpace) >= 240)
+        {
+            bool right = rightSpace >= leftSpace;
+            width = Math.Min(desiredWidth, right ? rightSpace : leftSpace);
+            x = right ? focus.Right + 12 : 12;
+            y = Math.Clamp(focus.Top + 20, 12, Math.Max(12, Height - height - 12));
+        }
+        else
+        {
+            x = Math.Max(12, (Width - width) / 2);
+            y = focus.Top >= height + 24 ? focus.Top - height - 12 : Height - height - 12;
+        }
+        infoBounds = new(x, Math.Max(12, y), width, height);
+        information.Bounds = new(x + 16, infoBounds.Y + 15, width - 58, height - 75);
+        information.Text = message;
+        cancel.SetBounds(x + width - 36, infoBounds.Y + 6, 28, 28);
+        previous.SetBounds(x + 12, infoBounds.Bottom - 48, 32, 34);
+        forward.SetBounds(infoBounds.Right - 44, infoBounds.Bottom - 48, 32, 34);
+        next.SetBounds(x + 50, infoBounds.Bottom - 48, width - 100, 34);
+        next.Text = L.T("Weiter · Leertaste"); next.Visible = canAdvance;
+        var region = new Region(ClientRectangle);
+        if (!focus.IsEmpty) region.Exclude(focus);
+        region.Union(infoBounds);
+        var oldRegion = Region; Region = region; oldRegion?.Dispose();
+        boardFrames.Clear(); RefreshBoards(host);
+        BringToFront(); Invalidate();
+    }
+    internal bool IsAdvanceAt(Point screen) => new[] { next, forward }.Any(c => c.Visible && c.RectangleToScreen(c.ClientRectangle).Contains(screen));
+    private void RefreshBoards(Form host)
+    {
+        if (background is null) return;
+        using var g = Graphics.FromImage(background);
+        foreach (var board in TutorialSession.Descendants(host).OfType<BoardControl>().Where(b => b.Visible))
+        {
+            var frame = (board.Position?.ToFen(), board.TutorialFrame, board.HintMove?.Uci);
+            if (boardFrames.TryGetValue(board, out var previousFrame) && previousFrame == frame) continue;
+            boardFrames[board] = frame;
+            using var bitmap = new Bitmap(Math.Max(1, board.Width), Math.Max(1, board.Height));
+            board.DrawToBitmap(bitmap, new Rectangle(Point.Empty, board.Size));
+            var bounds = host.RectangleToClient(board.RectangleToScreen(board.ClientRectangle));
+            g.DrawImageUnscaled(bitmap, bounds.Location); Invalidate(bounds);
+        }
+    }
+    private void CaptureBackground(Form host)
+    {
+        background?.Dispose(); background = new Bitmap(Math.Max(1, Width), Math.Max(1, Height));
+        using var g = Graphics.FromImage(background);
+        g.Clear(host.BackColor);
+        // Never capture this layer, or toggle visibility (which would flash).
+        foreach (Control c in host.Controls.Cast<Control>().Reverse())
+        {
+            if (c == this || !c.Visible || c.Width <= 0 || c.Height <= 0) continue;
+            using var bitmap = new Bitmap(c.Width, c.Height);
+            c.DrawToBitmap(bitmap, new Rectangle(Point.Empty, c.Size));
+            g.DrawImageUnscaled(bitmap, c.Location);
+        }
+    }
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        if (background is not null) e.Graphics.DrawImageUnscaled(background, Point.Empty);
+        using var dim = new SolidBrush(Color.FromArgb(172, 24, 27, 30));
+        e.Graphics.FillRectangle(dim, ClientRectangle);
+        using var card = new SolidBrush(Color.FromArgb(8, 9, 11));
+        e.Graphics.FillRectangle(card, infoBounds);
+        if (focus.IsEmpty) return;
+        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+        using var line = new Pen(Color.FromArgb(240, 187, 79), 3);
+        var outline = focus; outline.Inflate(2, 2); e.Graphics.DrawRectangle(line, outline);
+        // Nearest facing edges, never a fixed left origin through the text.
+        Point start, end;
+        if (infoBounds.Right <= focus.Left)
+        { int y = Math.Clamp(infoBounds.Top + infoBounds.Height / 2, focus.Top, focus.Bottom); start = new(infoBounds.Right, Math.Clamp(y, infoBounds.Top, infoBounds.Bottom)); end = new(focus.Left, y); }
+        else if (infoBounds.Left >= focus.Right)
+        { int y = Math.Clamp(infoBounds.Top + infoBounds.Height / 2, focus.Top, focus.Bottom); start = new(infoBounds.Left, Math.Clamp(y, infoBounds.Top, infoBounds.Bottom)); end = new(focus.Right, y); }
+        else
+        {
+            int x = Math.Clamp(infoBounds.Left + infoBounds.Width / 2, focus.Left, focus.Right);
+            bool above = infoBounds.Top + infoBounds.Height / 2 < focus.Top + focus.Height / 2;
+            start = new(Math.Clamp(x, infoBounds.Left, infoBounds.Right), above ? infoBounds.Bottom : infoBounds.Top);
+            end = new(x, above ? focus.Top : focus.Bottom);
+        }
+        using var arrow = new AdjustableArrowCap(5, 6); line.CustomEndCap = arrow;
+        e.Graphics.DrawLine(line, start, end);
+    }
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing) background?.Dispose();
+        base.Dispose(disposing);
+    }
+}

@@ -65,6 +65,7 @@ public static class AppSounds
         })
         {
             IsBackground = true,
+            Priority = ThreadPriority.AboveNormal,
             Name = "Chess audio"
         };
         audioThread.SetApartmentState(ApartmentState.STA);
@@ -122,7 +123,7 @@ public static class AppSounds
         EnsureAudioThread();
         var target = dispatcher!;
         if (target.HasShutdownStarted || target.HasShutdownFinished) return;
-        target.Invoke(() =>
+        void Apply()
         {
             bool reload = loadedPack != Preferences.Current.SoundPack || players.Count == 0;
             if (reload)
@@ -141,7 +142,9 @@ public static class AppSounds
             AppliedVolume = volume;
             foreach (var p in players.Values.SelectMany(x => x))
                 p.SetVolume(AppliedVolume);
-        });
+        }
+        if (target.CheckAccess()) Apply();
+        else _ = target.BeginInvoke((Action)Apply, DispatcherPriority.Normal);
         }
         catch (Exception e) { LastError = e.Message; }
     }
@@ -250,7 +253,7 @@ public static class AppSounds
         try
         {
             var target = PreparePlayback();
-            target?.Invoke(() => { foreach (var p in players.Values.SelectMany(x => x)) p.Stop(); watchdog?.Stop(); });
+            target?.BeginInvoke(() => { foreach (var p in players.Values.SelectMany(x => x)) p.Stop(); watchdog?.Stop(); });
         }
         catch (Exception e) { LastError = e.Message; }
         Update();
@@ -274,7 +277,8 @@ public static class AppSounds
     public static void PlayMove(Position before, Move move, Position after, bool royalKings = true)
     {
         string kind = royalKings ? MoveKind(before, move, after) : before.Squares[move.To] != '\0' || move.IsEnPassant ? "capture" : "move";
-        if (!legacyMode && (kind == "move" || kind == "capture" && !HasCaptureSound))
+        bool usesLegacyPack = Packs.FirstOrDefault(p => p.Id == Preferences.Current.SoundPack) is not { Synthesized: false } pack || pack.Id == "legacy";
+        if (!usesLegacyPack && (kind == "move" || kind == "capture" && !HasCaptureSound))
             kind = char.ToLowerInvariant(before.Squares[move.From]) == 'p' ? "light" : "heavy";
         Play(kind);
     }
@@ -299,7 +303,6 @@ public static class AppSounds
             EnsureAudioThread();
             var target = dispatcher!;
             if (target.HasShutdownStarted || target.HasShutdownFinished) return null;
-            target.Invoke(() => { if (players.Count == 0) Update(); });
             return target;
         }
         catch (Exception e) { LastError = e.Message; return null; }
@@ -307,6 +310,9 @@ public static class AppSounds
 
     private static Task StartPlayback(string kind)
     {
+        // Executed only on the audio STA. Never synchronously wait for this
+        // dispatcher from the board/UI thread when generation saturates the CPU.
+        if (players.Count == 0 || loadedPack != Preferences.Current.SoundPack) Update();
         if (Muted || Preferences.Current.Volume == 0 || !players.TryGetValue(kind, out var choices) || choices.Count == 0)
             return Task.CompletedTask;
         var playing = choices[Random.Shared.Next(choices.Count)].Play(AppliedVolume);

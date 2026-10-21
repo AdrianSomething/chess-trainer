@@ -107,6 +107,24 @@ public sealed class SectionEditor : TableLayoutPanel
             UpdateSectionLayout(() => { });
         }
     }
+    public void SetValues(IReadOnlyList<DepthSection> values)
+    {
+        if (values.Count == 0) return;
+        SetCount(values.Count);
+        UpdateSectionLayout(() =>
+        {
+            for (int col = 0; col < values.Count; col++)
+            {
+                var s = values[col];
+                decimal[] data = [s.EndDepth, s.ComplexThreshold, (decimal)s.EasyThreshold, s.SearchDepth,
+                    (decimal)s.MaxReplyLoss, (decimal)s.CompressionLoss, s.RetainBest, (decimal)s.RetainMinEval, (decimal)s.LearnerVariationLoss];
+                // Remove bounds inherited from the previously selected job first.
+                columns[col][0].Minimum = 1; columns[col][0].Maximum = 60;
+                for (int row = 0; row < data.Length; row++)
+                    columns[col][row].Value = Math.Clamp(data[row], columns[col][row].Minimum, columns[col][row].Maximum);
+            }
+        });
+    }
     internal IEnumerable<ScrollNumber> AllInputs => cachedColumns.SelectMany(c => c).Cast<ScrollNumber>();
     internal IEnumerable<ScrollNumber> FocusInputs => columns.SelectMany(c => c).OfType<ScrollNumber>().Where(n => n.Visible && n.Enabled);
 

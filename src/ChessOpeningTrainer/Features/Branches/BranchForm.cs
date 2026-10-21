@@ -23,6 +23,13 @@ public sealed partial class BranchForm : LocalizedForm
         AutoSize = false
     };
     private CancellationTokenSource analysis = new();
+    private Action? collapseTutorialSettings;
+    internal void CollapseTutorialSettings() => collapseTutorialSettings?.Invoke();
+    private bool clearTutorialWhenLoaded;
+    internal void ClearTutorialSelection()
+    {
+        clearTutorialWhenLoaded = true; canvas.ClearSelection();
+    }
     public BranchForm(OpeningDefinition opening, ProgressStore progress, StockfishEngine engine, Position? current = null)
     {
         originalOpening = this.opening = opening; originalProgress = this.progress = progress; this.engine = engine;
@@ -43,7 +50,7 @@ public sealed partial class BranchForm : LocalizedForm
             Dock = DockStyle.Top,
             Height = 92
         };
-        canvas = new(opening, progress, current);
+        canvas = new(opening, progress, current, deferBuild: true);
         graphArea.Controls.Add(canvas); Controls.Add(graphArea);
         Controls.Add(right);
         Controls.Add(top);
@@ -229,8 +236,10 @@ public sealed partial class BranchForm : LocalizedForm
             ForeColor = UiPalette.Gainsboro
         };
         right.Controls.Add(hideSubs);
+        bool initialBuildPending = true, rebuildAfterLoad = false;
         void Rebuild()
         {
+            if (initialBuildPending) { rebuildAfterLoad = true; return; }
             var camera = canvas.Camera;
             var rootBefore = canvas.Vertices.FirstOrDefault()?.Location ?? PointF.Empty;
             string? selectedKey = selectedVertex is null ? null : OpeningStore.PositionKey(selectedVertex.Position);
@@ -401,10 +410,32 @@ public sealed partial class BranchForm : LocalizedForm
             AppendModeMenu(nodeMenu);
             nodeMenu.Show(canvas, point);
         }
-        Shown += (_, _) =>
+        Shown += async (_, _) =>
         {
-            canvas.FocusCurrent();
-            ShowPosition(current ?? Position.FromFen(opening.StartFen ?? Position.InitialFen));
+            using var loading = new BranchLoadingOverlay { Dock = DockStyle.Fill };
+            graphArea.Controls.Add(loading); loading.BringToFront();
+            top.Enabled = right.Enabled = false;
+            try
+            {
+                var vertices = await Task.Run(() => BranchGraphBuilder.Build(opening));
+                if (IsDisposed) return;
+                canvas.Vertices.AddRange(vertices);
+                canvas.FocusCurrent();
+                ShowPosition(current ?? Position.FromFen(opening.StartFen ?? Position.InitialFen));
+                ApplyModeCanvas(); UpdateModeSelection();
+                if (clearTutorialWhenLoaded) canvas.ClearSelection();
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+            { if (!IsDisposed) L.Message(this, ex.Message, "Branch"); }
+            finally
+            {
+                initialBuildPending = false;
+                if (!IsDisposed)
+                {
+                    graphArea.Controls.Remove(loading); top.Enabled = right.Enabled = true;
+                    if (rebuildAfterLoad) Rebuild();
+                }
+            }
         };
         FormClosed += (_, _) => analysis.Cancel();
         alternatives.SelectedIndexChanged += (_, _) =>
@@ -458,7 +489,7 @@ public sealed partial class BranchForm : LocalizedForm
         right.Controls.Add(priorityLabel);
         priority.SetBounds(140, 525, 245, 28);
         int actionY = 582;
-        foreach (string name in new[] { "Subbranch-Status umschalten", "Jetzt diesen Branch lernen", "Tiefer erforschen", "Alle Subbranches einklappen", "Human Moves neu generieren", "Mit anderem Opening kombinieren" })
+        foreach (string name in new[] { "Subbranch-Status umschalten", "Jetzt diesen Branch lernen", "Tiefer erforschen", "Variante als eigenes Opening speichern", "Alle Subbranches einklappen", "Human Moves neu generieren", "Mit anderem Opening kombinieren" })
         {
             Control? control = name == "Jetzt diesen Branch lernen" ? learn : name == "Alle Subbranches einklappen" ? hideSubs : actionButtons.GetValueOrDefault(name);
             if (control is null && name.StartsWith("Mit anderem")) control = actionButtons.FirstOrDefault(x => x.Key.StartsWith("Mit andere")).Value;
@@ -544,6 +575,10 @@ public sealed partial class BranchForm : LocalizedForm
             settings.Visible = !settings.Visible;
             settingsHost.Width = settings.Visible ? 273 : 18;
             toggleSettings.Text = settings.Visible ? "◀" : "▶";
+        };
+        collapseTutorialSettings = () =>
+        {
+            settings.Visible = false; settingsHost.Width = 18; toggleSettings.Text = "▶";
         };
         Controls.SetChildIndex(top, Controls.Count - 1);
         Controls.SetChildIndex(right, Controls.Count - 2);

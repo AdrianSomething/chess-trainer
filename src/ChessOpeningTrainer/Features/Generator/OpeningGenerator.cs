@@ -84,7 +84,7 @@ public sealed class OpeningGenerator
         return (measured, options.MaxPositions);
     }
 
-    public async Task<OpeningDefinition> GenerateAsync(Position start, string name, GeneratorOptions options, Func<int, Task<bool>> continueAtLimit, IProgress<GeneratorProgress>? progress, CancellationToken token, IReadOnlyList<string>? setup = null, IProgress<GeneratorGraphSnapshot>? graph = null, IProgress<GeneratorSearchDepth>? searchDepthProgress = null)
+    public async Task<OpeningDefinition> GenerateAsync(Position start, string name, GeneratorOptions options, Func<int, Task<bool>> continueAtLimit, IProgress<GeneratorProgress>? progress, CancellationToken token, IReadOnlyList<string>? setup = null, IProgress<GeneratorGraphSnapshot>? graph = null, IProgress<GeneratorSearchDepth>? searchDepthProgress = null, IOpeningSearch? sharedSearch = null)
     {
         options.Validate();
         if (string.IsNullOrWhiteSpace(name))
@@ -181,6 +181,7 @@ public sealed class OpeningGenerator
         {
             if (cards < limit)
                 return true;
+            ReportGraph(0, force: true);
             progress?.Report(new(cards, 0, "Kartenlimit: Bestätigung nötig (inklusive Startsequenz)"));
             if (!await continueAtLimit(cards))
                 return false;
@@ -198,17 +199,18 @@ public sealed class OpeningGenerator
         var reachedDepths = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
         string? currentSearchKey = null;
         int currentTreeDepth = 0;
-        await using var pool = new EnginePool(engine, workers, threads, searches.Token);
+        await using var pool = sharedSearch is null ? new EnginePool(engine, workers, threads, searches.Token) : null;
         Task<EngineResult> RunSearch(Position p, int depth)
         {
-            if (searchDepthProgress is null) return pool.Search(p, depth);
+            if (searchDepthProgress is null) return sharedSearch?.Search(p, depth, null, searches.Token) ?? pool!.Search(p, depth);
             string key = p.ToFen() + "|" + depth;
-            return pool.Search(p, depth, depthProgress: reached =>
+            void ReportDepth(int reached)
             {
                 int achieved = reachedDepths.AddOrUpdate(key, reached, (_, previous) => Math.Max(previous, reached));
                 if (Volatile.Read(ref currentSearchKey) == key)
                     searchDepthProgress?.Report(new(achieved, depth, Volatile.Read(ref currentTreeDepth), options.MaxDepth));
-            });
+            }
+            return sharedSearch?.Search(p, depth, ReportDepth, searches.Token) ?? pool!.Search(p, depth, depthProgress: ReportDepth);
         }
         Task<EngineResult> Search(Position p, int depth)
         {
@@ -272,7 +274,7 @@ public sealed class OpeningGenerator
                     stoppedAtLimit = true;
                     break;
                 }
-                progress?.Report(new(cards, queue.Count, $"Tiefe {work.Depth}/{options.MaxDepth} · {pool.ActiveSearches}/{workers} aktive Arbeiter × {threads} Threads · Engine {effective.SearchDepth}"));
+                progress?.Report(new(cards, queue.Count, $"Tiefe {work.Depth}/{options.MaxDepth} · {pool?.ActiveSearches ?? 0}/{workers} aktive Arbeiter × {threads} Threads · Engine {effective.SearchDepth}"));
                 ReportGraph(queue.Count + 1);
                 // All learner alternatives are needed to measure compression loss.
                 Volatile.Write(ref currentTreeDepth, work.Depth);
@@ -332,7 +334,7 @@ public sealed class OpeningGenerator
         {
             Volatile.Write(ref currentSearchKey, null);
             searches.Cancel();
-            await pool.DisposeAsync();
+            if (pool is not null) await pool.DisposeAsync();
             try
             {
                 await Task.WhenAll(pending.Values);
