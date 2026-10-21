@@ -1,6 +1,16 @@
-# 0.25.1 beta testing
+# 0.25.2 beta testing
 
 Development happens on `dev/0.25.0`. The stable `main` branch and `v0.24.0` release are not replaced by this branch.
+
+## 0.25.2 tutorial corrections
+
+The tour now has 46 steps. Backwards navigation restores the relevant exercise rather than just its text. Completed tutorial windows close; returning recreates the required window and checkpoint. Existing windows from before the tour are not closed by this mechanism. The game library stays open while its separate evaluation graph is being used.
+
+Informational steps reject the complete client mouse-button sequence, including double-clicks, and release stale capture. Native title-bar controls remain available. During the branch introduction, dragging and wheel zoom work but node selection is disabled.
+
+Statistics dropdowns require an actual committed choice, not the native dropdown's hover preview. After choosing a tab, metric, time grouping or graph position, use **Next** or Space to continue. Left/Right navigation can still explicitly skip an exercise. Revisiting a selection task resets its confirmation state. An extra final statistics card allows exploration before returning home.
+
+English and German instructions use quoted button names. The opening-list highlight includes the space for additional openings; the generator highlight covers its parameter column; the statistics-tab highlight excludes the page below. A dimmed game-library snapshot refreshes its review controls as well as its board after graph navigation.
 
 ## 0.25.1 corrections
 

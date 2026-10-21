@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>ChessOpeningTrainer</AssemblyName>
-    <Version>0.25.1-beta</Version>
+    <Version>0.25.2-beta</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <NoWarn>$(NoWarn);WFO1000</NoWarn>

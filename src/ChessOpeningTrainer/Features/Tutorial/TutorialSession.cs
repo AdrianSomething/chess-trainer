@@ -8,51 +8,76 @@ internal sealed class TutorialSession : IDisposable, IMessageFilter
     private readonly System.Windows.Forms.Timer timer = new() { Interval = 100 };
     private readonly Action finished;
     private int index = -1;
-    private int furthest = -1;
-    private bool disposed, interacted, changing;
+    private bool disposed, interacted, changing, committed, satisfied;
+    private readonly Action<int, int>? prepare;
+    private ComboBox? watchedCombo;
     private DateTime entered;
     private DateTime noticeUntil;
-    public TutorialSession(IReadOnlyList<TutorialStep> steps, Action finished)
+    public TutorialSession(IReadOnlyList<TutorialStep> steps, Action finished) : this(steps, finished, null) { }
+    public TutorialSession(IReadOnlyList<TutorialStep> steps, Action finished, Action<int, int>? prepare)
     {
-        this.steps = steps; this.finished = finished;
+        this.steps = steps; this.finished = finished; this.prepare = prepare;
         Application.AddMessageFilter(this);
         timer.Tick += (_, _) => Refresh(); timer.Start(); Next();
     }
     private void Next()
     {
         if (disposed || changing) return;
-        if (index < furthest) { Review(index + 1); return; }
-        changing = true;
-        try
-        {
-            if (index >= 0) steps[index].Leave?.Invoke();
-            if (++index >= steps.Count) { Dispose(); return; }
-            furthest = index;
-            interacted = false; entered = DateTime.UtcNow;
-            steps[index].Enter?.Invoke(); Refresh();
-        }
-        finally { changing = false; }
+        if (index >= 0) steps[index].Leave?.Invoke();
+        Review(index + 1);
     }
     private void Review(int destination)
     {
-        if (disposed || destination < 0 || destination > furthest) return;
-        var window = steps[destination].Window();
-        if (window is null || window.IsDisposed) return;
-        index = destination; entered = DateTime.UtcNow; noticeUntil = default;
-        window.Show(); window.Activate(); Refresh();
+        if (disposed || changing || destination < 0) return;
+        if (destination >= steps.Count) { Dispose(); return; }
+        changing = true;
+        try
+        {
+            int previous = index;
+            if (index >= 0 && steps[index].Window() is { IsDisposed: false } oldWindow)
+            {
+                foreach (var combo in Descendants(oldWindow).OfType<ComboBox>().Where(c => c.DroppedDown)) combo.DroppedDown = false;
+                foreach (var control in Descendants(oldWindow).Where(c => c.Capture)) control.Capture = false;
+            }
+            WatchCombo(null);
+            index = destination; entered = DateTime.UtcNow; noticeUntil = default;
+            interacted = committed = satisfied = false;
+            prepare?.Invoke(index, previous);
+            steps[index].Enter?.Invoke();
+            var window = steps[index].Window();
+            if (window is { IsDisposed: false }) { window.Show(); window.Activate(); }
+            Refresh();
+        }
+        finally { changing = false; }
     }
-    private bool CanAdvance => index < furthest || !steps[index].Interaction;
+    private bool CanAdvance => !steps[index].Interaction || satisfied;
     private void Forward()
     {
         if (disposed || changing) return;
-        if (index == furthest && steps[index].Interaction) steps[index].Skip?.Invoke();
+        if (steps[index].Interaction && !satisfied) steps[index].Skip?.Invoke();
         Next();
     }
+    private void WatchCombo(ComboBox? combo)
+    {
+        if (watchedCombo == combo) return;
+        if (watchedCombo is not null) watchedCombo.SelectionChangeCommitted -= SelectionCommitted;
+        watchedCombo = combo;
+        if (combo is not null) combo.SelectionChangeCommitted += SelectionCommitted;
+    }
+    private void SelectionCommitted(object? sender, EventArgs e) => committed = true;
     private void Refresh()
     {
         if (disposed || index < 0 || index >= steps.Count) return;
         var step = steps[index]; var active = step.Window();
         if (active is { IsDisposed: true }) { Dispose(); return; }
+        WatchCombo(active is null ? null : step.Target(active) as ComboBox);
+        if (step.Interaction && !changing)
+        {
+            bool done = step.Completed?.Invoke() ?? interacted;
+            // Native combos may change SelectedIndex while previewing a row.
+            // Only CBN_SELENDOK (SelectionChangeCommitted) confirms the choice.
+            satisfied |= done && (watchedCombo is null || committed && !watchedCombo.DroppedDown);
+        }
         var forms = Application.OpenForms.Cast<Form>().Where(f => f.Visible && f.TopLevel && f is not HoverBoard).ToArray();
         foreach (var stale in overlays.Keys.Where(f => f.IsDisposed || !forms.Contains(f)).ToArray()) { overlays[stale].Dispose(); overlays.Remove(stale); }
         foreach (var form in forms)
@@ -68,10 +93,10 @@ internal sealed class TutorialSession : IDisposable, IMessageFilter
             bool here = form == active;
             string text = here ? $"{index + 1}/{steps.Count}\n" + L.T(step.Text) : L.T("Der Überblick geht im anderen Fenster weiter:") + "\n" + (active?.Text ?? L.T("Fenster wird vorbereitet …"));
             if (here && DateTime.UtcNow < noticeUntil) text += "\n" + L.T("Bitte zuerst den Überblick beenden, bevor du diese Funktion ausprobierst.");
-            overlay.UpdateView(form, here ? step.Target(form) : null, text, here && CanAdvance, here && index > 0);
+            overlay.UpdateViewArea(form, here ? step.Target(form) : null, text, here && CanAdvance, here && index > 0,
+                here ? step.TargetArea : null);
         }
-        if (index == furthest && !changing && step.Interaction && DateTime.UtcNow - entered > TimeSpan.FromMilliseconds(350) &&
-            (step.Completed?.Invoke() ?? interacted)) Next();
+        if (!changing && step.Interaction && step.AutoAdvance && satisfied && DateTime.UtcNow - entered > TimeSpan.FromMilliseconds(350)) Next();
     }
     public bool PreFilterMessage(ref Message m)
     {
@@ -79,6 +104,18 @@ internal sealed class TutorialSession : IDisposable, IMessageFilter
         var step = steps[index];
         var source = Control.FromHandle(m.HWnd);
         bool inOverlay = overlays.Values.Any(o => o == source || source is not null && o.Contains(source));
+        bool clientMouse = m.Msg is >= 0x0201 and <= 0x0209;
+        bool managedWindow = source?.FindForm() is { } sourceForm && overlays.ContainsKey(sourceForm);
+        // Never swallow non-client input: title-bar close/maximize must work.
+        // Treat down/up/double-click as a complete sequence, otherwise Button
+        // can capture the mouse on DBLCLK and never receive the blocked up.
+        if (clientMouse && managedWindow && !inOverlay &&
+            (!step.Interaction && !step.AllowInput || step.Interaction && interacted && step.Target(step.Window()!) is Button))
+        {
+            if (source is not null) source.Capture = false;
+            if (m.Msg == 0x0201) { noticeUntil = DateTime.UtcNow.AddSeconds(3); Refresh(); }
+            return true;
+        }
         if (m.Msg == 0x0201 && step.Window() is { } navigationHost && overlays.TryGetValue(navigationHost, out var navigationOverlay)
             && navigationOverlay.NavigationAt(Cursor.Position) is int direction && direction != 0)
         {
@@ -97,11 +134,6 @@ internal sealed class TutorialSession : IDisposable, IMessageFilter
         {
             foreach (var combo in Descendants(active).OfType<ComboBox>().Where(c => c.DroppedDown)) combo.DroppedDown = false;
             Next(); return true;
-        }
-        if ((m.Msg is 0x0201 or 0x0202) && !step.Interaction && !step.AllowInput && !inOverlay)
-        {
-            if (m.Msg == 0x0201) { noticeUntil = DateTime.UtcNow.AddSeconds(3); Refresh(); }
-            return true;
         }
         // Consume the entire key sequence, including key-up/character messages:
         // Space may advance information, but never click Settings or the X.
@@ -125,6 +157,7 @@ internal sealed class TutorialSession : IDisposable, IMessageFilter
     public void Dispose()
     {
         if (disposed) return; disposed = true;
+        WatchCombo(null);
         Application.RemoveMessageFilter(this); timer.Dispose();
         foreach (var overlay in overlays.Values) overlay.Dispose(); overlays.Clear();
         finished();

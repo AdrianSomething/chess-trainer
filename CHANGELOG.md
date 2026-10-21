@@ -2,6 +2,16 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.25.2-beta — Development
+
+- Blocked complete mouse-button sequences on informational tutorial steps, including double-clicks, without intercepting title-bar controls.
+- Made tutorial steps reproducible checkpoints: revisiting lessons restores the exercise, revisiting selection tasks clears previous answers, and completed windows close and reopen when needed.
+- Prevented duplicate learning windows when repeating the opening action.
+- Require committed dropdown choices rather than hover previews. Statistics and evaluation-graph interactions unlock an explicit Next action; arrow-key navigation remains available.
+- Added a 46th tutorial card for exploring statistics, revised English/German instructions and refined highlighted areas.
+- Kept branch panning/zooming available without node selection during its introductory explanation.
+- Refresh dimmed game-library controls alongside the board when navigating its evaluation graph.
+
 ## 0.25.1-beta — Development
 
 - Centered tutorial close/navigation glyphs, moved navigation beside the step counter, and enabled Left/Right navigation during interactive steps.

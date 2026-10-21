@@ -13,6 +13,7 @@ public sealed class BranchCanvas : Control
     public Color AnalysisMarkerColor { get; set; } = Color.FromArgb(230, 72, 72);
 
     public event Action<Position>? Selected;
+    internal bool TutorialPanOnly { get; set; }
     public event Action<BranchVertex>? VertexSelected;
     public event Action? SelectionCleared;
     private bool explicitSelectionCleared;
@@ -222,7 +223,7 @@ public sealed class BranchCanvas : Control
     protected override void OnMouseDown(MouseEventArgs e)
     {
         base.OnMouseDown(e);
-        if (e.Button == MouseButtons.Right)
+        if (e.Button == MouseButtons.Right && !TutorialPanOnly)
         {
             float x = (e.X - pan.X) / zoom, y = (e.Y - pan.Y) / zoom;
             var hit = Vertices.FirstOrDefault(v => Math.Abs(v.Location.X - x) <= v.Width / 2 && Math.Abs(v.Location.Y - y) <= v.Height / 2);
@@ -263,7 +264,7 @@ public sealed class BranchCanvas : Control
     {
         base.OnMouseUp(e);
         Capture = false;
-        if (e.Button == MouseButtons.Left && !dragging)
+        if (e.Button == MouseButtons.Left && !dragging && !TutorialPanOnly)
         {
             var x = (e.X - pan.X) / zoom;
             var y = (e.Y - pan.Y) / zoom;

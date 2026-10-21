@@ -30,6 +30,16 @@ public sealed partial class BranchForm : LocalizedForm
     {
         clearTutorialWhenLoaded = true; canvas.ClearSelection();
     }
+    internal void SelectTutorialCurrent()
+    {
+        clearTutorialWhenLoaded = false; canvas.FocusCurrent();
+    }
+    internal void SetTutorialPanOnly(bool value) => canvas.TutorialPanOnly = value;
+    internal void EnsureTutorialSelection()
+    {
+        clearTutorialWhenLoaded = false;
+        if (!canvas.HasSelection) canvas.FocusCurrent();
+    }
     public BranchForm(OpeningDefinition opening, ProgressStore progress, StockfishEngine engine, Position? current = null)
     {
         originalOpening = this.opening = opening; originalProgress = this.progress = progress; this.engine = engine;

@@ -52,6 +52,7 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Generator sections / forecasts | Features/Generator/DepthSection.cs, GeneratorForecast.cs, GeneratorPreviewGraph.cs |
 | Generator job scheduling / approval / cooling | Features/Generator/GeneratorWorkQueue.cs; OpeningGeneratorForm.Queue.cs owns its UI lifetime |
 | Guided overview / first-run language | Features/Tutorial; App/MainForm.Tutorial.cs defines the route |
+| Reversible tutorial checkpoints | App/MainForm.TutorialLesson.cs restores lesson state; the route prepares/closes section windows; TutorialSession owns input and confirmation |
 | Pre-analysed tutorial game | Features/Tutorial/TutorialSampleGame.cs; embedded Samples/tutorial-game.json, isolated tutorial storage |
 | Opening menu bookmarks / order | App/OpeningMenuOrder.cs; UserPreferences.BookmarkedOpenings stores IDs only |
 | Audio recovery | Infrastructure/Customization/SoundVoice.cs |

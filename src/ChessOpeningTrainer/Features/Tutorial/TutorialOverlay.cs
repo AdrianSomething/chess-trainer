@@ -14,6 +14,7 @@ internal sealed class TutorialOverlay : Control
     private Bitmap? background;
     private readonly Dictionary<BoardControl, (string? Fen, int Frame, string? Hint)> boardFrames = [];
     private Rectangle focus, infoBounds;
+    private string? selectorState;
     private (Size Host, Rectangle Focus, string Text, bool Advance)? lastView;
     public event Action? Advance;
     public event Action? Abort;
@@ -39,9 +40,11 @@ internal sealed class TutorialOverlay : Control
         previous.Click += (_, _) => Previous?.Invoke(); forward.Click += (_, _) => Forward?.Invoke();
     }
     public void UpdateView(Form host, Control? target, string message, bool canAdvance, bool canGoBack = false)
+        => UpdateViewArea(host, target, message, canAdvance, canGoBack, null);
+    public void UpdateViewArea(Form host, Control? target, string message, bool canAdvance, bool canGoBack, Func<Control, Rectangle>? area)
     {
         var targetBounds = target is null || !target.Visible ? Rectangle.Empty :
-            host.RectangleToClient(target.RectangleToScreen(target.ClientRectangle));
+            host.RectangleToClient(target.RectangleToScreen(area?.Invoke(target) ?? target.ClientRectangle));
         var key = (host.ClientSize, targetBounds, message, canAdvance);
         bool numbered = message.Length > 0 && char.IsDigit(message[0]);
         previous.Visible = forward.Visible = numbered; previous.Enabled = canGoBack;
@@ -92,17 +95,19 @@ internal sealed class TutorialOverlay : Control
     private void RefreshBoards(Form host)
     {
         if (background is null) return;
-        using var g = Graphics.FromImage(background);
+        string selectors = string.Join("|", TutorialSession.Descendants(host).Select(c => c switch
+        { ComboBox combo => combo.SelectedIndex.ToString(), TabControl tabs => tabs.SelectedIndex.ToString(), _ => "" }).Where(s => s.Length > 0));
+        bool changed = selectorState != selectors; selectorState = selectors;
         foreach (var board in TutorialSession.Descendants(host).OfType<BoardControl>().Where(b => b.Visible))
         {
             var frame = (board.Position?.ToFen(), board.TutorialFrame, board.HintMove?.Uci);
             if (boardFrames.TryGetValue(board, out var previousFrame) && previousFrame == frame) continue;
             boardFrames[board] = frame;
-            using var bitmap = new Bitmap(Math.Max(1, board.Width), Math.Max(1, board.Height));
-            board.DrawToBitmap(bitmap, new Rectangle(Point.Empty, board.Size));
-            var bounds = host.RectangleToClient(board.RectangleToScreen(board.ClientRectangle));
-            g.DrawImageUnscaled(bitmap, bounds.Location); Invalidate(bounds);
+            changed = true;
         }
+        // The game-library side panel changes with the displayed board too.
+        // Refresh its snapshot, not just the board pixels, after navigation.
+        if (changed) { CaptureBackground(host); Invalidate(); }
     }
     private void CaptureBackground(Form host)
     {
