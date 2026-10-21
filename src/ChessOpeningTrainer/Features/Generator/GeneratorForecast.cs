@@ -46,22 +46,36 @@ public sealed class GeneratorForecast
             var useful = snapshot.Nodes.Where(n => !n.IsTerminalCounter).ToArray();
             var ids = useful.Select(n => n.Id).ToHashSet();
             var outgoing = snapshot.Edges.Where(e => ids.Contains(e.To)).GroupBy(e => e.From).ToDictionary(g => g.Key, g => g.Count());
-            var rates = useful.Where(n => n.Completed).GroupBy(n => n.Depth)
-                .ToDictionary(g => g.Key, g => g.Average(n => (double)outgoing.GetValueOrDefault(n.Id)));
+            var cohorts = useful.Where(n => n.Completed).GroupBy(n => n.Depth).ToDictionary(g => g.Key, g => g.ToArray());
+            var rates = cohorts.ToDictionary(g => g.Key, g => g.Value.Average(n => (double)outgoing.GetValueOrDefault(n.Id)));
+            // For unseen deeper layers, use the latest observed layer of the
+            // same side. A broad early layer must not override a later cutoff.
+            double Rate(int depth)
+            {
+                if (rates.TryGetValue(depth, out double exact)) return exact;
+                int latest = rates.Keys.Where(d => d < depth && (d & 1) == (depth & 1)).DefaultIfEmpty(-1).Max();
+                return latest >= 0 ? rates[latest] : 1;
+            }
             double FutureCards(int depth)
             {
                 double population = 1, cards = 0;
                 for (int d = depth; d < snapshot.MaxDepth && population > .01; d++)
                 {
-                    population *= rates.GetValueOrDefault(d, rates.GetValueOrDefault(d - 2, 1));
+                    population *= Rate(d);
                     cards = Math.Min(1_000_000_000, cards + population * .5);
                     if (cards >= 1_000_000_000) break;
                 }
                 return cards;
             }
-            double projected = snapshot.Cards + useful.Where(n => !n.Completed).Sum(n => FutureCards(n.Depth));
+            var frontier = useful.Where(n => !n.Completed).ToArray();
+            double projected = snapshot.Cards + frontier.Sum(n => FutureCards(n.Depth));
             long observed = (long)Math.Min(1_000_000_000, Math.Max(lowerBound, projected));
-            EstimatedCards = Math.Max(lowerBound, (long)Math.Round(.8 * EstimatedCards + .2 * observed));
+            // React strongly when a sampled frontier layer is mostly closed.
+            // Keep some smoothing for small/noisy cohorts, not an obsolete
+            // exponential estimate that survives until the final notification.
+            bool cutoff = frontier.Any(n => cohorts.TryGetValue(n.Depth, out var cohort) && cohort.Length >= 4 && rates[n.Depth] < .5);
+            double weight = cutoff ? .9 : .5;
+            EstimatedCards = Math.Max(lowerBound, (long)Math.Round((1 - weight) * EstimatedCards + weight * observed));
         }
         else EstimatedCards = Math.Max(EstimatedCards, lowerBound);
         double fraction = completed / (double)Math.Max(1, EstimatedCards - prefixCards);

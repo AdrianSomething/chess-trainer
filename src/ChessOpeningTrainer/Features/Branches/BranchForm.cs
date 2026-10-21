@@ -520,6 +520,26 @@ public sealed partial class BranchForm : LocalizedForm
         bool updatingLayoutSettings = false;
         var legacyLayout = new CheckBox { Text = "Bisherige Branchpositionierung verwenden", Checked = Preferences.Current.BranchLegacyPositioning, Size = new(230, 48), ForeColor = UiPalette.Gainsboro };
         settings.Controls.Add(legacyLayout);
+        var refinement = new CheckBox { Text = "Stärkere Kreuzungsreduktion (Beta)", Checked = Preferences.Current.BranchGlobalRefinementBeta, Size = new(230, 48), ForeColor = UiPalette.Gainsboro };
+        settings.Controls.Add(refinement);
+        refinement.CheckedChanged += async (_, _) =>
+        {
+            Preferences.Current.BranchGlobalRefinementBeta = refinement.Checked; Preferences.Save();
+            if (!refinement.Checked || IsEditingMode) { Rebuild(); return; }
+            bool group = groups.Checked, hide = hideHuman.Checked, hideAll = hideSubs.Checked;
+            var closedNodes = collapsed.ToHashSet(); var compactNodes = compact.ToHashSet(); var source = opening;
+            using var loading = new BranchLoadingOverlay { Dock = DockStyle.Fill };
+            graphArea.Controls.Add(loading); loading.BringToFront(); top.Enabled = settings.Enabled = right.Enabled = false;
+            try
+            {
+                await Task.Run(() => BranchGraphBuilder.Build(source, group, hide, hideAll, closedNodes, compactNodes));
+                if (!IsDisposed && ReferenceEquals(source, opening)) Rebuild();
+            }
+            finally
+            {
+                if (!IsDisposed) { graphArea.Controls.Remove(loading); top.Enabled = settings.Enabled = right.Enabled = true; }
+            }
+        };
         var spacingRow = new FlowLayoutPanel { Size = new(230, 64), Margin = new(3, 3, 3, 8), WrapContents = true };
         var spacingLabel = new Label { Text = "Horizontaler Spaltenabstand", Width = 224, Height = 24, ForeColor = UiPalette.Gainsboro };
         var spacing = new ScrollNumber
@@ -530,6 +550,7 @@ public sealed partial class BranchForm : LocalizedForm
         spacingRow.Controls.AddRange([spacingLabel, spacing, new Label { Text = "×", AutoSize = true, Margin = new(4, 5, 0, 0) }]);
         settings.Controls.Add(spacingRow);
         var layoutTips = new ToolTip { AutoPopDelay = 12000 };
+        L.SetToolTip(layoutTips, refinement, "Zusätzliche, zeitlich begrenzte Suche nach weniger Verbindungskreuzungen. Nur messbar bessere Anordnungen werden übernommen. Bei großen Branches dauert das erste Laden etwas länger; das Ergebnis wird zwischengespeichert.");
         L.SetToolTip(layoutTips, spacing, "Ändert nur den horizontalen Abstand der Graphspalten auf das 0,25- bis 5-Fache. Knotengröße, Zoom und Kameraposition am Startknoten bleiben erhalten.");
         legacyLayout.CheckedChanged += (_, _) =>
         {

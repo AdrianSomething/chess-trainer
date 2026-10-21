@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>ChessOpeningTrainer</AssemblyName>
-    <Version>0.25.0-beta.1</Version>
+    <Version>0.25.1-beta</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <NoWarn>$(NoWarn);WFO1000</NoWarn>
@@ -23,6 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="app.ico" />
+    <EmbeddedResource Include="Samples/tutorial-game.json" LogicalName="ChessOpeningTrainer.TutorialGame.json" />
     <Content Include="Customization\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

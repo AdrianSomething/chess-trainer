@@ -32,7 +32,24 @@ public sealed partial class MainForm
         Func<Form?> root = () => this;
         Control? Find(Form f, string text) => TutorialSession.Find(f, text);
         void Info(Func<Form?> window, Func<Form, Control?> target, string text, Action? enter = null, Action? leave = null, bool allowInput = false) => steps.Add(new(window, target, text, Enter: enter, Leave: leave, AllowInput: allowInput));
-        void Click(Func<Form?> window, Func<Form, Control?> target, string text, Action? enter = null, Action? leave = null, Func<bool>? complete = null, Action? space = null) => steps.Add(new(window, target, text, true, complete, enter, leave, SpaceAction: space));
+        void Click(Func<Form?> window, Func<Form, Control?> target, string text, Action? enter = null, Action? leave = null, Func<bool>? complete = null, Action? space = null)
+        {
+            // Explicit arrow navigation may skip an exercise, but still creates
+            // the window/state needed by the following information cards.
+            void Skip()
+            {
+                if (window() is not { } host) return;
+                switch (target(host))
+                {
+                    case Button button: button.PerformClick(); break;
+                    case BranchCanvas canvas: canvas.FocusCurrent(); break;
+                    case BoardControl when host == lesson: lesson?.next.PerformClick(); break;
+                    case ComboBox combo when combo.Items.Count > 1: combo.SelectedIndex = (combo.SelectedIndex + 1) % combo.Items.Count; break;
+                    case TabControl tabs when tabs.TabCount > 1: tabs.SelectedIndex = (tabs.SelectedIndex + 1) % tabs.TabCount; break;
+                }
+            }
+            steps.Add(new(window, target, text, true, complete, enter, leave, SpaceAction: space, Skip: Skip));
+        }
         Control? HomeCard(Form f) => TutorialSession.Descendants(f).OfType<Label>().FirstOrDefault(l => l.Text == example.Name)?.Parent;
         Control? HomeLearn(Form f) => HomeCard(f)?.Controls.Cast<Control>().FirstOrDefault(c => c.Text == L.T("Lernen"));
         Info(root, _ => home, "Trainiere Openings, löse Aufgaben und verstehe deine Partien. Alles läuft lokal auf deinem Computer.");
@@ -86,9 +103,9 @@ public sealed partial class MainForm
         Info(root, f => Find(f, "Lokales Spiel"), "Lokales Spiel ist für zwei Menschen an einem Gerät, mit optionalen Schachuhren.");
         Click(root, f => Find(f, "Eigene Spiele und Analysen"), "Öffne Eigene Spiele und Analysen. Für den Überblick verwenden wir eine separate Beispielpartie.", enter: () => tutorialGamesDirectory = tutorialData,
             leave: () => { games = gamesWindow; tutorialGamesDirectory = null; });
-        Info(() => games, f => TutorialSession.Of<GameList>(f), "In der Partienliste wählst du eine Partie aus. Das Beispiel wird im Hintergrund analysiert.");
+        Info(() => games, f => TutorialSession.Of<GameList>(f), "In der Partienliste wählst du eine Partie aus. Das Beispiel ist bereits analysiert.");
         Info(() => games, f => Find(f, "PGN importieren"), "Importiere eine PGN-Datei mit einer oder mehreren Partien oder schreibe eine eigene PGN.");
-        Info(() => games, f => Find(f, "Highlights durchgehen") ?? Find(f, "Analyse abbrechen"), "Highlights zeigen wichtige Entscheidungen. Warte bei der Beispielpartie kurz auf das Ende der Analyse.");
+        Info(() => games, f => Find(f, "Highlights durchgehen") ?? Find(f, "Analyse abbrechen"), "Highlights zeigen wichtige Entscheidungen der bereits analysierten Beispielpartie.");
         Click(() => games, f => Find(f, "Evaluationsgraph anzeigen"), "Öffne den Evaluationsgraphen, sobald die Analyse fertig ist.", leave: () => graph = Application.OpenForms.OfType<GameEvaluationForm>().LastOrDefault());
         Info(() => graph, _ => graph?.Graph, "Klicke auf eine Stelle im Graphen: Das Brett springt zum zugehörigen Zug.",
             leave: () => { graph?.Hide(); games?.Hide(); Activate(); }, allowInput: true);
@@ -113,7 +130,10 @@ public sealed partial class MainForm
         ComboBox? Metric() => statistics is null ? null : TutorialSession.Descendants(statistics).OfType<ComboBox>().FirstOrDefault(c => c.Visible && c.Items.Count == 5);
         Click(() => statistics, _ => Metric(), "Wähle einen Statistiktyp, etwa Geschwindigkeit oder Fehlerzusammensetzung.",
             enter: () => oldMetric = Metric()?.SelectedIndex ?? -1, complete: () => Metric()?.SelectedIndex != oldMetric);
-        Info(() => statistics, f => TutorialSession.Descendants(f).OfType<ComboBox>().FirstOrDefault(c => c.Visible && c.Items.Count == 4), "Die Zeitspanne und Tage, Wochen oder Monate bestimmen die Gruppierung. Die Demo wird nach diesem Überblick wieder zurückgestellt.");
+        ComboBox? Period() => statistics is null ? null : TutorialSession.Descendants(statistics).OfType<ComboBox>().FirstOrDefault(c => c.Visible && c.Items.Count == 4);
+        int oldPeriod = -1;
+        Click(() => statistics, _ => Period(), "Wähle eine andere Zeitgruppierung: Tage, Wochen oder Monate. Die Demo wird nach dem Überblick wieder zurückgestellt.",
+            enter: () => oldPeriod = Period()?.SelectedIndex ?? -1, complete: () => Period()?.SelectedIndex != oldPeriod);
         Info(root, _ => home, "Du bist startklar. Den Überblick kannst du jederzeit oben in den allgemeinen Einstellungen erneut öffnen.", enter: () => { statistics?.Hide(); vision?.Hide(); Activate(); });
         tutorial = new TutorialSession(steps, () =>
         {

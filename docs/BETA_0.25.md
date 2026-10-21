@@ -1,6 +1,25 @@
-# 0.25.0 beta testing
+# 0.25.1 beta testing
 
 Development happens on `dev/0.25.0`. The stable `main` branch and `v0.24.0` release are not replaced by this branch.
+
+## 0.25.1 corrections
+
+Tutorial navigation is beside the step counter. Left/Right keys and the arrow buttons can explicitly skip an interaction; Space still waits for a required interaction, except for the lesson-card actions. Statistic type and time grouping now require a real selection change. Close and navigation glyphs use centered vector strokes. Connector arrows are omitted when a large target surrounds the information card.
+
+The tutorial sample is a synthetic five-half-move game, analysed locally with Stockfish 19 at requested depth 12. Its complete analysis is embedded in `Samples/tutorial-game.json`; no user game or profile is included. Terminal mating lines can end before the requested depth. This is engine analysis, not a claim of mathematically optimal play.
+
+The generator forecast now marks the approach sequence complete and extrapolates from the latest observed continuation rates for each side. Large closed cohorts pull an obsolete estimate down more quickly. Estimates remain heuristic; the visible progress never moves backwards and a completed job uses its actual card count.
+
+**Stronger crossing reduction (beta)** is available in the Branch window's left settings panel, off by default. It searches coordinated column orders, subtree exchanges and local placements, retaining only strictly fewer globally counted edge crossings. It does not change moves, learning cards or graph connections. Extra work is limited to approximately 3.5 seconds per uncached layout; oversized candidate sets fall back unchanged. Results use the existing geometry cache. The optional search may trade some family compactness for fewer crossings.
+
+Local diagnostic measurements on the bundled examples (not portable performance guarantees):
+
+| Example | Visual nodes | Crossings before → after | Initial layout + optional pass |
+| --- | ---: | ---: | ---: |
+| Pirc | 521 | 40 → 10 | about 2.2 s |
+| English | 1,009 | 633 → 521 | about 4.4 s |
+
+Counts use straight connection segments, excluding shared endpoints. Independent recounts and node-spacing checks verify accepted layouts. A time-bounded search may find a different improvement on a busier/slower machine; it never intentionally accepts an equal or worse layout.
 
 ## Compatibility and isolation
 

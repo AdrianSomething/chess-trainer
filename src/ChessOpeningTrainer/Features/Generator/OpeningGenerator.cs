@@ -243,6 +243,7 @@ public sealed class OpeningGenerator
                 offset++;
                 var next = Register(prefixPosition, offset, out _);
                 current.Moves.Add(new() { Uci = u, Next = next, NextId = next.Id, Explanation = "Manuell vorgegebene Startsequenz" });
+                completedPreviewNodes.Add(current.Id!);
                 if (learner)
                     cards++;
                 current = next;

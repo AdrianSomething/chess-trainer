@@ -4,7 +4,7 @@ title: "Chess Opening Trainer"
 type: software
 authors:
   - name: "Chess Opening Trainer contributors"
-version: "0.25.0-beta.1"
+version: "0.25.1-beta"
 license: GPL-3.0-or-later
 repository-code: "https://github.com/AdrianSomething/chess-trainer"
 url: "https://github.com/AdrianSomething/chess-trainer"

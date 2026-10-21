@@ -196,7 +196,7 @@ public sealed partial class OpeningGeneratorForm
         using var font = new Font(Font.FontFamily, Math.Clamp(board.Width / 24f, 22, 34), FontStyle.Bold);
         using var brush = new SolidBrush(Color.FromArgb(235, Color.White));
         using var shadow = new SolidBrush(Color.FromArgb(150, Color.Black));
-        var bounds = new RectangleF(14, board.Height / 2f - 65, board.Width - 28, 110);
+        var bounds = new RectangleF(2, board.Height / 2f - 65, board.Width - 28, 110);
         using var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
         e.Graphics.DrawString(text, font, shadow, new RectangleF(bounds.X + 1, bounds.Y + 1, bounds.Width, bounds.Height), format);
         e.Graphics.DrawString(text, font, brush, bounds, format);
@@ -204,7 +204,7 @@ public sealed partial class OpeningGeneratorForm
         {
             using var pen = new Pen(Color.FromArgb(185, Color.White), 3);
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            e.Graphics.DrawArc(pen, board.Width / 2f - 12, bounds.Bottom + 4, 24, 24, Environment.TickCount64 % 1000 * .36f, 260);
+            e.Graphics.DrawArc(pen, bounds.X + bounds.Width / 2 - 22, bounds.Bottom + 4, 44, 44, Environment.TickCount64 % 1000 * .36f, 260);
         }
     }
 }

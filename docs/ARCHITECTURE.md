@@ -39,7 +39,7 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Puzzle source / refill | Features/Puzzles/Generation, PuzzleSupply.cs, PuzzleBank.Refill.cs |
 | Puzzle view registration | Features/Puzzles/Tabs; PuzzleTab attribute |
 | Branch feature registration | Features/Branches/Actions; IBranchFeature and BranchFeature attribute |
-| Branch layout / crossing reduction | BranchGraphBuilder.cs, BranchLayoutCache.cs, BranchBetaLayout.cs, BranchCrossingReduction.cs; BranchCanvas.cs renders the result |
+| Branch layout / crossing reduction | BranchGraphBuilder.cs, BranchLayoutCache.cs, BranchBetaLayout.cs, BranchCrossingReduction.cs, optional BranchGlobalRefinement.cs; BranchCanvas.cs renders the result |
 | Extract an opening variation | Features/Branches/BranchExtraction.cs, Actions/ExtractOpeningFeature.cs |
 | Staged branch edits / undo / persistence | BranchGraphEdit.cs, BranchForm.Editing.cs, BranchEditSession.cs |
 | Match-to-branch mapping | BranchGameAnalysis.cs, BranchGameMatchIndex.cs, BranchAnalysisCaptions.cs |
@@ -52,6 +52,7 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Generator sections / forecasts | Features/Generator/DepthSection.cs, GeneratorForecast.cs, GeneratorPreviewGraph.cs |
 | Generator job scheduling / approval / cooling | Features/Generator/GeneratorWorkQueue.cs; OpeningGeneratorForm.Queue.cs owns its UI lifetime |
 | Guided overview / first-run language | Features/Tutorial; App/MainForm.Tutorial.cs defines the route |
+| Pre-analysed tutorial game | Features/Tutorial/TutorialSampleGame.cs; embedded Samples/tutorial-game.json, isolated tutorial storage |
 | Opening menu bookmarks / order | App/OpeningMenuOrder.cs; UserPreferences.BookmarkedOpenings stores IDs only |
 | Audio recovery | Infrastructure/Customization/SoundVoice.cs |
 | Languages and tooltips | Infrastructure/Customization/L.cs, Customization/languages.json, UI/Common/LocalizedToolTips.cs |

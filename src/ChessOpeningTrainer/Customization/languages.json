@@ -1,6 +1,11 @@
 {
   "languages": [{"id":"de","name":"Deutsch"},{"id":"en","name":"English"}],
   "rows": [
+    {"de":"Zusätzliche, zeitlich begrenzte Suche nach weniger Verbindungskreuzungen. Nur messbar bessere Anordnungen werden übernommen. Bei großen Branches dauert das erste Laden etwas länger; das Ergebnis wird zwischengespeichert.","en":"Additional time-bounded search for fewer edge crossings. Only measurably better layouts are accepted. Large branches take a little longer to load initially; the result is cached."},
+    {"de":"Stärkere Kreuzungsreduktion (Beta)","en":"Stronger crossing reduction (beta)"},
+    {"de":"In der Partienliste wählst du eine Partie aus. Das Beispiel ist bereits analysiert.","en":"Select a game from the list. The example has already been analysed."},
+    {"de":"Highlights zeigen wichtige Entscheidungen der bereits analysierten Beispielpartie.","en":"Highlights show important decisions in the pre-analysed example game."},
+    {"de":"Wähle eine andere Zeitgruppierung: Tage, Wochen oder Monate. Die Demo wird nach dem Überblick wieder zurückgestellt.","en":"Choose a different time grouping: days, weeks or months. The demo setting is restored after the tour."},
     {"de":"Bitte zuerst den Überblick beenden, bevor du diese Funktion ausprobierst.","en":"Please finish the tour before trying this feature."},
     {"de":"Abgeschlossene Aufträge entfernen","en":"Clear all completed jobs"},
     {"de":"Auftrag entfernen","en":"Clear job"},

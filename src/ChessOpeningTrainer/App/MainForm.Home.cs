@@ -121,9 +121,8 @@ public sealed partial class MainForm
         {
             if (tutorialGamesDirectory is { } tutorialDirectory)
             {
-                var demo = new PersonalGameStore(tutorialDirectory);
-                if (demo.Games.Count == 0) demo.Import("[Event \"Tutorial sample\"]\n[White \"Example White\"]\n[Black \"Example Black\"]\n[Result \"1-0\"]\n\n1. e4 f6 2. d4 g5 3. Qh5# 1-0");
-                gamesWindow = new GameLibraryForm(engine, tutorialDirectory, demo.Games[0].Id, analyzeOnOpen: true);
+                var sample = TutorialSampleGame.Load(tutorialDirectory);
+                gamesWindow = new GameLibraryForm(engine, tutorialDirectory, sample.Id);
             }
             if (gamesWindow is null || gamesWindow.IsDisposed)
                 gamesWindow = new GameLibraryForm(engine, dataDir);

@@ -2,6 +2,17 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.25.1-beta — Development
+
+- Centered tutorial close/navigation glyphs, moved navigation beside the step counter, and enabled Left/Right navigation during interactive steps.
+- Suppressed tutorial arrows where the target surrounds the information card; fitted text to narrower cards.
+- Require actual statistic-type and time-grouping changes during the tutorial (explicit navigation arrows can still skip steps).
+- Bundled a synthetic, pre-analysed tutorial game so its evaluation graph opens without an engine wait.
+- Corrected generator forecasts after depth cutoffs and excluded already-completed approach moves from the active frontier.
+- Added an optional, default-off stronger crossing-reduction search with a bounded runtime and a strict globally-better-only acceptance rule.
+- Shifted generator status text slightly left and enlarged its loading ring.
+- Kept opening formats, stable-release behavior and private user data unchanged.
+
 ## 0.25.0-beta.1 — Development
 
 - Added prioritized opening-generation jobs with shared engine workers, per-job approval and optional queue-wide pauses.

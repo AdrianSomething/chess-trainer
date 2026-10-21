@@ -42,6 +42,12 @@ internal sealed class TutorialSession : IDisposable, IMessageFilter
         window.Show(); window.Activate(); Refresh();
     }
     private bool CanAdvance => index < furthest || !steps[index].Interaction;
+    private void Forward()
+    {
+        if (disposed || changing) return;
+        if (index == furthest && steps[index].Interaction) steps[index].Skip?.Invoke();
+        Next();
+    }
     private void Refresh()
     {
         if (disposed || index < 0 || index >= steps.Count) return;
@@ -56,6 +62,7 @@ internal sealed class TutorialSession : IDisposable, IMessageFilter
                 overlay = new(); overlays.Add(form, overlay);
                 overlay.Advance += () => { if (form == steps[index].Window() && CanAdvance) Next(); };
                 overlay.Previous += () => { if (form == steps[index].Window()) Review(index - 1); };
+                overlay.Forward += () => { if (form == steps[index].Window()) Forward(); };
                 overlay.Abort += Dispose; form.Controls.Add(overlay); overlay.BringToFront();
             }
             bool here = form == active;
@@ -72,6 +79,19 @@ internal sealed class TutorialSession : IDisposable, IMessageFilter
         var step = steps[index];
         var source = Control.FromHandle(m.HWnd);
         bool inOverlay = overlays.Values.Any(o => o == source || source is not null && o.Contains(source));
+        if (m.Msg == 0x0201 && step.Window() is { } navigationHost && overlays.TryGetValue(navigationHost, out var navigationOverlay)
+            && navigationOverlay.NavigationAt(Cursor.Position) is int direction && direction != 0)
+        {
+            foreach (var combo in Descendants(navigationHost).OfType<ComboBox>().Where(c => c.DroppedDown)) combo.DroppedDown = false;
+            if (direction < 0) Review(index - 1); else Forward();
+            return true;
+        }
+        if ((m.Msg is 0x0100 or 0x0101) && (Keys)(int)m.WParam is Keys.Left or Keys.Right)
+        {
+            if (m.Msg == 0x0100 && ((long)m.LParam & (1L << 30)) == 0)
+            { if ((Keys)(int)m.WParam == Keys.Left) Review(index - 1); else Forward(); }
+            return true;
+        }
         if (m.Msg == 0x0201 && step.Window() is { } active && overlays.TryGetValue(active, out var activeOverlay)
             && CanAdvance && activeOverlay.IsAdvanceAt(Cursor.Position))
         {
