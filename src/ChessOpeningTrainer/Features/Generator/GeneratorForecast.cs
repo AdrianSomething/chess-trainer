@@ -32,16 +32,60 @@ public sealed class GeneratorForecast
         Finished = snapshot.Finished;
         Stopped = snapshot.Stopped;
         if (Stopped) elapsed.Stop();
-        if (Finished) { progress = 1; elapsed.Stop(); return; }
+        if (Finished) { EstimatedCards = CompletedCards; progress = 1; elapsed.Stop(); return; }
         // A prefilled start sequence is not work already done by the engine.
         // The previous node/pending ratio could incorrectly report 30% here.
         long completed = Math.Max(0, snapshot.Cards - prefixCards);
         long pendingLowerBound = Math.Max(1, (snapshot.Pending + 1L) / 2);
-        EstimatedCards = Math.Max(EstimatedCards, snapshot.Cards + pendingLowerBound);
+        long lowerBound = snapshot.Cards + pendingLowerBound;
+        if (completed >= 8 && snapshot.Nodes.Count(n => n.Completed) >= 12)
+        {
+            // Learn continuation/termination rates from processed nodes at each
+            // depth. Unlike a maximum-only estimate this can correct an overly
+            // broad initial forecast downwards when filters close many branches.
+            var useful = snapshot.Nodes.Where(n => !n.IsTerminalCounter).ToArray();
+            var ids = useful.Select(n => n.Id).ToHashSet();
+            var outgoing = snapshot.Edges.Where(e => ids.Contains(e.To)).GroupBy(e => e.From).ToDictionary(g => g.Key, g => g.Count());
+            var cohorts = useful.Where(n => n.Completed).GroupBy(n => n.Depth).ToDictionary(g => g.Key, g => g.ToArray());
+            var rates = cohorts.ToDictionary(g => g.Key, g => g.Value.Average(n => (double)outgoing.GetValueOrDefault(n.Id)));
+            // For unseen deeper layers, use the latest observed layer of the
+            // same side. A broad early layer must not override a later cutoff.
+            double Rate(int depth)
+            {
+                if (rates.TryGetValue(depth, out double exact)) return exact;
+                int latest = rates.Keys.Where(d => d < depth && (d & 1) == (depth & 1)).DefaultIfEmpty(-1).Max();
+                return latest >= 0 ? rates[latest] : 1;
+            }
+            double FutureCards(int depth)
+            {
+                double population = 1, cards = 0;
+                for (int d = depth; d < snapshot.MaxDepth && population > .01; d++)
+                {
+                    population *= Rate(d);
+                    cards = Math.Min(1_000_000_000, cards + population * .5);
+                    if (cards >= 1_000_000_000) break;
+                }
+                return cards;
+            }
+            var frontier = useful.Where(n => !n.Completed).ToArray();
+            double projected = snapshot.Cards + frontier.Sum(n => FutureCards(n.Depth));
+            long observed = (long)Math.Min(1_000_000_000, Math.Max(lowerBound, projected));
+            // React strongly when a sampled frontier layer is mostly closed.
+            // Keep some smoothing for small/noisy cohorts, not an obsolete
+            // exponential estimate that survives until the final notification.
+            bool cutoff = frontier.Any(n => cohorts.TryGetValue(n.Depth, out var cohort) && cohort.Length >= 4 && rates[n.Depth] < .5);
+            double weight = cutoff ? .9 : .5;
+            EstimatedCards = Math.Max(lowerBound, (long)Math.Round((1 - weight) * EstimatedCards + weight * observed));
+        }
+        else EstimatedCards = Math.Max(EstimatedCards, lowerBound);
         double fraction = completed / (double)Math.Max(1, EstimatedCards - prefixCards);
         progress = Math.Max(progress, Math.Min(.98, fraction));
     }
     public void Stop() { Stopped = true; elapsed.Stop(); }
+    public void SetWorking(bool active)
+    {
+        if (active && !Stopped && !Finished) elapsed.Start(); else elapsed.Stop();
+    }
 
     public TimeSpan? Remaining
     {

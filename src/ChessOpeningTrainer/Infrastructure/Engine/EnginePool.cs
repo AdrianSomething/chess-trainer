@@ -86,6 +86,9 @@ public sealed class EnginePool : IAsyncDisposable
                 }
             };
             process.Start();
+            // Keep the UI/audio responsive when many background engines compete.
+            try { process.PriorityClass = ProcessPriorityClass.BelowNormal; }
+            catch (Exception e) when (e is System.ComponentModel.Win32Exception or InvalidOperationException) { }
             processIds[process.Id] = 0;
             registration = token.Register(() =>
             {

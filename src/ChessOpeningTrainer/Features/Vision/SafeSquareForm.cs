@@ -13,7 +13,7 @@ public sealed class SafeSquareForm : VisionChallengeForm
         "Rette die markierte Figur auf ein sicheres Feld, das keine gegnerische Figur angreift.")
     {
         ownsBuffer = preparedBuffer is null;
-        buffer = preparedBuffer ?? new(VisionSafety.Generate, e => e.Position.ToFen() + "|" + e.Origin, Lifetime.Token);
+        buffer = preparedBuffer ?? new(new VisionSafetyGenerator(new StockfishEngine(AppContext.BaseDirectory)).Generate, e => e.Position.ToFen() + "|" + e.Origin, Lifetime.Token);
         AddView(board);
         Controls.Add(hideDestinations);
         hideDestinations.CheckedChanged += (_, _) => UpdateDestinations();

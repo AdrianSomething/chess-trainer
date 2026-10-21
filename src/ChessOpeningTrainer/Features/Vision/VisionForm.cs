@@ -173,7 +173,7 @@ public sealed partial class VisionForm : LocalizedForm
                 VisionChallengeForm training;
                 if (extra == 0)
                 {
-                    safetyBuffer ??= new(VisionSafety.Generate, e => e.Position.ToFen() + "|" + e.Origin, lifetime.Token);
+                    safetyBuffer ??= new(new VisionSafetyGenerator(comparisons is null ? engine ?? new StockfishEngine(AppContext.BaseDirectory) : (engine ?? new StockfishEngine(AppContext.BaseDirectory)).ForGeneration(comparisons.Budget)).Generate, e => e.Position.ToFen() + "|" + e.Origin, lifetime.Token);
                     training = new SafeSquareForm(directory, safetyBuffer);
                 }
                 else if (extra == 1) training = new CompareMovesForm(directory, engine ?? new StockfishEngine(AppContext.BaseDirectory), comparisons);

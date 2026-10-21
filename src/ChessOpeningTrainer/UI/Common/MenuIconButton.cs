@@ -98,6 +98,11 @@ public class MenuIconButton : Button
         using var pen = new Pen(Color.White, 2.3f) { LineJoin = LineJoin.Round };
         switch (name)
         {
+            case "bookmark": case "bookmark-filled":
+                Point[] bookmark = [new(6, 3), new(20, 3), new(20, 24), new(13, 18), new(6, 24)];
+                if (name == "bookmark-filled") g.FillPolygon(Brushes.White, bookmark);
+                else g.DrawPolygon(pen, bookmark);
+                break;
             case "pause":
                 g.FillRectangle(Brushes.White, 6, 3, 5, 20); g.FillRectangle(Brushes.White, 16, 3, 5, 20); break;
             case "play":
@@ -148,6 +153,10 @@ public class MenuIconButton : Button
                 break;
             case "generator":
                 g.DrawRectangle(pen, 1, 2, 23, 16); g.DrawLine(pen, 13, 18, 13, 23); g.DrawLine(pen, 6, 24, 20, 24); break;
+            case "graph-preview":
+                g.DrawRectangle(pen, 1, 2, 24, 22); g.DrawLine(pen, 1, 7, 25, 7);
+                g.DrawLine(pen, 6, 15, 12, 15); g.DrawLine(pen, 12, 15, 20, 11); g.DrawLine(pen, 12, 15, 20, 20);
+                g.FillEllipse(Brushes.White, 3, 12, 5, 5); g.FillEllipse(Brushes.White, 18, 9, 4, 4); g.FillEllipse(Brushes.White, 18, 18, 4, 4); break;
             case "custom-game":
                 g.FillRectangle(Brushes.White, 2, 2, 11, 11); g.FillRectangle(Brushes.White, 13, 13, 11, 11); g.DrawRectangle(pen, 2, 2, 22, 22); break;
             case "local-game":

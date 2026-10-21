@@ -16,7 +16,7 @@ public sealed partial class MainForm
         puzzleWindow.Activate();
     }
 
-    private void OpenBranch(OpeningDefinition item, Position? current = null)
+    internal void OpenBranch(OpeningDefinition item, Position? current = null)
     {
         var window = new BranchForm(item, progress, engine, current);
         window.LearnRequested += p =>
@@ -31,7 +31,7 @@ public sealed partial class MainForm
     {
         Preferences.Current.LastLearningOpening = item.Id;
         Preferences.Save();
-        var window = new MainForm(true, progress);
+        var window = new MainForm(true, tutorialLearning?.Progress ?? progress);
         window.Show();
         if (plan is null)
             window.Start(item, "Lernen");
@@ -119,6 +119,11 @@ public sealed partial class MainForm
         ownGames.SetBounds(575, 172, 355, 32);
         ownGames.Click += (_, _) =>
         {
+            if (tutorialGamesDirectory is { } tutorialDirectory)
+            {
+                var sample = TutorialSampleGame.Load(tutorialDirectory);
+                gamesWindow = new GameLibraryForm(engine, tutorialDirectory, sample.Id);
+            }
             if (gamesWindow is null || gamesWindow.IsDisposed)
                 gamesWindow = new GameLibraryForm(engine, dataDir);
             gamesWindow.Show();
@@ -134,7 +139,7 @@ public sealed partial class MainForm
         foreach (var button in navigation) { button.Size = new(244, 52); button.Margin = new(0, 0, 0, 10); sidebar.Controls.Add(button); }
         var cards = new List<Panel>();
         int y = 66;
-        foreach (var item in openings)
+        foreach (var item in OpeningMenuOrder.Sort(openings, Preferences.Current.BookmarkedOpenings))
         {
             var panel = new Panel
             {
@@ -157,6 +162,20 @@ public sealed partial class MainForm
             learn.SetBounds(710, 15, 175, 35);
             learn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             learn.Click += (_, _) => OpenLearning(item);
+            bool bookmarked = Preferences.Current.BookmarkedOpenings.Contains(item.Id);
+            var bookmark = new MenuIconButton(bookmarked ? "bookmark-filled" : "bookmark")
+            {
+                AccessibleName = bookmarked ? "Lesezeichen entfernen" : "Opening als Lesezeichen markieren",
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                BackColor = panel.BackColor
+            };
+            bookmark.FlatAppearance.BorderSize = 0;
+            bookmark.SetBounds(668, 15, 34, 35);
+            bookmark.Click += (_, _) =>
+            {
+                if (!Preferences.Current.BookmarkedOpenings.Add(item.Id)) Preferences.Current.BookmarkedOpenings.Remove(item.Id);
+                Preferences.Save(); LoadHome();
+            };
             var free = Button("Freeplay");
             free.SetBounds(710, 60, 175, 35);
             free.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -179,8 +198,12 @@ public sealed partial class MainForm
             delete.SetBounds(255, 143, 175, 32);
             delete.Visible = !IsDefault(item);
             delete.Click += (_, _) => DeleteOpening(item);
-            panel.Controls.AddRange([name, count, bar, learn, free, clear, graph, delete]);
-            panel.Resize += (_, _) => { name.Width = count.Width = Math.Max(160, panel.Width - 220); bar.Width = Math.Max(160, panel.Width - 220); };
+            panel.Controls.AddRange([name, count, bar, learn, bookmark, free, clear, graph, delete]);
+            panel.Resize += (_, _) =>
+            {
+                name.Width = Math.Max(160, panel.Width - 264);
+                count.Width = bar.Width = Math.Max(160, panel.Width - 220);
+            };
             cards.Add(panel);
             content.Controls.Add(panel);
             y += 203;

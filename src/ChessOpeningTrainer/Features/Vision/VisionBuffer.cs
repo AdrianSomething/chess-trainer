@@ -9,6 +9,8 @@ public sealed class VisionBuffer<T> : IDisposable
     private readonly CancellationTokenSource lifetime;
     private int nextSide, disposed;
     public VisionBuffer(Func<bool, CancellationToken, T> generate, Func<T, string> key, CancellationToken token)
+        : this((white, ct) => Task.FromResult(generate(white, ct)), key, token) { }
+    public VisionBuffer(Func<bool, CancellationToken, Task<T>> generate, Func<T, string> key, CancellationToken token)
     {
         lifetime = CancellationTokenSource.CreateLinkedTokenSource(token);
         var ct = lifetime.Token;
@@ -23,7 +25,7 @@ public sealed class VisionBuffer<T> : IDisposable
                     var queue = side ? white : black;
                     if (queue.Reader.Count >= 15) { await Task.Delay(100, ct); continue; }
                     T item;
-                    do { ct.ThrowIfCancellationRequested(); item = generate(side, ct); } while (!used.Add(key(item)));
+                    do { ct.ThrowIfCancellationRequested(); item = await generate(side, ct).ConfigureAwait(false); } while (!used.Add(key(item)));
                     await queue.Writer.WriteAsync(item, ct);
                 }
             }

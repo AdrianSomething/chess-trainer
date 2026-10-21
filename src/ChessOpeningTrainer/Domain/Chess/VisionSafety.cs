@@ -18,7 +18,7 @@ public static class VisionSafety
                     var next = p.Clone(); next.Apply(move);
                     if (!Enumerable.Range(0, 64).Any(i => next.Squares[i] != '\0' && char.IsUpper(next.Squares[i]) != p.WhiteToMove && VisionRules.Attacks(next, i, move.To))) destinations.Add(move.To);
                 }
-                if (destinations.Count > 0 && legal.Select(m => m.To).Distinct().Count() > destinations.Count)
+                if (destinations.Count == 1 && legal.Select(m => m.To).Distinct().Count() > 1)
                     return new(p, square, destinations);
             }
         }

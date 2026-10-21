@@ -109,7 +109,9 @@ public sealed class AnalysisPresenter : IDisposable
         if (current is null)
             return;
         EvaluationPresentation.Show(bar, p, current);
-        if (wantLines && painted != current)
+        // Checkpoint restoration can clear the view without changing the FEN
+        // or cached result. Repaint that result instead of rerunning the engine.
+        if (wantLines && (painted != current || rows.Controls.Count == 0))
         {
             rows.ShowLines(p, current);
             painted = current;

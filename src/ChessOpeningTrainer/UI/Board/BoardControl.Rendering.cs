@@ -4,6 +4,8 @@ using ChessMove = ChessOpeningTrainer.Move;
 namespace ChessOpeningTrainer;
 public partial class BoardControl
 {
+    /// <summary>Feature-owned overlays painted after pieces, in control coordinates.</summary>
+    public event PaintEventHandler? ForegroundPaint;
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
@@ -119,6 +121,8 @@ public partial class BoardControl
             var center = SquareCenter(assessment.Square, cell);
             AssessmentBadge.Draw(g, new RectangleF(center.X + cell * .17f, center.Y - cell * .48f, cell * .32f, cell * .32f), assessment.Category);
         }
+        g.TranslateTransform(-BoardLeft, -22);
+        ForegroundPaint?.Invoke(this, e);
     }
 
     private void PaintCaptures(Graphics g)

@@ -3,11 +3,15 @@ using System.Text.Json;
 namespace ChessOpeningTrainer;
 public sealed class UserPreferences
 {
+    public bool GeneratorRestEnabled { get; set; }
+    public int GeneratorWorkMinutes { get; set; } = 60;
+    public int GeneratorRestMinutes { get; set; } = 5;
     public GameAnalysisOptions GameAnalysis { get; set; } = new();
     public string Language { get; set; } = "en";
     public bool DebugInformation { get; set; }
     public bool UseCustomIcons { get; set; } = true;
     public string? LastLearningOpening { get; set; }
+    public HashSet<string> BookmarkedOpenings { get; set; } = [];
     public int EvaluationWorkers { get; set; } = 3;
     public int TacticStockPerLane { get; set; } = 10;
     public int TacticGenerationWorkers { get; set; } = 2;
@@ -34,12 +38,14 @@ public sealed class UserPreferences
     // V18 starts with improved placement, independently of V17's saved beta opt-in.
     // Keep the older serialized field above so existing settings remain readable.
     public bool BranchLegacyPositioning { get; set; }
+    public bool BranchGlobalRefinementBeta { get; set; }
     public double BranchColumnSpacing { get; set; } = 1;
     public bool VisionIndirectDefenders { get; set; }
     public int VisionMemoryDifficulty { get; set; } = 1;
     public int VisionGenerationWorkers { get; set; } = 2;
     public int VisionGenerationThreads { get; set; } = 1;
     public bool VisionStatisticsDemo { get; set; }
+    public bool TutorialOffered { get; set; }
     public int HeartLossAnimation { get; set; }
     public bool LocalContinuousAnalysis { get; set; }
 }
