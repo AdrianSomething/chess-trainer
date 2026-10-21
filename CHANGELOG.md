@@ -2,6 +2,19 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.25.3 — 2026-10-21
+
+Stable release of the 0.25 development series. Highlights since 0.24.0:
+
+- Queue opening-generation jobs with priorities, resumable approval blocks, optional work/rest intervals and one shared progress window.
+- Keep unfinished job drafts, remove completed jobs, and open their branches or learning cards directly.
+- Bookmark openings, extract a selected branch as a separate repertoire, and reuse cached graph layouts. Optional stronger crossing reduction remains opt-in.
+- Introduce a reversible 46-step English/German guided tour with an already analysed example game, window-local instructions and explicit interaction confirmations.
+- Improve audio recovery during background work and require a unique safe destination with an engine quality check in Save a Piece.
+- Fix restored tutorial engine variations and statistics previews.
+
+Existing opening schemas and IDs remain compatible with 0.24.0. The previous release remains available as a fallback. The final beta passed 1,421 local regression checks; stable promotion changes version metadata and release documentation only.
+
 ## 0.25.3-beta — Development
 
 - Restore cached engine variations immediately when revisiting a tutorial lesson checkpoint.

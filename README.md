@@ -4,11 +4,11 @@ An open-source, local-first chess training application featuring built-in engine
 
 **Information:** This application was developed with the help of codex. More information about the used prompts and the methodology can be found in [docs/ai-development](docs/ai-development/README.md). Figma was used to create some icons and Audacity to edit the credited sound effects.
 
-**Current development version:** version 0.24.0.
+**Current stable version:** version 0.25.3.
 
-Windows release assets will be published separately on the Releases page.
+Windows release assets are available on the [0.25.3 Releases page](https://github.com/AdrianSomething/chess-trainer/releases/tag/v0.25.3). [0.24.0 remains available as a fallback](https://github.com/AdrianSomething/chess-trainer/releases/tag/v0.24.0).
 
-[Download releases](https://github.com/AdrianSomething/chess-trainer/releases) · [Windows guide](docs/INSTALLATION.md) · [Developer guide](docs/DEVELOPMENT.md) · [Architecture](docs/ARCHITECTURE.md)
+[Download 0.25.3 for Windows](https://github.com/AdrianSomething/chess-trainer/releases/download/v0.25.3/ChessOpeningTrainer-0.25.3-win-x64.zip) · [Windows guide](docs/INSTALLATION.md) · [Developer guide](docs/DEVELOPMENT.md) · [Architecture](docs/ARCHITECTURE.md)
 
 
 ## Explore
@@ -55,8 +55,8 @@ Windows release assets will be published separately on the Releases page.
 
 ## Download and start
 
-1. Open [Releases](https://github.com/AdrianSomething/chess-trainer/releases) and choose the latest published release.
-2. Download **ChessOpeningTrainer-0.24.0-win-x64.zip** (or its newer equivalent), not GitHub's automatic “Source code” archive.
+1. Open [Release 0.25.3](https://github.com/AdrianSomething/chess-trainer/releases/tag/v0.25.3).
+2. Download [**ChessOpeningTrainer-0.25.3-win-x64.zip**](https://github.com/AdrianSomething/chess-trainer/releases/download/v0.25.3/ChessOpeningTrainer-0.25.3-win-x64.zip), not GitHub's automatic “Source code” archive.
 3. Right-click the ZIP and choose **Extract All**.
 4. Run **ChessOpeningTrainer.exe** from the extracted folder. Keep its supporting folders alongside it.
 
