@@ -1,6 +1,6 @@
 # Chess Opening Trainer
 
-An open-source, local-first chess training application featuring built-in engine evaluation, advanced engine-assisted opening-branch creation, interactive learning (learning tree visualized as branch-graph), automated puzzle generation, game analysis, and custom training modes.
+An open-source, local-first chess training application featuring built-in engine evaluation, advanced engine-assisted (Stockfish) opening-branch creation, interactive learning (learning tree visualized as branch-graph), automated puzzle generation, game analysis, and custom training modes.
 
 **Information:** This application was developed with the help of codex. More information about the used prompts and the methodology can be found in [docs/ai-development](docs/ai-development/README.md). Figma was used to create some icons and Audacity to edit the credited sound effects.
 
@@ -23,7 +23,7 @@ Windows release assets are available on the [0.25.3 Releases page](https://githu
 - Use **Branch-Mode** to view and edit the moving-branches of the opening you want to learn.
 - Use **Learn-Mode** to learn your opening like index cards.
 - Use **Freeplay-Mode** to practice the move sequences in order in a game against an engine.
-- Use **Opening Branch Generator** to customize and create your own branch with the help of an engine or just add an opening json file directly into the Opening folder.
+- Use **Opening Branch Generator** to customize and create your own branches in a queue system with the help of an engine (or just add an opening json file directly into the Opening folder).
 
 ### Puzzle Mode:
 ![Puzzle-Mode](docs/images/puzzlemode.png)
