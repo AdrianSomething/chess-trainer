@@ -17,6 +17,17 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
         }
     }
     public event Action<OpeningDefinition>? Generated;
+    public void PrepareSequence(IReadOnlyList<string> moves)
+    {
+        undo.Clear(); position = Position.FromFen(Position.InitialFen);
+        foreach (string uci in moves)
+        {
+            var move = MoveGenerator.GenerateLegal(position).First(m => m.Uci == uci);
+            undo.Push(position.Clone()); position.Apply(move);
+        }
+        color.SelectedIndex = position.WhiteToMove ? 1 : 0;
+        RefreshPosition();
+    }
     public void PrepareFrom(OpeningDefinition opening, Position target)
     {
         var path = GraphOperations.Positions(opening).First(w => OpeningStore.PositionKey(w.Position) == OpeningStore.PositionKey(target)).Path;

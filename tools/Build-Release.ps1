@@ -82,7 +82,7 @@ foreach ($name in @('LICENSE','COPYRIGHT.md','THIRD_PARTY_NOTICES.md')) {
 }
 New-Item -ItemType Directory -Path (Join-Path $app 'docs'), (Join-Path $app 'licenses/dotnet') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $root 'docs/INSTALLATION.md') -Destination (Join-Path $app 'README.md')
-foreach ($name in @('LICENSE_COMPLIANCE.md','ASSET_PROVENANCE.md','PRIVACY.md','RELEASE_VALIDATION.md')) {
+foreach ($name in @('LICENSE_COMPLIANCE.md','ASSET_PROVENANCE.md','PRIVACY.md','RELEASE_VALIDATION.md','DATASETS.md')) {
     Copy-Item -LiteralPath (Join-Path $root "docs/$name") -Destination (Join-Path $app "docs/$name")
 }
 Get-ChildItem -LiteralPath (Join-Path $root 'third_party/dotnet') -File | Copy-Item -Destination (Join-Path $app 'licenses/dotnet')

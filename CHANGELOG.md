@@ -2,6 +2,17 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.26.0-beta — Development
+
+- Add Data sets: stream PGN, ZIP, gzip and Zstandard archives, download selected Lichess months with checksum verification and resumable progress, and trim local datasets using rating, result, termination, clock and opening-prefix filters.
+- Build a disk-backed frequency DAG with exact outcome counts and transpositions. The final index uses binary moves, variable-length counters, prefix-coded positions and independently compressed blocks, not PGN or JSON trees.
+- Add an optional continuation cutoff (default 0: unlimited depth). A position reached in at most N games becomes a counted leaf. Active-selection/cutoff changes leave the last complete index intact and display an outdated-index warning.
+- Show a sample-based size range, lazy frequency-ordered branches, board previews, outcome bars and links to Custom Game and the Opening Branch Generator. Show dataset position counts in learning branches.
+- Add bounded order-preserving alignment to stronger crossing reduction; reject shifts that increase the measured crossing count.
+- Extend the bilingual tour with two dataset explanations (48 cards). Document a staged CI proposal; do not enable network download tests or publish private test data.
+
+This is a development build, not a stable release. See [dataset design and limits](docs/DATASETS.md).
+
 ## 0.25.3 — 2026-10-21
 
 Stable release of the 0.25 development series. Highlights since 0.24.0:

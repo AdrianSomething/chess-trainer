@@ -134,7 +134,7 @@ public static class BranchGraphBuilder
 
         bool improved = betaLayout ?? !Preferences.Current.BranchLegacyPositioning;
         bool refine = globalRefinement ?? Preferences.Current.BranchGlobalRefinementBeta;
-        string layoutKey = BranchLayoutCache.Key(vertices, improved, fastLayout, crossingPostPass) + (refine ? ":global-beta-1" : "");
+        string layoutKey = BranchLayoutCache.Key(vertices, improved, fastLayout, crossingPostPass) + (refine ? ":global-beta-2-aligned" : "");
         bool cachedLayout = BranchLayoutCache.Apply(layoutKey, vertices);
         if (!cachedLayout && !fastLayout && !improved)
         {
@@ -181,7 +181,7 @@ public static class BranchGraphBuilder
         if (!cachedLayout)
         {
             if (crossingPostPass && !fastLayout) BranchCrossingReduction.Apply(vertices);
-            if (refine && !fastLayout) BranchGlobalRefinement.Apply(vertices);
+            if (refine && !fastLayout) { BranchGlobalRefinement.Apply(vertices); BranchAlignmentPass.Apply(vertices); }
             BranchLayoutCache.Store(layoutKey, vertices);
         }
 

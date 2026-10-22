@@ -137,6 +137,8 @@ public sealed partial class MainForm
         Click(() => statistics, _ => Period(), "Wähle eine andere Zeitgruppierung: Tage, Wochen oder Monate.",
             enter: () => oldPeriod = Period()?.SelectedIndex ?? -1, complete: () => Period()?.SelectedIndex != oldPeriod, autoAdvance: false);
         Info(() => statistics, f => TutorialSession.Of<VisionTimelineChart>(f), "Jetzt kannst du deine Statistik erkunden.", allowInput: true);
+        Info(root, f => Find(f, "Datensätze"), "Datensätze zeigen, wie häufig Stellungen und Züge in gespielten Partien vorkommen und wie diese Partien ausgegangen sind.");
+        Info(root, f => Find(f, "Datensätze"), "Im Datensatzmodus kannst du Lichess-Monatsarchive herunterladen oder PGN-Dateien importieren, filtern und zu einem Häufigkeitsbaum zusammenfassen. Große Archive benötigen Zeit und freien Speicher.");
         Info(root, _ => home, "Du bist startklar. Den Überblick kannst du jederzeit oben in den allgemeinen Einstellungen erneut öffnen.");
         var lessonTargets = OpeningStore.LearningTargets(example).Take(2).ToArray();
         Position branchPosition = Position.FromFen(example.StartFen ?? Position.InitialFen);

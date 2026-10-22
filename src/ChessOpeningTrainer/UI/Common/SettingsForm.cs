@@ -5,6 +5,7 @@ public sealed class SettingsForm : LocalizedForm
     private readonly TabControl tabs = new ThemedTabControl { Dock = DockStyle.Fill };
     private readonly SettingsWheelGuard wheelGuard;
     public static void OpenVision() => OpenNamed("vision");
+    public static void OpenDatasets() => OpenNamed("datasets");
     public static void OpenPuzzles() => OpenNamed("puzzles");
     public static void OpenGameAnalysis() => OpenNamed("analysis");
     private static void OpenNamed(string name)
@@ -70,7 +71,9 @@ public sealed class SettingsForm : LocalizedForm
         branches.Controls.Add(new BranchSettingsEditor { Dock = DockStyle.Fill });
         tabs.TabPages.Add(branches);
         tabs.TabPages.Clear();
-        tabs.TabPages.AddRange([general, evaluation, markings, analysis, branches, vision, supply]);
+        var datasets = new TabPage("Datensätze") { Name = "datasets", BackColor = BackColor };
+        datasets.Controls.Add(DatasetSettingsEditor.Create());
+        tabs.TabPages.AddRange([general, evaluation, markings, analysis, branches, vision, supply, datasets]);
         var layout = new FlowLayoutPanel
         {
             Dock = DockStyle.Fill,

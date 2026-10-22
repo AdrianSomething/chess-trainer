@@ -3,6 +3,7 @@ using System.Text.Json;
 namespace ChessOpeningTrainer;
 public sealed class UserPreferences
 {
+    public DatasetSettings Datasets { get; set; } = new();
     public bool GeneratorRestEnabled { get; set; }
     public int GeneratorWorkMinutes { get; set; } = 60;
     public int GeneratorRestMinutes { get; set; } = 5;

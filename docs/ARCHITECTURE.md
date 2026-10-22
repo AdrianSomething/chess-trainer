@@ -22,6 +22,8 @@ The application is a **modular monolith**: one WinForms assembly, with responsib
 | Features/Games | PGN library, analysis, highlights |
 | Features/FreePlay and Features/LocalMatch | Setup, custom games, two-player games and clocks |
 | Features/Vision | Chess vision exercises, buffers and statistics |
+| Features/Datasets | Dataset catalog, import/download/trim views and lazy frequency-tree browsing |
+| Domain/Datasets and Infrastructure/Storage/Datasets | Filter contracts, streaming PGN, compact move/index codecs, local persistence and resumable HTTP |
 | Features/Tutorial | Window-local guided tour, input policy and first-run card |
 
 All paths above are relative to src/ChessOpeningTrainer.
@@ -56,6 +58,8 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Pre-analysed tutorial game | Features/Tutorial/TutorialSampleGame.cs; embedded Samples/tutorial-game.json, isolated tutorial storage |
 | Opening menu bookmarks / order | App/OpeningMenuOrder.cs; UserPreferences.BookmarkedOpenings stores IDs only |
 | Audio recovery | Infrastructure/Customization/SoundVoice.cs |
+| Dataset index / pruning / size forecast | DatasetIndexBuilder, DatasetIndexFormat, DatasetIndex, DatasetForecast; PackedMove is the shared 15-bit translation layer |
+| Dataset navigation / position frequencies | DatasetGraphModel reuses BranchCanvas; DatasetResultsStrip is shared with BranchForm.Datasets |
 | Languages and tooltips | Infrastructure/Customization/L.cs, Customization/languages.json, UI/Common/LocalizedToolTips.cs |
 | Theme and native controls | UI/Theming/UiPalette.cs, ComboArrowSurface.cs, WindowTitleTheme.cs |
 | Fresh public demonstration game | Infrastructure/Storage/BundledSampleGame.cs |

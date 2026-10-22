@@ -98,6 +98,9 @@ public class MenuIconButton : Button
         using var pen = new Pen(Color.White, 2.3f) { LineJoin = LineJoin.Round };
         switch (name)
         {
+            case "datasets":
+                g.DrawEllipse(pen, 3, 2, 20, 7); g.DrawLine(pen, 3, 5, 3, 21); g.DrawLine(pen, 23, 5, 23, 21);
+                g.DrawArc(pen, 3, 10, 20, 7, 0, 180); g.DrawArc(pen, 3, 17, 20, 7, 0, 180); break;
             case "bookmark": case "bookmark-filled":
                 Point[] bookmark = [new(6, 3), new(20, 3), new(20, 24), new(13, 18), new(6, 24)];
                 if (name == "bookmark-filled") g.FillPolygon(Brushes.White, bookmark);

@@ -4,6 +4,9 @@ namespace ChessOpeningTrainer;
 public sealed class BranchCanvas : Control
 {
     private readonly BranchCanvasCache renderCache = new();
+    // Optional data-driven appearance; normal opening branches keep their existing style.
+    public Func<BranchVertex, BranchVertex, float>? EdgeWeight { get; set; }
+    public Func<BranchVertex, (Color Color, float Width)?>? NodeBorder { get; set; }
     public List<BranchVertex> Vertices { get; } = [];
     public IReadOnlyDictionary<string, int> AnalysisExits { get; set; } = new Dictionary<string, int>();
     public IReadOnlyDictionary<string, IReadOnlySet<string>> AnalysisCaptions { get; set; } = new Dictionary<string, IReadOnlySet<string>>();
@@ -134,7 +137,10 @@ public sealed class BranchCanvas : Control
         using var edge = new Pen(UiPalette.FromArgb(87, 106, 125), 1.3f / zoom);
         foreach (var v in Vertices)
             foreach (var child in v.Children)
+            {
+                edge.Width = Math.Clamp(EdgeWeight?.Invoke(v, child) ?? 1.3f, .7f, 5f) / zoom;
                 g.DrawBezier(edge, new PointF(v.Location.X + v.Width / 2, v.Location.Y), new PointF(v.Location.X + 98, v.Location.Y), new PointF(child.Location.X - 98, child.Location.Y), new PointF(child.Location.X - child.Width / 2, child.Location.Y));
+            }
         Color normalText = UiPalette.LightBackground ? UiPalette.ButtonText : Color.White;
         using var text = new SolidBrush(normalText);
         using var font = new Font("Segoe UI", 8);
@@ -155,6 +161,11 @@ public sealed class BranchCanvas : Control
             }
             if (v.CanCompact) Handle(v.VariantHandle, false, v.Compact);
             if (v.Nodes.Any(n => n.IsSubbranch)) Handle(v.SubbranchHandle, true, v.Collapsed);
+            if (NodeBorder?.Invoke(v) is { } border)
+            {
+                using var borderPen = new Pen(border.Color, border.Width);
+                using var borderPath = v.Outline(); g.DrawPath(borderPen, borderPath);
+            }
 
             if (!explicitSelectionCleared && (selectedKey is not null ? renderCache.Keys(v).Exact.Contains(selectedKey)
                 : highlight is not null && renderCache.Keys(v).Normalized.Contains(highlight)))

@@ -4,6 +4,10 @@
 /private/
 /publication/
 /artifacts/
+**/DataSets/
+*.cotidx
+*.pgn.zst
+*.pgn.gz
 /.cache/
 /.dotnet-home/
 *.pdb

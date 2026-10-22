@@ -618,6 +618,7 @@ public sealed partial class BranchForm : LocalizedForm
         graphArea.BringToFront();
         canvas.BringToFront();
         incomingMoveFor = LastMoveFor;
+        InitializeDatasetStats(right);
         InitializeModes(top, right, settings, alternatives, () => selectedVertex, Rebuild,
             (definition, store) => { opening = this.opening = definition; progress = this.progress = store; });
         var refresh = new System.Windows.Forms.Timer
