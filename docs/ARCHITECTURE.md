@@ -60,6 +60,8 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Audio recovery | Infrastructure/Customization/SoundVoice.cs |
 | Dataset index / pruning / size forecast | DatasetIndexBuilder, DatasetIndexFormat, DatasetIndex, DatasetForecast; PackedMove is the shared 15-bit translation layer |
 | Dataset navigation / position frequencies | DatasetGraphModel reuses BranchCanvas; DatasetResultsStrip is shared with BranchForm.Datasets |
+| Dataset pause / import checkpoints | DatasetOperation owns pause/cancel timing; DatasetImportJob checkpoints committed records and publication state |
+| Dataset compact identity / shared bars | DatasetPositionKey uses order-preserving temporary RLE; DatasetFrequencyBinding owns background reader/cache lifetime across board views |
 | Languages and tooltips | Infrastructure/Customization/L.cs, Customization/languages.json, UI/Common/LocalizedToolTips.cs |
 | Theme and native controls | UI/Theming/UiPalette.cs, ComboArrowSurface.cs, WindowTitleTheme.cs |
 | Fresh public demonstration game | Infrastructure/Storage/BundledSampleGame.cs |

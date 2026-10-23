@@ -29,7 +29,7 @@ public sealed class DatasetStore
             throw new InvalidDataException("Invalid dataset entries.");
     }
     public string PathFor(DatasetEntry entry) => Path.Combine(DirectoryPath, Guid.ParseExact(entry.Id, "N").ToString("N") + ".sqlite");
-    public string Signature => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes("compact-v2:" + Manifest.StopAtGames + ":" + string.Join("|", Manifest.Entries.Where(e => e.Active).OrderBy(e => e.Id).Select(e => e.Id + ":" + e.ContentHash)))));
+    public string Signature => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes("compact-v3:" + Manifest.StopAtGames + ":" + string.Join("|", Manifest.Entries.Where(e => e.Active).OrderBy(e => e.Id).Select(e => e.Id + ":" + e.ContentHash)))));
     public bool HasIndex => Manifest.IndexFile is { } file && File.Exists(IndexPath(file));
     public bool IsStale => Manifest.IndexSignature != Signature && (HasIndex || Manifest.Entries.Any(e => e.Active));
     public string IndexPath(string file)
@@ -74,16 +74,12 @@ public sealed class DatasetStore
             yield return DatasetGameCodec.Decode(decompressor.Unwrap((byte[])reader[0]).ToArray());
         }
     }
-    public DatasetEntry Import(string source, DatasetSettings settings, IProgress<string>? progress, CancellationToken token)
+    public DatasetEntry Import(string source, DatasetSettings settings, IProgress<string>? progress, CancellationToken token, DatasetOperation? operation = null)
     {
-        long skipped = 0;
-        var parsed = DatasetPgn.Read(source, token).AsParallel().AsOrdered().WithDegreeOfParallelism(Math.Clamp(settings.FilterWorkers, 1, 32)).WithCancellation(token)
-            .Select(text => { try { return DatasetPgn.Parse(text); } catch (Exception e) when (e is InvalidDataException or InvalidOperationException or FormatException or ArgumentException) { Interlocked.Increment(ref skipped); return null; } }).Where(g => g is not null).Select(g => g!);
-        var entry = Write(parsed, Path.GetFileName(source), new FileInfo(source).Length, settings.SampleSize, progress, token);
-        entry.Skipped = skipped;
-        return entry;
+        using var owned = operation is null ? new DatasetOperation() : null;
+        return DatasetImportJob.Run(this, source, settings, progress, token, operation ?? owned!);
     }
-    public DatasetEntry Write(IEnumerable<DatasetGame> games, string name, long sourceBytes, int sampleSize, IProgress<string>? progress, CancellationToken token)
+    public DatasetEntry Write(IEnumerable<DatasetGame> games, string name, long sourceBytes, int sampleSize, IProgress<string>? progress, CancellationToken token, DatasetOperation? operation = null)
     {
         var entry = new DatasetEntry { Name = name, SourceBytes = sourceBytes };
         string path = PathFor(entry), temp = path + ".partial";
@@ -104,6 +100,9 @@ public sealed class DatasetStore
                 sampleSize = Math.Clamp(sampleSize, 100, 10000);
                 foreach (var game in games)
                 {
+                    operation?.Wait(token);
+                    if (operation?.SaveRequested == true)
+                        break;
                     token.ThrowIfCancellationRequested();
                     value.Value = compressor.Wrap(DatasetGameCodec.Encode(game)).ToArray();
                     insert.ExecuteNonQuery();
@@ -133,12 +132,26 @@ public sealed class DatasetStore
     }
     public void Register(DatasetEntry entry)
     {
-        Manifest.Entries.Add(entry);
+        if (Manifest.Entries.All(existing => existing.Id != entry.Id))
+            Manifest.Entries.Add(entry);
         Save();
     }
-    public DatasetEntry Trim(DatasetEntry source, DatasetFilter filter, DatasetSettings settings, IProgress<string>? progress, CancellationToken token)
+    public DatasetEntry Trim(DatasetEntry source, DatasetFilter filter, DatasetSettings settings, IProgress<string>? progress, CancellationToken token, DatasetOperation? operation = null)
     {
-        var matches = Games(PathFor(source), token).Select((game, id) => (Game: game, Id: (long)id + 1)).AsParallel().AsOrdered().WithDegreeOfParallelism(Math.Clamp(settings.FilterWorkers, 1, 32)).WithCancellation(token).Where(item => filter.Matches(item.Game));
+        long scanned = 0;
+        long lastReport = 0;
+        long prediction = source.Sample.Count == 0 ? 0 : (long)(source.Games * source.Sample.Count(filter.Matches) / (double)source.Sample.Count);
+        var matches = Games(PathFor(source), token).Select((game, id) =>
+        {
+            operation?.Wait(token);
+            Interlocked.Increment(ref scanned);
+            if (Environment.TickCount64 - lastReport > 400)
+            {
+                lastReport = Environment.TickCount64;
+                progress?.Report(source.Name + " · " + L.T("Erwartete Partien") + $": {Math.Min(filter.Limit ?? long.MaxValue, prediction):N0}\n" + operation?.Timing(scanned, source.Games));
+            }
+            return (Game: game, Id: (long)id + 1);
+        }).TakeWhile(_ => operation?.SaveRequested != true).AsParallel().AsOrdered().WithDegreeOfParallelism(Math.Clamp(settings.FilterWorkers, 1, 32)).WithCancellation(token).Where(item => filter.Matches(item.Game));
         // Reservoir sampling has a bounded result set and no bias toward early games.
         IEnumerable<DatasetGame> selected = matches.Select(item => item.Game);
         if (filter.Limit is > 0)
@@ -163,7 +176,7 @@ public sealed class DatasetStore
             }
             selected = SelectedGames(PathFor(source), reservoir, token);
         }
-        return Write(selected, source.Name + " (subset)", new FileInfo(PathFor(source)).Length, settings.SampleSize, progress, token);
+        return Write(selected, source.Name + " (subset)", new FileInfo(PathFor(source)).Length, settings.SampleSize, null, token, filter.Limit is > 0 ? null : operation);
     }
     private static IEnumerable<DatasetGame> SelectedGames(string path, List<long> ids, CancellationToken token)
     {

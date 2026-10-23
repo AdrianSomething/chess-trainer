@@ -63,7 +63,7 @@ public static class DatasetDownloader
 {
     private static readonly HttpClient client = new() { Timeout = Timeout.InfiniteTimeSpan };
     public static string Journal(string root) => Path.Combine(root, "download.json");
-    public static async Task<string> Download(string root, DatasetDownloadJob job, IProgress<string>? progress, CancellationToken token, HttpClient? transport = null)
+    public static async Task<string> Download(string root, DatasetDownloadJob job, IProgress<string>? progress, CancellationToken token, HttpClient? transport = null, DatasetOperation? operation = null)
     {
         Directory.CreateDirectory(root);
         if (job.Option.Url.Scheme != "https" || job.Option.Url.Host != "database.lichess.org")
@@ -125,6 +125,7 @@ public static class DatasetDownloader
             long copied = offset, last = 0;
             while (true)
             {
+                operation?.Wait(token);
                 using var stalled = CancellationTokenSource.CreateLinkedTokenSource(token);
                 stalled.CancelAfter(TimeSpan.FromMinutes(2));
                 int count = await input.ReadAsync(buffer, stalled.Token);

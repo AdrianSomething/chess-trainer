@@ -66,6 +66,8 @@ public readonly record struct DatasetCounts(long White, long Draw, long Black, l
 
 public sealed class DatasetEntry
 {
+    public bool Bookmarked { get; set; }
+    public Dictionary<string, long> ImportIssues { get; set; } = [];
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
     public string Name { get; set; } = "Dataset";
     public bool Active { get; set; } = true;

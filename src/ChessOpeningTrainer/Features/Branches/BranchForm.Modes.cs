@@ -136,7 +136,7 @@ public sealed partial class BranchForm
         bool showDataset = branchMode == BranchMode.Learning && datasetIndexPath is not null;
         datasetResults.Visible = showDataset;
         datasetResults.Top = 390 + (Preferences.Current.DebugInformation ? 65 : 0) + rightSidebar.AutoScrollPosition.Y;
-        if (showDataset) shift += 70;
+        if (showDataset) shift += 47;
         info.Visible = Preferences.Current.DebugInformation;
         foreach (var (control, original) in sidebarBounds)
             if (control.Parent == rightSidebar && original.Top >= 450) control.Top = original.Top + shift + rightSidebar.AutoScrollPosition.Y;

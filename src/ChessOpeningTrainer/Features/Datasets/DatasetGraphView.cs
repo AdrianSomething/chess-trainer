@@ -12,7 +12,8 @@ public sealed class DatasetGraphView : UserControl
     private readonly DatasetResultsStrip results = new();
     private readonly Panel right = new() { Dock = DockStyle.Right, Width = 380, Visible = false };
     private readonly Label status = new() { Dock = DockStyle.Bottom, Height = 30 };
-    private readonly Dictionary<int, string> expanded = [];
+    private readonly Dictionary<int, string> expanded = new() { [0] = "" };
+    private readonly ScrollNumber spacing = new() { Minimum = .25m, Maximum = 5, DecimalPlaces = 2, Increment = .25m, Value = 1, Width = 65 };
     private DatasetGraphModel? model;
     private BranchVertex? selected;
     private CancellationTokenSource? load;
@@ -26,7 +27,8 @@ public sealed class DatasetGraphView : UserControl
         var top = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 48 };
         var back = new MenuIconButton("back") { Width = 40, Height = 38, AccessibleName = "Zurück" };
         back.Click += (_, _) => BackRequested?.Invoke();
-        top.Controls.AddRange([back, DatasetControls.Button("Gesamter Graph", canvas.Fit, 160), new Label { Text = "Ziehen: Kamera · Mausrad: Zoom", AutoSize = true, Margin = new(12) }]);
+        top.Controls.AddRange([back, DatasetControls.Button("Gesamter Graph", canvas.Fit, 160), new Label { Text = L.T("Ziehen: Kamera · Mausrad: Zoom"), AutoSize = true, Margin = new(12) }, new Label { Text = L.T("Spaltenabstand"), AutoSize = true, Margin = new(8, 8, 0, 0) }, spacing]);
+        spacing.ValueChanged += (_, _) => _ = Reload();
         Controls.AddRange([canvas, right, top, status]);
         right.Controls.AddRange([board, scale, results]);
         board.SetBounds(45, 10, 325, 325);
@@ -44,7 +46,7 @@ public sealed class DatasetGraphView : UserControl
             if (c.White == c.Black)
                 return (Color.Gray, 1);
             double confidence = Math.Abs(c.White - c.Black) / (double)Math.Max(1, c.Total) * Math.Min(1, Math.Sqrt(c.Total / 30d));
-            return (c.White > c.Black ? Color.White : Color.Black, 1 + (float)confidence * 3);
+            return (c.White > c.Black ? Color.White : Color.Black, 1 + (float)confidence * 6);
         };
         canvas.VertexSelected += v => { selected = v; right.Visible = true; BoardPresentation.Preview(board, v.Position, false); results.Counts = model!.Counts[v]; presenter.Show(v.Position, true, false, true, ""); };
         canvas.SelectionCleared += () => { selected = null; right.Visible = false; };
@@ -52,12 +54,16 @@ public sealed class DatasetGraphView : UserControl
         {
             if (model is null)
                 return;
-            string path = string.Join(' ', model.Paths[v]);
-            bool wasOpen = expanded.GetValueOrDefault(v.Depth) == path;
-            foreach (int depth in expanded.Keys.Where(d => d >= v.Depth).ToArray())
+            var expansion = model.Expansion[v];
+            string path = expansion.Path;
+            int targetDepth = expansion.Depth;
+            bool wasOpen = expanded.GetValueOrDefault(targetDepth) == path;
+            foreach (int depth in expanded.Keys.Where(d => targetDepth >= 0 && d >= targetDepth).ToArray())
                 expanded.Remove(depth);
             if (!wasOpen)
-                expanded[v.Depth] = path;
+                expanded[targetDepth] = path;
+            else
+                expanded.Remove(targetDepth);
             _ = Reload();
         };
         Load += async (_, _) => await Reload();
@@ -68,11 +74,13 @@ public sealed class DatasetGraphView : UserControl
         var cts = new CancellationTokenSource();
         load = cts;
         var snapshot = new Dictionary<int, string>(expanded);
+        Position? previousSelection = selected?.Position.Clone();
+        float gap = (float)spacing.Value;
         status.Text = L.T("Datensatzbaum wird geladen …");
         canvas.Enabled = false;
         try
         {
-            var built = await Task.Run(() => DatasetGraphModel.Build(indexPath, snapshot, cts.Token), cts.Token);
+            var built = await Task.Run(() => DatasetGraphModel.Build(indexPath, snapshot, cts.Token, true, gap), cts.Token);
             if (IsDisposed || cts.IsCancellationRequested)
                 return;
             bool first = model is null;
@@ -82,6 +90,8 @@ public sealed class DatasetGraphView : UserControl
             canvas.ClearSelection();
             canvas.Vertices.Clear();
             canvas.Vertices.AddRange(built.Vertices);
+            if (previousSelection is not null)
+                canvas.SelectPosition(previousSelection);
             if (first)
                 canvas.Fit();
             canvas.Invalidate();

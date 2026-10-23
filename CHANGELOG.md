@@ -2,6 +2,18 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.26.1-beta — Development
+
+- Align dataset cards, download selection, settings, scrollbars and compact filter sections with the other modes; add bookmarks and explicit rename confirmation.
+- Add operation pause/resume, cancellation and stop-and-save, durable import checkpoints, elapsed/remaining estimates and download/import overlap with queue totals.
+- Accept valid zero-move games and retain rejection-reason counts for newly imported unsupported records.
+- Reduce temporary storage with order-preserving empty-square run coding and by reconstructing destination positions instead of storing them per edge. Use compact pure-result counters and share identical node/edge counters in the final index; read existing 0.26.0 indexes.
+- Base temporary-space forecasts on a measured sample workspace, show live working-file usage, and avoid identical lower/upper size ranges.
+- Add compact, expandable forced lines, stronger contrasting outcome borders, column spacing and selection retention to the dataset browser.
+- Add shared asynchronous game-frequency bars to learning, Custom Game, game analysis and the Opening Branch Generator.
+- Refine order-preserving branch centering without accepting additional measured crossings.
+- Keep GitHub Actions disabled by explicit request; update the CI recommendation and document remaining 0.26 issue scope.
+
 ## 0.26.0-beta — Development
 
 - Add Data sets: stream PGN, ZIP, gzip and Zstandard archives, download selected Lichess months with checksum verification and resumable progress, and trim local datasets using rating, result, termination, clock and opening-prefix filters.

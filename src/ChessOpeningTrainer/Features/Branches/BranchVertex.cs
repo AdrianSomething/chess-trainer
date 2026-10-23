@@ -20,6 +20,7 @@ public sealed class BranchVertex
     public List<string> AlternativeNames { get; } = [];
     public string Caption => Incoming.Count == 0 ? "Start" : string.Join("\n", Incoming.Chunk(2).Select(group => string.Join(" / ", group)));
     public bool Compact { get; set; }
+    public float? DisplayWidth { get; set; }
     public bool Collapsed { get; set; }
     public Color? SubbranchColor { get; set; }
     public BranchVertex? SubbranchRoot { get; set; }
@@ -37,5 +38,5 @@ public sealed class BranchVertex
         return path;
     }
     public float Height => Compact && CanCompact ? 26 : Math.Max(26, ((Incoming.Count + 1) / 2) * 14 + 4);
-    public float Width => Math.Clamp(Caption.Split('\n').Max(l => l.Length) * 6 + 16, 48, 120);
+    public float Width => DisplayWidth ?? Math.Clamp(Caption.Split('\n').Max(l => l.Length) * 6 + 16, 48, 120);
 }

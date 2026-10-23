@@ -32,16 +32,19 @@ public static class DatasetForecast
             var store = new DatasetStore(workspace);
             store.Register(store.Write(sample, "estimate", 0, 100, null, token));
             double scale = Math.Max(1, total / (double)sample.Count);
+            long peak = 0;
             long Measure(int threshold)
             {
                 store.Manifest.StopAtGames = threshold;
-                string path = DatasetIndex.Build(store, workers, null, token);
+                using var operation = new DatasetOperation();
+                string path = DatasetIndex.Build(store, workers, null, token, operation);
+                peak = Math.Max(peak, operation.PeakWorkspaceBytes);
                 return new FileInfo(path).Length;
             }
             long upper = Measure((int)Math.Floor(cutoff / scale));
             long lower = cutoff > 0 ? Measure(cutoff) : upper;
             // A conservative workspace indication, separate from final archive size.
-            long temporary = (long)Math.Min(long.MaxValue, sample.Sum(g => (long)g.Moves.Length + 1) * 160d * scale);
+            long temporary = (long)Math.Min(long.MaxValue, peak * scale);
             return new((long)(Math.Min(lower, upper) * scale), (long)(Math.Max(lower, upper) * scale), temporary, sample.Count);
         }
         finally { Directory.Delete(workspace, true); }

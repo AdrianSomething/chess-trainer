@@ -10,7 +10,7 @@ public sealed partial class BranchForm
     private string? datasetReaderPath;
     private void InitializeDatasetStats(Panel right)
     {
-        datasetResults.SetBounds(12, 390, 385, 65);
+        datasetResults.SetBounds(12, 390, 385, 42);
         datasetResults.Visible = false;
         right.Controls.Add(datasetResults);
         void RefreshIndex()

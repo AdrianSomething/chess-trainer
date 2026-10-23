@@ -7,6 +7,7 @@ public sealed class DatasetTrimForm : LocalizedForm
     private readonly Label estimate = new() { Dock = DockStyle.Bottom, Height = 48, Padding = new(10) };
     private CancellationTokenSource? estimation;
     private readonly System.Windows.Forms.Timer debounce = new() { Interval = 180 };
+    private readonly InputFocusCommit inputCommit;
     public DatasetFilter Filter => filter;
     public bool ReplaceOriginal
     {
@@ -15,6 +16,7 @@ public sealed class DatasetTrimForm : LocalizedForm
     public DatasetTrimForm(DatasetEntry entry, StockfishEngine engine)
     {
         this.entry = entry;
+        inputCommit = new(this);
         Text = "Datensatz zuschneiden";
         Size = new(580, 800);
         MinimumSize = new(550, 500);
@@ -34,9 +36,11 @@ public sealed class DatasetTrimForm : LocalizedForm
         void Number(Control parent, string label, int value, int min, int max, Action<int> change, int step = 1) => parent.Controls.Add(DatasetControls.Number(label, value, min, max, n => { change((int)n); Changed(); }, step));
         FlowLayoutPanel Group(string title)
         {
-            var outer = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Width = 495, Margin = new(0, 7, 0, 7) };
+            var outer = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Width = 495, Margin = new(0, 2, 0, 2) };
             var inner = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Width = 490 };
-            var toggle = DatasetControls.Button("▾ " + title, () => { inner.Visible = !inner.Visible; }, 480);
+            var toggle = new Button { Text = "▾ " + L.T(title), Width = 480, Height = 27, FlatStyle = FlatStyle.Flat, BackColor = UiPalette.FromArgb(43, 49, 55), ForeColor = UiPalette.Gainsboro, Margin = new(0, 1, 0, 1), TextAlign = ContentAlignment.MiddleLeft };
+            toggle.FlatAppearance.BorderSize = 0;
+            toggle.Click += (_, _) => { inner.Visible = !inner.Visible; toggle.Text = (inner.Visible ? "▾ " : "▸ ") + L.T(title); };
             outer.Controls.AddRange([toggle, inner]);
             layout.Controls.Add(outer);
             return inner;
@@ -92,7 +96,7 @@ public sealed class DatasetTrimForm : LocalizedForm
             long predicted = (long)(ratio * entry.Games);
             if (copy.Limit is long limit)
                 predicted = Math.Min(predicted, limit);
-            estimate.Text = L.T($"Schätzung: ca. {predicted:N0} Partien · Stichprobe {sample.Length:N0} · keine Garantie");
+            estimate.Text = L.T("Erwartete Partien") + $": {predicted:N0}";
         }
         catch (OperationCanceledException) { }
         finally { if (estimation == cts) estimation = null; cts.Dispose(); }
@@ -102,6 +106,7 @@ public sealed class DatasetTrimForm : LocalizedForm
         if (disposing)
         {
             debounce.Dispose();
+            inputCommit.Dispose();
             estimation?.Cancel();
         }
         base.Dispose(disposing);

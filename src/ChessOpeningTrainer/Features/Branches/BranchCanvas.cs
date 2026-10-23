@@ -163,6 +163,8 @@ public sealed class BranchCanvas : Control
             if (v.Nodes.Any(n => n.IsSubbranch)) Handle(v.SubbranchHandle, true, v.Collapsed);
             if (NodeBorder?.Invoke(v) is { } border)
             {
+                using var contrast = new Pen(border.Color.GetBrightness() < .5f ? Color.White : Color.Black, border.Width + 1.5f);
+                using var contrastPath = v.Outline(); g.DrawPath(contrast, contrastPath);
                 using var borderPen = new Pen(border.Color, border.Width);
                 using var borderPath = v.Outline(); g.DrawPath(borderPen, borderPath);
             }

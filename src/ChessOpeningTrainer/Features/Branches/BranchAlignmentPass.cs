@@ -43,13 +43,16 @@ public static class BranchAlignmentPass
             return Side(a.A.Location, a.B.Location, b.A.Location) * Side(a.A.Location, a.B.Location, b.B.Location) < 0 &&
                 Side(b.A.Location, b.B.Location, a.A.Location) * Side(b.A.Location, b.B.Location, a.B.Location) < 0;
         }
-        for (int pass = 0; pass < 4; pass++)
+        // Finish with a child-to-parent sweep: ending with the opposite sweep
+        // used to undo the fan-out centering just established in the previous pass.
+        for (int pass = 0; pass < 5; pass++)
             foreach (var col in pass % 2 == 0 ? columns.Reverse() : columns)
                 for (int i = 0; i < col.Length; i++)
                 {
                     if (watch.ElapsedMilliseconds >= budgetMilliseconds)
                         return moved;
                     var n = col[i];
+                    if (pass % 2 == 1 && n.Children.Count > 1) continue;
                     var links = pass % 2 == 0 ? n.Children.ToArray() : parents[n].ToArray();
                     if (links.Length == 0)
                         continue;
@@ -64,11 +67,15 @@ public static class BranchAlignmentPass
                         continue;
                     int before = incident[n].Count(Cross);
                     var previous = n.Location;
-                    n.Location = new(previous.X, desired);
-                    if (incident[n].Count(Cross) > before)
+                    // A full move can cross another edge even when a smaller
+                    // order-preserving adjustment is useful. Back off, don't
+                    // force a crossing or push the node beyond its target.
+                    for (int attempt = 0; attempt < 6; attempt++)
+                    {
+                        n.Location = new(previous.X, previous.Y + (desired - previous.Y) / (1 << attempt));
+                        if (incident[n].Count(Cross) <= before) { moved++; break; }
                         n.Location = previous;
-                    else
-                        moved++;
+                    }
                 }
         return moved;
     }

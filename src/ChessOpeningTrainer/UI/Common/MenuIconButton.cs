@@ -98,6 +98,12 @@ public class MenuIconButton : Button
         using var pen = new Pen(Color.White, 2.3f) { LineJoin = LineJoin.Round };
         switch (name)
         {
+            case "dataset-download":
+                g.DrawLine(pen, 13, 1, 13, 17); g.DrawLines(pen, [new Point(6,10), new(13,17), new(20,10)]);
+                g.DrawLines(pen, [new Point(3,18), new(3,24), new(23,24), new(23,18)]); break;
+            case "dataset-import":
+                g.DrawLines(pen, [new Point(2,22), new(2,5), new(10,5), new(13,8), new(24,8), new(24,22), new(2,22)]);
+                g.DrawLine(pen, 7,15,19,15); g.DrawLines(pen,[new Point(14,11),new(19,15),new(14,19)]); break;
             case "datasets":
                 g.DrawEllipse(pen, 3, 2, 20, 7); g.DrawLine(pen, 3, 5, 3, 21); g.DrawLine(pen, 23, 5, 23, 21);
                 g.DrawArc(pen, 3, 10, 20, 7, 0, 180); g.DrawArc(pen, 3, 17, 20, 7, 0, 180); break;

@@ -1,5 +1,9 @@
 # Future GitHub Actions assessment — no workflow enabled
 
+**Decision reconfirmed for 0.26.1-beta (2026-10-24): keep Actions disabled.**
+Only this recommendation is updated. No workflow, scheduled downloads, release
+automation or private test fixtures are added to GitHub.
+
 The private project has a substantial rules/UI/engine regression harness. Exporting it is deferred: this preparation intentionally adds neither the tests directory nor a GitHub Actions workflow.
 
 ## Recommended staged adoption
@@ -31,6 +35,12 @@ Suggested public layout when test export is approved:
 
 Start with two or three jobs grouped by execution requirements, not feature count. Pure rules/storage may eventually run cross-platform, but the current assembly targets WinForms, so Windows is the honest initial runner choice. Restore/build once per job; cache packages by lock/project inputs. Use timeouts and cancellation for background workers. Upload only selected synthetic failure artifacts, never copied profiles, game libraries or downloaded archives. A release gate should include the sanitized-source build, publication audit and matching-source package checks.
 
-No Actions workflow or private tests are published as part of 0.26.0-beta. The one authorized live Lichess download was a local manual check; normal dataset tests inject fake HTTP and do not access the network. A full multi-gigabyte archive test remains an opt-in local benchmark.
+No Actions workflow or private tests are published as part of the 0.26 beta series. The one authorized live Lichess download was a local manual check; normal dataset tests inject fake HTTP and do not access the network. A full multi-gigabyte archive test remains an opt-in local benchmark.
+
+Add checkpoint/resume, stop-and-save versus cancellation, old-index decoding,
+position-key sort order and theme/layout construction to the fast storage group.
+Keep size/performance comparisons as reported benchmarks rather than brittle
+millisecond gates on shared runners. Most of the 22,000+ dataset assertions are
+cheap codec cases; they fit in one test process, not 22,000 Actions jobs.
 
 A successful CI run would not prove puzzle quality, legal compliance or all interactive UI behavior. Preserve manual fresh-install and accessibility checks.

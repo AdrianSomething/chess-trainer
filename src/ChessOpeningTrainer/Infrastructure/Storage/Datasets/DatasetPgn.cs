@@ -9,7 +9,7 @@ namespace ChessOpeningTrainer;
 public static class DatasetPgn
 {
     private static readonly Regex tagPattern = new("(?m)^[ \\t]*\\[(\\w+)\\s+\"((?:\\\\.|[^\"])*)\"[ \\t]*\\][ \\t]*\\r?$", RegexOptions.Compiled);
-    public static IEnumerable<string> Read(string path, CancellationToken token)
+    public static IEnumerable<string> Read(string path, CancellationToken token, Action<long, long>? progress = null)
     {
         using var file = File.OpenRead(path);
         if (path.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
@@ -19,7 +19,10 @@ public static class DatasetPgn
             {
                 using var stream = entry.Open();
                 foreach (var text in ReadText(stream, token))
+                {
+                    progress?.Invoke(file.Position, file.Length);
                     yield return text;
+                }
             }
         }
         else
@@ -27,7 +30,10 @@ public static class DatasetPgn
             using Stream stream = path.EndsWith(".zst", StringComparison.OrdinalIgnoreCase) ? new DecompressionStream(file) :
                 path.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) ? new GZipStream(file, CompressionMode.Decompress) : file;
             foreach (var text in ReadText(stream, token))
+            {
+                progress?.Invoke(file.Position, file.Length);
                 yield return text;
+            }
         }
     }
     private static IEnumerable<string> ReadText(Stream stream, CancellationToken token)
@@ -65,8 +71,8 @@ public static class DatasetPgn
         if (final.Squares.Count(c => c == 'K') != 1 || final.Squares.Count(c => c == 'k') != 1)
             throw new InvalidDataException("Standard chess requires one king per side.");
         string[] moves = MainlineMoves.Parse(tagPattern.Replace(text, ""), final);
-        if (moves.Length == 0)
-            throw new InvalidDataException("Empty game.");
+        // A rated game can end by timeout before the first move. It is still a
+        // valid record and contributes its result to the initial position.
         int Elo(string key) => int.TryParse(tags.GetValueOrDefault(key), out int value) ? value : -1;
         var clock = tags.GetValueOrDefault("TimeControl", "-").Split('+');
         int seconds = clock.Length == 2 && int.TryParse(clock[0], out int s) ? s : -1;

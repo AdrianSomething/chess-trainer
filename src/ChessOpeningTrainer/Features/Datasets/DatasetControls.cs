@@ -6,7 +6,7 @@ internal static class DatasetControls
     {
         var button = new Button
         {
-            Text = text,
+            Text = L.T(text),
             Width = width,
             Height = 40,
             FlatStyle = FlatStyle.Flat,

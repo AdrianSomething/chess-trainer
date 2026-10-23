@@ -15,7 +15,7 @@ public sealed class DatasetResultsStrip : Control
     public DatasetResultsStrip()
     {
         DoubleBuffered = true;
-        Height = 65;
+        Height = 42;
     }
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -29,10 +29,10 @@ public sealed class DatasetResultsStrip : Control
             if (width <= 0)
                 continue;
             using var brush = new SolidBrush(segment.Item2);
-            e.Graphics.FillRectangle(brush, x, 28, width, 28);
+            e.Graphics.FillRectangle(brush, x, 25, width, 16);
             string text = $"{100 * segment.Item1 / total:0.#}%";
             if (TextRenderer.MeasureText(text, Font).Width < width)
-                TextRenderer.DrawText(e.Graphics, text, Font, new Rectangle((int)x, 28, (int)width, 28), segment.Item3, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                TextRenderer.DrawText(e.Graphics, text, Font, new Rectangle((int)x, 25, (int)width, 16), segment.Item3, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             x += width;
         }
     }

@@ -12,6 +12,7 @@ public sealed class DatasetIndex : IDisposable
     private readonly List<DatasetIndexFormat.Block> blocks = [];
     private readonly Dictionary<int, List<DatasetIndexRecord>> cache = [];
     private readonly Queue<int> cacheOrder = [];
+    private readonly int version;
     public int StopAtGames
     {
         get;
@@ -27,7 +28,9 @@ public sealed class DatasetIndex : IDisposable
         reader = new(file);
         try
         {
-            if (!reader.ReadBytes(8).SequenceEqual(DatasetIndexFormat.Magic))
+            byte[] magic = reader.ReadBytes(8);
+            version = magic.SequenceEqual("COTDSI02"u8.ToArray()) ? 2 : magic.SequenceEqual(DatasetIndexFormat.Magic) ? 3 : 0;
+            if (version == 0)
                 throw new InvalidDataException("Unsupported dataset index. Rebuild it in Data sets.");
             long offset = reader.ReadInt64();
             StopAtGames = reader.ReadInt32();
@@ -40,7 +43,10 @@ public sealed class DatasetIndex : IDisposable
                 throw new InvalidDataException("Invalid index directory size.");
             for (int i = 0; i < count; i++)
             {
-                byte[] first = reader.ReadBytes(35);
+                const int keyLength = 35;
+                if (keyLength < 5 || keyLength > 51)
+                    throw new InvalidDataException("Invalid directory key.");
+                byte[] first = reader.ReadBytes(keyLength);
                 long at = reader.ReadInt64();
                 int length = reader.ReadInt32();
                 if (at < 28 || length < 1 || length > 4_000_000 || at + length > offset)
@@ -51,23 +57,8 @@ public sealed class DatasetIndex : IDisposable
         catch { Dispose(); throw; }
     }
 
-    public static byte[] Key(Position p)
-    {
-        // Exact key, not a hash: no collision ambiguity. Counters are excluded.
-        var key = new byte[35];
-        const string pieces = "\0PNBRQKpnbrqk";
-        for (int i = 0; i < 64; i++)
-            key[i / 2] |= (byte)(Math.Max(0, pieces.IndexOf(p.Squares[i])) << ((i % 2) * 4));
-        key[32] = (byte)(p.WhiteToMove ? 1 : 0);
-        foreach (char c in p.Castling)
-        {
-            int bit = "KQkq".IndexOf(c);
-            if (bit >= 0)
-                key[33] |= (byte)(1 << bit);
-        }
-        key[34] = (byte)(p.EnPassant is { } ep && MoveGenerator.GenerateLegal(p).Any(m => m.IsEnPassant) ? ep + 1 : 0);
-        return key;
-    }
+    public static byte[] Key(Position p) => DatasetPositionKey.Legacy(p);
+    internal static Position PositionFromKey(byte[] key) => DatasetPositionKey.Decode(key);
 
     private DatasetIndexRecord? Find(Position position)
     {
@@ -92,7 +83,7 @@ public sealed class DatasetIndex : IDisposable
             file.Position = block.Offset;
             try
             {
-                records = DatasetIndexFormat.Decode(decompressor.Unwrap(reader.ReadBytes(block.Length), 4_000_000).ToArray());
+                records = DatasetIndexFormat.Decode(decompressor.Unwrap(reader.ReadBytes(block.Length), 4_000_000).ToArray(), version);
             }
             catch (ZstdException ex) { throw new InvalidDataException("Damaged dataset index. Rebuild it in Data sets.", ex); }
             while (cacheOrder.Count >= 32)
@@ -123,6 +114,6 @@ public sealed class DatasetIndex : IDisposable
         file.Dispose();
         decompressor.Dispose();
     }
-    public static string Build(DatasetStore store, DatasetSettings settings, IProgress<string>? progress, CancellationToken token)
-        => DatasetIndexBuilder.Build(store, settings, progress, token);
+    public static string Build(DatasetStore store, DatasetSettings settings, IProgress<string>? progress, CancellationToken token, DatasetOperation? operation = null)
+        => DatasetIndexBuilder.Build(store, settings, progress, token, operation);
 }
