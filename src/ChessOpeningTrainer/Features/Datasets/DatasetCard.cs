@@ -8,9 +8,10 @@ internal sealed class DatasetCard : Panel
         Width = 600;
         BackColor = UiPalette.FromArgb(43, 49, 55);
         var title = new Label { Text = DatasetNames.FromFile(entry.Name), Font = new Font(SystemFonts.MessageBoxFont!.FontFamily, 13, FontStyle.Bold), Left = 12, Top = 10, Height = 30, AutoEllipsis = true, UseMnemonic = false };
-        var edit = new TextBox { Visible = false, Left = 12, Top = 10, Font = title.Font, BorderStyle = BorderStyle.None, BackColor = BackColor, ForeColor = UiPalette.Gainsboro };
+        var edit = new TextBox { Visible = false, Left = 12, Top = 10, Font = title.Font, BorderStyle = BorderStyle.FixedSingle, BackColor = BackColor, ForeColor = UiPalette.Gainsboro };
         var confirm = DatasetControls.Button("✓", () => { if (edit.Text.Trim().Length > 0) { entry.Name = edit.Text.Trim(); title.Text = entry.Name; save(); } edit.Visible = confirmPlaceholder!.Visible = false; title.Visible = true; }, 36);
         confirmPlaceholder = confirm;
+        RenameConfirmation.Style(confirm);
         confirm.Visible = false;
         void Cancel()
         {
@@ -24,20 +25,22 @@ internal sealed class DatasetCard : Panel
         var active = new CheckBox { Text = L.T("Aktiv"), Checked = entry.Active, Left = 12, Top = 84, Width = 100 };
         active.CheckedChanged += (_, _) => { entry.Active = active.Checked; save(); activeChanged(); };
         var bookmark = new MenuIconButton(entry.Bookmarked ? "bookmark-filled" : "bookmark") { Width = 32, Height = 32, Left = 120, Top = 80, AccessibleName = L.T("Lesezeichen") };
+        bookmark.FlatAppearance.BorderSize = 0;
         bookmark.Click += (_, _) => { entry.Bookmarked = !entry.Bookmarked; save(); orderChanged(); };
         var trimButton = DatasetControls.Button("Zuschneiden", trim, 120);
         var deleteButton = DatasetControls.Button("Löschen", delete, 120);
         foreach (var b in new[] { trimButton, deleteButton })
         {
-            b.BackColor = UiPalette.FromArgb(48, 105, 160);
+            b.BackColor = UiPalette.FromArgb(57, 91, 119);
             b.ForeColor = UiPalette.ButtonText;
         }
         Controls.AddRange([title, edit, confirm, info, active, bookmark, trimButton, deleteButton]);
         void Arrange()
         {
-            title.Width = Width - 155;
-            edit.Width = Width - 195;
-            confirm.SetBounds(Width - 177, 8, 32, 30);
+            title.Width = Width - 200;
+            edit.Width = Width - 240;
+            confirm.SetBounds(Width - 222, 8, 32, 32);
+            bookmark.SetBounds(Width - 180, 10, 34, 35);
             info.Width = Width - 155;
             trimButton.SetBounds(Width - 135, 10, 120, 40);
             deleteButton.SetBounds(Width - 135, 62, 120, 40);

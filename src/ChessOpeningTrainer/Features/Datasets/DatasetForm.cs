@@ -8,7 +8,9 @@ public sealed class DatasetForm : LocalizedForm
     private readonly DatasetStore store;
     private readonly StockfishEngine engine;
     private readonly Panel body = new() { Dock = DockStyle.Fill };
-    private readonly Label status = new() { Dock = DockStyle.Bottom, Height = 100, Padding = new(12, 6, 12, 4) };
+    private readonly DatasetActivityLabel status = new() { Dock = DockStyle.Bottom, Height = 100, Padding = new(32, 6, 12, 4) };
+    private enum WorkKind { Index, Import, Download, Filter }
+    private WorkKind workKind;
     private readonly Button cancel;
     private readonly Button pause;
     private readonly Button savePartial;
@@ -47,7 +49,14 @@ public sealed class DatasetForm : LocalizedForm
             if (operation is null)
                 return;
             e.Cancel = true;
-            if (closeAfter || L.Message(this, "Vorgang anhalten und schließen? Downloads und gespeicherte Import-Checkpoints können später fortgesetzt werden. Nicht abgeschlossene Filter- und Indexarbeiten werden verworfen; vorhandene Datensätze bleiben erhalten.", "Datensätze", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            string question = workKind switch
+            {
+                WorkKind.Import => "Import speichern und Fenster schließen? Du kannst ihn später mit „Import fortsetzen“ fortführen.",
+                WorkKind.Download => "Download und Import anhalten und schließen? Der Fortschritt bleibt zum späteren Fortsetzen gespeichert.",
+                WorkKind.Filter => "Zuschneiden abbrechen und schließen? Der unvollständige neue Datensatz wird verworfen; das Original bleibt erhalten.",
+                _ => "Baumerstellung abbrechen und schließen? Der bisherige Baum und deine Datensätze bleiben erhalten. Der Neubau muss später neu gestartet werden."
+            };
+            if (closeAfter || L.Message(this, question, "Datensätze", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 closeAfter = true;
                 if (job is not null)
@@ -103,7 +112,7 @@ public sealed class DatasetForm : LocalizedForm
             side.Controls.Add(DatasetControls.Button("Import verwerfen", () => { DatasetImportJob.Discard(store); Render(); }, 245));
         }
         if (File.Exists(QueuePath) || File.Exists(DatasetDownloader.Journal(store.DirectoryPath)))
-            side.Controls.Add(DatasetControls.Button("Download fortsetzen", () => _ = Run(DownloadQueue, true), 245));
+            side.Controls.Add(DatasetControls.Button("Download fortsetzen", () => _ = Run(DownloadQueue, true, WorkKind.Download), 245));
         if (store.HasIndex)
         {
             viewTreeButton = DatasetControls.Button((store.IsStale ? "(alt) " : "") + "Datensatzbaum anzeigen", ShowGraph, 245);
@@ -117,7 +126,7 @@ public sealed class DatasetForm : LocalizedForm
         threshold.ValueChanged += (_, _) => { store.Manifest.StopAtGames = (int)threshold.Value; store.Save(); ActiveChanged(); };
         cutoffRow.Controls.Add(threshold);
         side.Controls.Add(cutoffRow);
-        forecastLabel = new Label { Width = 245, Height = 90, Text = L.T("Dateigröße wird geschätzt …"), Margin = new(4, 15, 4, 4) };
+        forecastLabel = new Label { Width = 245, Height = 155, Text = L.T("Dateigröße wird geschätzt …"), Margin = new(4, 15, 4, 4) };
         side.Controls.Add(forecastLabel);
         var right = new Panel { Dock = DockStyle.Fill };
         var list = new DarkScrollPanel { Dock = DockStyle.Fill };
@@ -186,11 +195,20 @@ public sealed class DatasetForm : LocalizedForm
         target.Text = L.T("Dateigröße wird geschätzt …");
         try
         {
+            if (store.HasIndex && !store.IsStale)
+            {
+                target.Text = L.T("Baumgröße (tatsächlich): ") + $"{new FileInfo(store.IndexPath(store.Manifest.IndexFile!)).Length / 1e6:0.000} MB\n" +
+                    L.T("Arbeitsraum beim Aufbau (Maximum): ") + (store.Manifest.IndexPeakWorkspaceBytes is long peak ? $"{peak / 1e6:0.000} MB" : L.T("Bei diesem älteren Baum nicht erfasst."));
+                return;
+            }
+            long? measured = await Task.Run(() => DatasetPruningForecast.Measure(store, cts.Token), cts.Token);
             var estimate = await Task.Run(() => DatasetForecast.Estimate(store.DirectoryPath, active, cutoff, Preferences.Current.Datasets, cts.Token), cts.Token);
             if (IsDisposed || target.IsDisposed || cts.IsCancellationRequested)
                 return;
             string size = Math.Round(estimate.LowerBytes / 1e6, 1) == Math.Round(estimate.UpperBytes / 1e6, 1) ? $"{estimate.UpperBytes / 1e6:0.0} MB" : $"{estimate.LowerBytes / 1e6:0.0}–{estimate.UpperBytes / 1e6:0.0} MB";
-            target.Text = L.T("Baum: ca. ") + size + "\n" + L.T("Temporärer Arbeitsraum: ca. ") + $"{estimate.TemporaryBytes / 1e6:0.0} MB";
+            target.Text = (measured is long exact ? L.T("Neuer Baum (vollständig gemessen): ") + $"{exact / 1e6:0.000} MB" :
+                estimate.PruningUnknown ? L.T("Die Größe nach dem Ausdünnen benötigt vollständige Häufigkeiten. Nach einem Aufbau kann ein höheres Minimum exakt vermessen werden.") : L.T("Baum: ca. ") + size) +
+                "\n" + L.T("Temporärer Arbeitsraum: ca. ") + $"{estimate.TemporaryBytes / 1e6:0.0} MB";
         }
         catch (OperationCanceledException) { }
         catch (Exception ex) { if (!target.IsDisposed) target.Text = L.T("Schätzung nicht verfügbar: ") + ex.GetBaseException().Message; }
@@ -203,7 +221,7 @@ public sealed class DatasetForm : LocalizedForm
             return;
         ImportFiles(dialog.FileNames);
     }
-    private void ImportFiles(string[] paths) => _ = Run(async (progress, token) => { foreach (string path in paths) { var entry = await Task.Run(() => store.Import(path, Preferences.Current.Datasets, progress, token, job), token); store.Register(entry); if (job!.SaveRequested) break; } }, true);
+    private void ImportFiles(string[] paths) => _ = Run(async (progress, token) => { foreach (string path in paths) { var entry = await Task.Run(() => store.Import(path, Preferences.Current.Datasets, progress, token, job), token); store.Register(entry); if (job!.SaveRequested) break; } }, true, WorkKind.Import);
     private void ChooseDownload()
     {
         if (operation is not null)
@@ -216,7 +234,7 @@ public sealed class DatasetForm : LocalizedForm
             var queue = ReadQueue();
             queue.AddRange(dialog.Selection.Where(o => !queue.Any(q => q.Url == o.Url)));
             SaveQueue(queue);
-            _ = Run(DownloadQueue, true);
+            _ = Run(DownloadQueue, true, WorkKind.Download);
         };
         dialog.Show();
     }
@@ -325,11 +343,11 @@ public sealed class DatasetForm : LocalizedForm
                 return;
             var filter = dialog.Filter;
             bool replace = dialog.ReplaceOriginal;
-            _ = Run(async (progress, token) => { var result = await Task.Run(() => store.Trim(entry, filter, Preferences.Current.Datasets, progress, token, job), token); result.Active = replace && entry.Active; store.Register(result); if (replace) store.Delete(entry); }, true);
+            _ = Run(async (progress, token) => { var result = await Task.Run(() => store.Trim(entry, filter, Preferences.Current.Datasets, progress, token, job), token); result.Active = replace && entry.Active; store.Register(result); if (replace) store.Delete(entry); }, true, WorkKind.Filter);
         };
         dialog.Show();
     }
-    private async Task Run(Func<IProgress<string>, CancellationToken, Task> action, bool canSave = false)
+    private async Task Run(Func<IProgress<string>, CancellationToken, Task> action, bool canSave = false, WorkKind kind = WorkKind.Index)
     {
         if (operation is not null)
             return;
@@ -337,6 +355,8 @@ public sealed class DatasetForm : LocalizedForm
         using var state = new DatasetOperation();
         job = state;
         operation = cts;
+        workKind = kind;
+        status.Busy = true;
         body.Enabled = false;
         operationButtons.Visible = true;
         savePartial.Visible = canSave;
@@ -351,7 +371,7 @@ public sealed class DatasetForm : LocalizedForm
         }
         catch (OperationCanceledException) { status.Text = L.T("Angehalten. Der bisherige Datensatzbaum bleibt erhalten."); }
         catch (Exception ex) { status.Text = L.T("Fehler: ") + ex.GetBaseException().Message; }
-        finally { operation = null; job = null; if (!IsDisposed) { body.Enabled = true; operationButtons.Visible = false; Changed?.Invoke(); Render(); if (closeAfter) Close(); } }
+        finally { operation = null; job = null; if (!IsDisposed) { status.Busy = false; body.Enabled = true; operationButtons.Visible = false; Changed?.Invoke(); Render(); if (closeAfter) Close(); } }
     }
     private void ShowGraph()
     {

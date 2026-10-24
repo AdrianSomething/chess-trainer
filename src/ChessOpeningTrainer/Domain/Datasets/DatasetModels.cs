@@ -89,6 +89,9 @@ public sealed class DatasetEntry
 
 public sealed class DatasetManifest
 {
+    public long? IndexPeakWorkspaceBytes { get; set; }
+    public string? IndexSourceSignature { get; set; }
+    public List<string> IndexRoots { get; set; } = [];
     public int StopAtGames
     {
         get; set;

@@ -10,7 +10,19 @@ Work is on `dev/0.26.0`; the stable release and its README download remain uncha
 | [#7: storage](https://github.com/AdrianSomething/chess-trainer/issues/7) | Packed moves, exact shared positions, variable counters, identical-counter reuse, smaller temporary keys, no stored destination key per edge, optional rare-continuation pruning, measured sample forecasts, live working-file size and cancellation cleanup | Full multi-million-game benchmarks are still needed. No universal 1:32 compression guarantee. See the measured bounded comparison in [DATASETS.md](DATASETS.md). |
 | [#8: graph layout](https://github.com/AdrianSomething/chess-trainer/issues/8) | Bounded crossing-reduction heuristic, cached geometry and order-preserving centering; adjustments are rejected if they increase measured crossings | Crossing minimization is heuristic, not a guarantee of an optimal drawing. Retain manual checks on large and unusual graphs. |
 
-Issues remain open: the broader 0.26 goals are not all completed by 0.26.1-beta.
+Issues remain open: the broader 0.26 goals are not all completed by 0.26.2-beta.
+
+## 0.26.2-beta corrections
+
+- Correct shared board colors (a1/d8 dark, d1/h1 light), with off-screen rendered-pixel checks in both orientations and all bundled skins. Chess rules and stored positions are unchanged.
+
+- Enable the bounded Windows build/synthetic-checks workflow; keep releases and large downloads manual.
+- Match dataset bookmarks, rename confirmation and button colors to the opening menu; use **Datasets** consistently in English.
+- Explain close/resume behavior for the current operation instead of showing one combined warning.
+- Show actual completed index size and measured peak build workspace. Measure stricter cutoffs from complete retained frequencies when available; do not extrapolate a tiny rare-tail sample into an arbitrary range.
+- Store temporary adjacency in its position row, eliminating repeated parent keys and the separate edge B-tree. The final format stays compatible.
+- Compact only complete terminal forced lines into one wide node; preserve expand/collapse controls and fit visible geometry.
+- Add whole-column centering and the separate [Sugiyama beta](BRANCH_LAYOUT.md).
 
 ## Compatibility and testing
 
@@ -18,4 +30,4 @@ Issues remain open: the broader 0.26 goals are not all completed by 0.26.1-beta.
 - No opening migration, personal data import, source-file deletion or main-branch merge is part of this beta.
 - Local tests use isolated synthetic profiles; the bounded archive benchmark reads only a 1,000-record prefix of the provided file.
 - Native form/lifecycle smoke tests supplement unit/integration tests. They do not replace human visual acceptance of every theme, DPI and screen size.
-- GitHub Actions remains **disabled by request**. [CI_ASSESSMENT.md](CI_ASSESSMENT.md) contains the recommendation, not an active workflow.
+- GitHub Actions is enabled for the development branch in 0.26.2; [CI_ASSESSMENT.md](CI_ASSESSMENT.md) describes its limited scope.

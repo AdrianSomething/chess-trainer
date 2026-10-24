@@ -32,7 +32,7 @@ public partial class BoardControl
             {
                 var square = VisualToSquare(col, row);
                 var rect = new RectangleF(col * cell, row * cell, cell + .5f, cell + .5f);
-                var dark = ((square % 8) + square / 8) % 2 != 0;
+                var dark = Square.IsDark(square);
                 using var brush = new SolidBrush(Skins.Color(dark ? Skins.Current.Dark : Skins.Current.Light, dark ? Color.Sienna : Color.Beige));
                 g.FillRectangle(brush, rect);
                 if (MarkedSquares.Contains(square))

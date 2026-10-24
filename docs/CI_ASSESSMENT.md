@@ -1,46 +1,40 @@
-# Future GitHub Actions assessment — no workflow enabled
+# Continuous integration
 
-**Decision reconfirmed for 0.26.1-beta (2026-10-24): keep Actions disabled.**
-Only this recommendation is updated. No workflow, scheduled downloads, release
-automation or private test fixtures are added to GitHub.
+## Enabled for 0.26.2-beta
 
-The private project has a substantial rules/UI/engine regression harness. Exporting it is deferred: this preparation intentionally adds neither the tests directory nor a GitHub Actions workflow.
+The previous keep-disabled decision was superseded by the explicit request for
+0.26.2. `.github/workflows/ci.yml` runs on pushes to `main` and `dev/**`, pull
+requests, and manual dispatch. It builds the Windows application and runs the
+curated synthetic checks in `tests/Public`, grouped into rules/codec and
+storage/graph steps. A thousand assertions need not mean a thousand jobs.
 
-## Recommended staged adoption
+The job uses the SDK selected by `global.json`, commit-pinned official checkout
+and setup-dotnet actions, read-only repository permissions, no persisted checkout
+credentials, a 15-minute timeout, and cancellation of superseded runs. It does
+not use `pull_request_target`. NuGet/SDK restoration is the only dependency
+download; there are no Lichess archive or Stockfish downloads in these checks.
+No release is automatically created and no test profiles are uploaded.
 
-| Stage | Benefit | Constraints |
+The source publication allowlist includes only `tests/Public` and this specific
+workflow. The larger existing local harness and private fixtures are not copied.
+
+## Test organization and future expansion
+
+| Group | Current execution | Suitable next step |
 | --- | --- | --- |
-| Build + pure chess rules on pull requests | Fast syntax/rule regressions; repeatable fresh environment | Use Windows and a pinned .NET SDK; synthetic fixtures only. |
-| Focused storage and serialization tests | Protect saved-data compatibility | Temporary per-test profiles; no real PGNs or shared AppData. |
-| WinForms smoke checks | Catch clipping, lifecycle and rendering regressions | Hosted Windows runners are not a full interactive desktop; separate off-screen checks from human UI acceptance. |
-| Engine/generator checks | Catch UCI and training-quality regressions | Bound workers/time, pin engine/network, allow justified search variation; expensive runs belong in opt-in or scheduled jobs. |
-| Release packaging checks | Verify licenses, source companion, hashes and private-data exclusion | Run before publishing artifacts; avoid uploading test profiles/logs wholesale. |
+| Rules and move codec | Every CI run, one fast process | More perft and rule fixtures |
+| Storage and graph projection | Every CI run, synthetic isolated profiles | Fake-HTTP and old-format fixtures after separate publication review |
+| WinForms smoke tests | Local private harness | Small off-screen construction checks, separate from human visual acceptance |
+| Engine and puzzle generation | Local opt-in suite | Manual or scheduled bounded runs with a pinned engine |
+| Benchmarks | Local bounded corpora | Report size/latency trends; avoid brittle wall-clock gates on shared runners |
+| Release packaging/privacy | Local sanitized-source build and audit | An explicit release gate, not automatic publication |
 
-A thousand checks need not mean a thousand CI jobs. Group by responsibility and runtime; measure first. Cache verified dependencies, not user data. Keep credentials out of untrusted pull-request jobs and use minimum token permissions. Pin action versions/commits when a workflow is eventually designed.
+The existing local harness includes more than 1,000 regression checks and over
+22,000 dataset assertions, mostly cheap codec combinations. Test cost and fixture
+privacy matter more than the count. Keep unit/integration checks fast enough for
+every pull request, while expensive engine searches and large archives remain
+opt-in. No successful CI run proves puzzle quality, legal compliance or complete
+interactive behavior across themes, DPI settings and Windows versions.
 
-## Dataset beta: proposed test groups
-
-The local 0.26 harness adds over 22,000 assertions, largely exhaustive move-codec combinations. These are cheap iterations within one process, not a reason to create thousands of jobs or omit coverage. The existing rules, smoke and engine suites produced 1,168 passing checks in the local regression run; the tutorial lifecycle suite separately exercises all 48 cards. Counts are observations of this revision, not coverage percentages.
-
-Suggested public layout when test export is approved:
-
-| Folder / CI group | Pull requests | Scheduled / manual |
-| --- | --- | --- |
-| `tests/Unit/Chess` and `tests/Unit/Datasets` | All rules, move codec, filters, position identity and counts | Same |
-| `tests/Integration/Storage` | Synthetic PGN/ZIP/Zstandard fixtures, pruning, cancellation and old-index preservation | Larger bounded synthetic corpora |
-| `tests/Integration/Downloads` | Fake HTTP: resume, ignored Range, checksum failures, interrupted finalization | Explicit live connectivity check only; never a monthly archive on every run |
-| `tests/Smoke/Windows` | Form construction and selected lifecycle checks in isolated profiles | Full tutorial and broader UI smoke suite |
-| `tests/Engine` | Small deterministic protocol checks, if time permits | Full pinned-engine generation/regression run with concurrency limits |
-| `tests/Benchmarks` | No fragile wall-clock assertions on shared runners | Codec size, peak memory, lookup latency and branch-layout scaling; report trends |
-
-Start with two or three jobs grouped by execution requirements, not feature count. Pure rules/storage may eventually run cross-platform, but the current assembly targets WinForms, so Windows is the honest initial runner choice. Restore/build once per job; cache packages by lock/project inputs. Use timeouts and cancellation for background workers. Upload only selected synthetic failure artifacts, never copied profiles, game libraries or downloaded archives. A release gate should include the sanitized-source build, publication audit and matching-source package checks.
-
-No Actions workflow or private tests are published as part of the 0.26 beta series. The one authorized live Lichess download was a local manual check; normal dataset tests inject fake HTTP and do not access the network. A full multi-gigabyte archive test remains an opt-in local benchmark.
-
-Add checkpoint/resume, stop-and-save versus cancellation, old-index decoding,
-position-key sort order and theme/layout construction to the fast storage group.
-Keep size/performance comparisons as reported benchmarks rather than brittle
-millisecond gates on shared runners. Most of the 22,000+ dataset assertions are
-cheap codec cases; they fit in one test process, not 22,000 Actions jobs.
-
-A successful CI run would not prove puzzle quality, legal compliance or all interactive UI behavior. Preserve manual fresh-install and accessibility checks.
+Workflow presence does not override repository-level Actions permissions. Check
+the repository's Actions page for the result of the first development-branch run.

@@ -28,9 +28,10 @@ public sealed partial class BranchForm
 
     private void BuildEditingControls(FlowLayoutPanel panel)
     {
-        var settingsToggle = new BranchDisclosureButton { Text = "Engine-Einstellungen", Width = 360, Height = 30 };
+        var settingsToggle = new Button { Text = "▸ " + L.T("Engine-Einstellungen"), Width = 360, Height = 27, FlatStyle = FlatStyle.Flat, BackColor = UiPalette.FromArgb(43, 49, 55), ForeColor = UiPalette.Gainsboro, Margin = new(0, 1, 0, 1), TextAlign = ContentAlignment.MiddleLeft };
+        settingsToggle.FlatAppearance.BorderSize = 0;
         panel.Controls.Add(settingsToggle); panel.Controls.Add(engineSettings);
-        settingsToggle.Click += (_, _) => { engineSettings.Visible = !engineSettings.Visible; settingsToggle.Expanded = engineSettings.Visible; };
+        settingsToggle.Click += (_, _) => { engineSettings.Visible = !engineSettings.Visible; settingsToggle.Text = (engineSettings.Visible ? "▾ " : "▸ ") + L.T("Engine-Einstellungen"); };
         void Row(string label, Control input)
         {
             var row = new FlowLayoutPanel { Width = 370, Height = 32 };

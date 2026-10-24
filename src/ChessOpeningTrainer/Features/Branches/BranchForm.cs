@@ -532,10 +532,14 @@ public sealed partial class BranchForm : LocalizedForm
         settings.Controls.Add(legacyLayout);
         var refinement = new CheckBox { Text = "Stärkere Kreuzungsreduktion (Beta)", Checked = Preferences.Current.BranchGlobalRefinementBeta, Size = new(230, 48), ForeColor = UiPalette.Gainsboro };
         settings.Controls.Add(refinement);
-        refinement.CheckedChanged += async (_, _) =>
+        var sugiyama = new CheckBox { Text = "Sugiyama-Positionierung (Beta)", Checked = Preferences.Current.BranchSugiyamaBeta, Size = new(230, 48), ForeColor = UiPalette.Gainsboro };
+        settings.Controls.Add(sugiyama);
+        async void LayoutOptionChanged(object? sender, EventArgs e)
         {
-            Preferences.Current.BranchGlobalRefinementBeta = refinement.Checked; Preferences.Save();
-            if (!refinement.Checked || IsEditingMode) { Rebuild(); return; }
+            Preferences.Current.BranchGlobalRefinementBeta = refinement.Checked;
+            Preferences.Current.BranchSugiyamaBeta = sugiyama.Checked; Preferences.Save();
+            refinement.Enabled = !sugiyama.Checked;
+            if ((!refinement.Checked && !sugiyama.Checked) || IsEditingMode) { Rebuild(); return; }
             bool group = groups.Checked, hide = hideHuman.Checked, hideAll = hideSubs.Checked;
             var closedNodes = collapsed.ToHashSet(); var compactNodes = compact.ToHashSet(); var source = opening;
             using var loading = new BranchLoadingOverlay { Dock = DockStyle.Fill };
@@ -549,7 +553,10 @@ public sealed partial class BranchForm : LocalizedForm
             {
                 if (!IsDisposed) { graphArea.Controls.Remove(loading); top.Enabled = settings.Enabled = right.Enabled = true; }
             }
-        };
+        }
+        refinement.CheckedChanged += LayoutOptionChanged;
+        sugiyama.CheckedChanged += LayoutOptionChanged;
+        refinement.Enabled = !sugiyama.Checked;
         var spacingRow = new FlowLayoutPanel { Size = new(230, 64), Margin = new(3, 3, 3, 8), WrapContents = true };
         var spacingLabel = new Label { Text = "Horizontaler Spaltenabstand", Width = 224, Height = 24, ForeColor = UiPalette.Gainsboro };
         var spacing = new ScrollNumber

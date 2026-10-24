@@ -31,6 +31,7 @@ public sealed class DatasetStore
     public string PathFor(DatasetEntry entry) => Path.Combine(DirectoryPath, Guid.ParseExact(entry.Id, "N").ToString("N") + ".sqlite");
     public string Signature => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes("compact-v3:" + Manifest.StopAtGames + ":" + string.Join("|", Manifest.Entries.Where(e => e.Active).OrderBy(e => e.Id).Select(e => e.Id + ":" + e.ContentHash)))));
     public bool HasIndex => Manifest.IndexFile is { } file && File.Exists(IndexPath(file));
+    public string SourceSignature => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join("|", Manifest.Entries.Where(e => e.Active).OrderBy(e => e.Id).Select(e => e.Id + ":" + e.ContentHash)))));
     public bool IsStale => Manifest.IndexSignature != Signature && (HasIndex || Manifest.Entries.Any(e => e.Active));
     public string IndexPath(string file)
     {

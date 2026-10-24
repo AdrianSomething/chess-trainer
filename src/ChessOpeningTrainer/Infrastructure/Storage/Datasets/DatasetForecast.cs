@@ -1,6 +1,9 @@
 namespace ChessOpeningTrainer;
 
-public sealed record DatasetSizeEstimate(long LowerBytes, long UpperBytes, long TemporaryBytes, int SampleGames);
+public sealed record DatasetSizeEstimate(long LowerBytes, long UpperBytes, long TemporaryBytes, int SampleGames)
+{
+    public bool PruningUnknown { get; init; }
+}
 
 /// <summary>Measures the actual codec on a bounded, stratified sample. Sparse
 /// tails are uncertain: show a range, never a promised compression factor.</summary>
@@ -41,11 +44,13 @@ public static class DatasetForecast
                 peak = Math.Max(peak, operation.PeakWorkspaceBytes);
                 return new FileInfo(path).Length;
             }
-            long upper = Measure((int)Math.Floor(cutoff / scale));
-            long lower = cutoff > 0 ? Measure(cutoff) : upper;
+            // Scaling an absolute rarity threshold into a 1,000-game sample
+            // cannot identify which unique tails recur in 500,000 games. Do not
+            // present that arbitrarily wide interval as a meaningful forecast.
+            long upper = Measure(scale == 1 ? cutoff : 0);
             // A conservative workspace indication, separate from final archive size.
             long temporary = (long)Math.Min(long.MaxValue, peak * scale);
-            return new((long)(Math.Min(lower, upper) * scale), (long)(Math.Max(lower, upper) * scale), temporary, sample.Count);
+            return new((long)(upper * scale), (long)(upper * scale), temporary, sample.Count) { PruningUnknown = cutoff > 0 && scale > 1 };
         }
         finally { Directory.Delete(workspace, true); }
     }

@@ -6,7 +6,7 @@ $files = @(Get-ChildItem -LiteralPath $root -Recurse -File -Force)
 $problems = [Collections.Generic.List[string]]::new()
 foreach ($file in $files) {
     $rel = [IO.Path]::GetRelativePath($root, $file.FullName).Replace('\','/')
-    if ($rel -match '(^|/)(outputs|work|private|AppData|\.git|tests|bin|obj)/' -or $rel -match '^docs/(history|versions)/' -or
+    if ($rel -match '(^|/)(outputs|work|private|AppData|\.git|bin|obj)/' -or ($rel -match '^tests/' -and $rel -notmatch '^tests/Public/[^/]+\.(cs|csproj|props|md)$') -or $rel -match '^docs/(history|versions)/' -or
         $rel -match '(personal-games|preferences|progress|vision-statistics)\.json$' -or
         $rel -match '\.(pdb|user|suo|pem|pfx|key)$' -or $rel -match '(^|/)\.env($|\.)') {
         $problems.Add("Disallowed private/build file: $rel")

@@ -2,6 +2,19 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.26.2-beta — Development
+
+- Correct reversed board-square parity in the shared renderer: a1/d8 are dark, d1/h1 are light. Add off-screen pixel checks for every square, both orientations and all bundled skins.
+
+- Enable a read-only, bounded Windows CI build with public synthetic rules, codec, storage and graph checks; no live archive downloads or automatic releases.
+- Align dataset cards, bookmark/rename controls and English naming with the home menu; use operation-specific close/resume messages.
+- Show actual tree size and recorded peak workspace; measure stricter cutoffs against complete position frequencies instead of presenting misleading sample-scaled rare-tail intervals.
+- Store temporary edge counters inside position rows. The 1,000-game comparison reduces peak aggregation workspace from 6,520,832 to 3,584,000 bytes without changing the final index or any counts.
+- Add an activity ring during indexing and use recent throughput for remaining-time estimates.
+- Collapse only terminal forced lines into a single wide node, restore their collapse handle after expansion, fit visible node bounds and show absolute game totals explicitly.
+- Improve order-preserving centering after stronger crossing reduction; add a separate opt-in, bounded Sugiyama-family layout with a crossing-count guard.
+- Keep stable downloads, opening formats and existing dataset indexes unchanged.
+
 ## 0.26.1-beta — Development
 
 - Align dataset cards, download selection, settings, scrollbars and compact filter sections with the other modes; add bookmarks and explicit rename confirmation.

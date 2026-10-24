@@ -1,8 +1,8 @@
-# Data sets — 0.26.1-beta
+# Datasets — 0.26.2-beta
 
 ## Workflow
 
-Open **Data sets** from the home menu. Import one or more PGN, PGN.ZST, PGN.GZ or ZIP files (PGN entries inside ZIP), or choose months from the live Lichess standard-rated catalog. The catalog shows approximate download size and game count; click to select, Ctrl-click to add/remove and Shift-click for a range. Downloads are checksummed against Lichess's SHA-256 list and recorded before transfer starts. The next transfer can overlap the current import; queue progress distinguishes downloaded from processed archives. Servers that ignore Range cause a clean restart, never an append to the wrong bytes.
+Open **Datasets** from the home menu. Import one or more PGN, PGN.ZST, PGN.GZ or ZIP files (PGN entries inside ZIP), or choose months from the live Lichess standard-rated catalog. The catalog shows approximate download size and game count; click to select, Ctrl-click to add/remove and Shift-click for a range. Downloads are checksummed against Lichess's SHA-256 list and recorded before transfer starts. The next transfer can overlap the current import; queue progress distinguishes downloaded from processed archives. Servers that ignore Range cause a clean restart, never an append to the wrong bytes.
 
 **Pause** holds the same operation in memory; **Resume** continues it. **Cancel** discards unfinished work, leaving existing datasets and the previous tree intact. **Stop and save** publishes the games already processed (or keeps a partial download for later). Closing the window retains download state and committed import checkpoints. Reopen Data sets and choose **Resume download/import**. Compressed imports replay the source stream to their saved record boundary, but do not revalidate or duplicate saved games. Filtering and indexing are paused only while the application remains open; closing discards those unfinished operations. Time estimates become useful only after work has been measured and exclude deliberate pauses.
 
@@ -28,13 +28,41 @@ The **frequency index** keeps only position identities, played moves and four ab
 
 Existing format-2 indexes remain readable. Rebuilding writes format 3. Version 0.26.0 cannot read the newer index; keep its old snapshot if testing a downgrade. Opening files and learning progress are unaffected.
 
+### Why an index can exceed a game list
+
+A compact game list needs roughly one two-byte move per ply and reconstructs
+positions sequentially. Fast arbitrary-position lookup materializes a queryable
+identity for each distinct position, plus outcome counts and outgoing moves.
+This is redundant, derived information traded for fast lookup: fewer PGN fields
+does not imply fewer bytes than a compressed sequential representation. Late-game
+positions are often unique, so shared openings do not offset all that overhead.
+The bounded 1,000-game example has 62,895 distinct positions and a 662,228-byte
+index (about 10.5 bytes per position after compression), versus a 204,800-byte
+normalized game store. This is a design trade-off, not an information-theoretic
+requirement that every possible tree encoding must be this large.
+
+The temporary database must update counters in arbitrary order while retaining
+exact identities. Its B-tree pages and row overhead are not compressed like the
+final sorted blocks. In 0.26.2 each position owns a small binary adjacency payload:
+there is no separate edge B-tree repeating its parent identity for every move.
+This reduces measured workspace by about 45% on the same 1,000-game input.
+Multi-pass external aggregation could trade more I/O for still less space, but
+is not claimed to be implemented. No arbitrary truncation or hash collisions are
+introduced to make the numbers appear smaller.
+
 There is no unconditional 1:32 size guarantee relative to an already compressed Lichess download. Unique late-game sequences still contain information. The optional cutoff trades those continuations for a smaller index without changing retained outcome counts.
 
 ## Continuation cutoff and size forecast
 
 **Minimum games per node** defaults to **0**, meaning no depth limit. With **5**, any position reached by at most five games becomes a leaf with its exact outcome counts. Its outgoing moves are omitted. Positions still reachable through a frequent transposition remain available. Pruning uses the complete aggregated dataset, not a sample.
 
-The file-size forecast uses the actual encoder on a bounded, stratified sample (up to 2,000 games). Observed-count and sample-scaled cutoffs give different estimates of rare tails; a range is shown only when its rounded endpoints differ. This is a rough extrapolation, not a confidence interval or storage promise. Temporary aggregation space is measured in the sample run instead of assuming a fixed cost per ply, and shown separately. The live working-file measurement includes the owned SQLite database and journal/WAL files, not unrelated application/profile files. Filtering uses the import-time random reservoir (default 1,000 games) for estimates, while subset creation applies the filter to every game. Existing datasets keep their original sample size. A random maximum-game limit samples matching row IDs instead of retaining every selected game's full contents in RAM.
+For a current completed tree, the sidebar shows the actual file size and the recorded peak aggregation workspace, not an approximation. Older trees have no historical workspace measurement; the app says so rather than inventing one.
+
+When the selected sources are unchanged and the minimum is increased, the app can measure a prospective smaller index using the complete stored counts, including transpositions. This read-only preview uses the actual final encoder and is limited to 100,000 retained positions / five seconds of traversal. No source file or current index is replaced. It cannot restore continuations omitted by an earlier, higher minimum.
+
+For a new full-depth build, the forecast measures the encoder and workspace on a bounded stratified sample (up to 2,000 games), then extrapolates. This remains approximate. For a new **pruned** build without complete counts, there is deliberately no large, misleading rare-tail range: a 1,000-game sample cannot determine which positions recur five times across 500,000 games. The UI explains that complete frequencies are needed. Building once at a lower minimum enables subsequent stricter-cutoff measurements; the preview's safety limits may still prevent an exact measurement of a huge retained graph.
+
+The live working-file measurement includes the owned SQLite database and journal/WAL files, not unrelated profile files. An activity ring remains visible through pruning/export, where a reliable phase ETA is unavailable. Aggregation ETA uses recent throughput rather than extrapolating only its initially faster phase. Filtering still uses the import-time random reservoir for estimates and applies filters to every game when creating a subset. Existing datasets keep their original sample size. A random maximum-game limit samples matching row IDs instead of retaining every selected game's full contents in RAM.
 
 An exact full-depth position index may be larger than its normalized game store: rare late-game positions need queryable identities and counts, whereas a game store can encode just successive moves. Transpositions and shared openings help, but do not make every late-game position shared. Use the cutoff to remove rare continuations; the app does not silently truncate depth or fabricate a compression ratio.
 
@@ -44,7 +72,7 @@ Both players must satisfy rating limits. Lichess calls these Glicko-2 ratings, n
 
 The graph starts at the standard initial position. Imported custom-FEN games are retained and can contribute to position lookups, but custom roots do not yet have a separate root selector in the graph browser. This is a beta limitation.
 
-The browser starts with the root expanded, expands one selected continuation per depth, compacts forced lines into up to five moves per wider node, stops repetition loops, and orders replies by frequency. Expand a compact line to inspect individual moves. Column spacing is adjustable, and an existing selection is retained when it is still visible. Edge width represents reply share; winner-border width is a bounded frequency/sample-size heuristic, **not a statistical significance test**. A thin opposite-color outer stroke keeps white/black borders visible across themes; the separate selection outline remains visible. The side panel uses the shared board/evaluation renderer and can open a position in Custom Game or preserve its sequence for the Opening Branch Generator.
+The browser starts with the root expanded, expands one selected continuation per depth, stops repetition loops, and orders replies by frequency. A forced line is compacted only when there is no later fork anywhere in that line. One wide node represents the entire tail and displays at most five moves plus an ellipsis; there is no extra continuation node. Expand it to inspect all individual moves; the first expanded move keeps its collapse handle. Fit uses visible node widths rather than hidden depth. Column spacing is adjustable, and an existing selection is retained when still visible. Edge width represents reply share; winner-border width is a bounded frequency/sample-size heuristic, **not a statistical significance test**. The side panel shows the absolute total, shared board/evaluation renderer and outcome bar, with links to Custom Game and the generator.
 
 **Game statistics** can also be enabled in learning, Custom Game and game analysis; the generator displays the strip below its board. Learning hides it until the answer is known. Lookups run in the background with bounded block caches and stale-result protection; they do not start additional engines.
 
@@ -66,3 +94,21 @@ For the supplied 1,799,107,597-byte February 2017 archive, only the first 1,000 
 The 2026-10-24 run parsed the prefix in about 0.62 seconds, built the full index in 1.52 seconds and performed 1,000 cached starting-position lookups in 3.31 ms. Timings vary by machine and load. This is not a full-archive benchmark and is not used to claim an archive-wide compression ratio. Alternative bitmap/RLE final-key encodings measured 824,268 and 904,231 bytes and were rejected in favor of the smaller prefix-coded format.
 
 Offline checks cover all 20,480 source/target/promotion encodings, legal SAN roundtrips, imports, durable checkpoint/resume without duplicates, stop-and-save, filtering, transpositions, key sort order, old format-2/3 reading, threshold invalidation, exact terminal counts, cancellation, fake-HTTP resume/restart/checksum cases and form construction. No personal library or real AppData is used by tests. A full 1.8-GB end-to-end import remains outside this bounded validation.
+
+### 0.26.2 bounded measurements
+
+| Measurement | First 1,000 records | First 10,000 records |
+| --- | ---: | ---: |
+| Accepted games | 1,000 | 10,000 |
+| Plies | 67,320 | 673,034 |
+| Normalized game store | 204,800 bytes | 1,970,176 bytes |
+| Full final index | 662,228 bytes | 6,428,497 bytes |
+| Cutoff-5 final index | 6,421 bytes | 72,366 bytes |
+| Full / cutoff positions | 62,895 / 672 | 607,280 / 7,266 |
+| Peak aggregation workspace | 3,584,000 bytes | 34,385,920 bytes |
+| Full-index build | 0.96 s | 6.28 s |
+| 1,000 cached lookups | 3.18 ms | 2.96 ms |
+
+The first-1,000 final sizes are identical to 0.26.1; its measured workspace was
+6,520,832 bytes. These prefixes are not random samples and do not establish a
+whole-archive ratio, an upper workspace bound or a guaranteed run time.

@@ -106,7 +106,7 @@ internal static class DatasetIndexFormat
         return records;
     }
 
-    private static void WriteCounts(BinaryWriter writer, DatasetCounts c)
+    internal static void WriteCounts(BinaryWriter writer, DatasetCounts c)
     {
         long[] values = [c.White, c.Draw, c.Black, c.Unknown];
         if (values.Count(n => n != 0) <= 1 && c.Total <= long.MaxValue / 8)
@@ -121,7 +121,7 @@ internal static class DatasetIndexFormat
         WriteUInt(writer, (ulong)c.Black);
         WriteUInt(writer, (ulong)c.Unknown);
     }
-    private static DatasetCounts ReadCounts(BinaryReader reader, bool legacy)
+    internal static DatasetCounts ReadCounts(BinaryReader reader, bool legacy)
     {
         if (!legacy)
         {

@@ -40,6 +40,7 @@ public sealed class UserPreferences
     // Keep the older serialized field above so existing settings remain readable.
     public bool BranchLegacyPositioning { get; set; }
     public bool BranchGlobalRefinementBeta { get; set; }
+    public bool BranchSugiyamaBeta { get; set; }
     public double BranchColumnSpacing { get; set; } = 1;
     public bool VisionIndirectDefenders { get; set; }
     public int VisionMemoryDifficulty { get; set; } = 1;

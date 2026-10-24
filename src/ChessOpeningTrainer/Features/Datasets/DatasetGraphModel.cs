@@ -13,38 +13,53 @@ public sealed class DatasetGraphModel
         using var index = new DatasetIndex(indexPath);
         var model = new DatasetGraphModel();
         float row = 0;
+        var leadsToFork = new HashSet<string>();
+        // A compact node represents an entire terminal forced line, not the
+        // first five moves of a line that branches farther down the graph.
+        List<(Position Position, string Uci, string San)>? TerminalTail(Position start, HashSet<string> ancestors)
+        {
+            var tail = new List<(Position, string, string)>();
+            var visited = new HashSet<string>(ancestors);
+            var ownKeys = new List<string>();
+            var p = start;
+            while (true)
+            {
+                token.ThrowIfCancellationRequested();
+                string key = Convert.ToHexString(DatasetIndex.Key(p));
+                if (!visited.Add(key)) return null;
+                ownKeys.Add(key);
+                var children = index.Children(p);
+                if (children.Count == 0) return tail;
+                if (children.Count != 1 || leadsToFork.Contains(key))
+                {
+                    leadsToFork.UnionWith(ownKeys);
+                    return null;
+                }
+                var move = MoveGenerator.GenerateLegal(p).FirstOrDefault(m => m.Uci == children[0].Move);
+                if (move is null) return null;
+                var next = p.Clone(); next.Apply(move);
+                tail.Add((next, move.Uci, SanNotation.Format(p, move)));
+                p = next;
+            }
+        }
         BranchVertex Visit(Position position, string[] path, string caption, HashSet<string> ancestors, bool root = false, bool expandForced = false)
         {
             token.ThrowIfCancellationRequested();
             int startDepth = path.Length;
             string startPath = string.Join(' ', path);
             bool grouped = false;
-            expandForced |= expanded.GetValueOrDefault(-startDepth - 1) == startPath;
+            bool forcedAnchor = compact && !root && !expandForced && expanded.GetValueOrDefault(-startDepth - 1) == startPath;
+            expandForced |= forcedAnchor;
             if (compact && !root && !expandForced && !ancestors.Contains(Convert.ToHexString(DatasetIndex.Key(position))))
             {
-                var seen = new HashSet<string>(ancestors);
-                for (int count = 1; count < 5; count++)
+                var tail = TerminalTail(position, ancestors);
+                if (tail is { Count: > 0 })
                 {
-                    string currentKey = Convert.ToHexString(DatasetIndex.Key(position));
-                    if (!seen.Add(currentKey))
-                        break;
-                    var nextMoves = index.Children(position);
-                    if (nextMoves.Count != 1)
-                        break;
-                    var move = MoveGenerator.GenerateLegal(position).FirstOrDefault(m => m.Uci == nextMoves[0].Move);
-                    if (move is null)
-                        break;
-                    var next = position.Clone();
-                    next.Apply(move);
-                    if (seen.Contains(Convert.ToHexString(DatasetIndex.Key(next))))
-                        break;
-                    caption += " " + SanNotation.Format(position, move);
-                    path = [.. path, move.Uci];
-                    position = next;
+                    caption += " " + string.Join(' ', tail.Take(4).Select(t => t.San)) + (tail.Count > 4 ? " …" : "");
+                    path = [.. path, .. tail.Select(t => t.Uci)];
+                    position = tail[^1].Position;
                     grouped = true;
                 }
-                ancestors = seen;
-                ancestors.Remove(Convert.ToHexString(DatasetIndex.Key(position)));
             }
             var v = new BranchVertex { Id = model.Vertices.Count, Position = position, Depth = path.Length, IsLearnerMove = true };
             if (grouped)
@@ -58,10 +73,10 @@ public sealed class DatasetGraphModel
             var children = repeated ? [] : index.Children(position);
             bool branch = root || children.Count > 1;
             bool open = !branch || expanded.GetValueOrDefault(path.Length) == string.Join(' ', path);
-            if (children.Count > 0 && branch || grouped)
+            if (children.Count > 0 && branch || grouped || forcedAnchor)
                 v.Nodes.Add(new OpeningNode { IsSubbranch = true });
             v.Collapsed = grouped || !open;
-            model.Expansion[v] = grouped ? (-startDepth - 1, startPath) : (path.Length, string.Join(' ', path));
+            model.Expansion[v] = grouped || forcedAnchor ? (-startDepth - 1, startPath) : (path.Length, string.Join(' ', path));
             if (open && children.Count > 0)
             {
                 var nextAncestors = new HashSet<string>(ancestors) { key };

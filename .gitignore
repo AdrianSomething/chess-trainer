@@ -21,7 +21,8 @@
 /src/ChessOpeningTrainer/Customization/sounds/user/
 /src/ChessOpeningTrainer/engine/stockfish_release/
 /src/ChessOpeningTrainer/Openings/example_pirc_defense.json
-/tests/
+/tests/*
+!/tests/Public/
 /docs/versions/
 /docs/history/
 /tools/Prepare-Publication.ps1

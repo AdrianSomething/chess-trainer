@@ -5,7 +5,7 @@ public sealed class DatasetGraphView : UserControl
     private readonly string indexPath;
     private readonly StockfishEngine engine;
     private readonly BranchCanvas canvas;
-    private readonly BoardControl board = new() { InputEnabled = false };
+    private readonly BoardControl board = new() { InputEnabled = false, MinimumSize = Size.Empty };
     private readonly EvalScale scale = new();
     private readonly VariationRows hiddenLines = new();
     private readonly AnalysisPresenter presenter;
@@ -13,7 +13,7 @@ public sealed class DatasetGraphView : UserControl
     private readonly Panel right = new() { Dock = DockStyle.Right, Width = 380, Visible = false };
     private readonly Label status = new() { Dock = DockStyle.Bottom, Height = 30 };
     private readonly Dictionary<int, string> expanded = new() { [0] = "" };
-    private readonly ScrollNumber spacing = new() { Minimum = .25m, Maximum = 5, DecimalPlaces = 2, Increment = .25m, Value = 1, Width = 65 };
+    private readonly ScrollNumber spacing = new() { Minimum = .25m, Maximum = 5, DecimalPlaces = 2, Increment = .25m, Value = 1, Width = 65, Margin = new(3, 10, 3, 3) };
     private DatasetGraphModel? model;
     private BranchVertex? selected;
     private CancellationTokenSource? load;

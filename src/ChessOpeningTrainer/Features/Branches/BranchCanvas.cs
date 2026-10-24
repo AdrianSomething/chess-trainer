@@ -76,9 +76,10 @@ public sealed class BranchCanvas : Control
     {
         if (Vertices.Count == 0)
             return;
-        float width = Vertices.Max(v => v.Location.X) + 145, height = Vertices.Max(v => v.Location.Y + v.Height / 2) + 60;
-        zoom = Math.Clamp(Math.Min((Width - 70) / width, (Height - 70) / height), .035f, 1.1f);
-        pan = new(35, 35);
+        float left = Vertices.Min(v => v.Location.X - v.Width / 2), right = Vertices.Max(v => v.Location.X + v.Width / 2 + 18);
+        float top = Vertices.Min(v => v.Location.Y - v.Height / 2), bottom = Vertices.Max(v => v.Location.Y + v.Height / 2 + 16);
+        zoom = Math.Clamp(Math.Min(Math.Max(1, Width - 70) / Math.Max(1, right - left), Math.Max(1, Height - 70) / Math.Max(1, bottom - top)), .035f, 1.1f);
+        pan = new(35 - left * zoom, 35 - top * zoom);
         Invalidate();
     }
 

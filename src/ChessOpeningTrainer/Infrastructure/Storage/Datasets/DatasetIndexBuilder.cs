@@ -30,16 +30,22 @@ internal static class DatasetIndexBuilder
         int cutoff = Math.Max(0, store.Manifest.StopAtGames);
         string signature = store.Signature, file = "index-" + Guid.NewGuid().ToString("N") + ".cotidx", path = store.IndexPath(file);
         string temporary = path + ".building.sqlite";
+        var roots = new List<string>();
         try
         {
             using (var db = DatasetStore.Open(temporary))
             {
                 using var schema = db.CreateCommand();
-                schema.CommandText = "CREATE TABLE positions(k BLOB PRIMARY KEY,w INTEGER,d INTEGER,b INTEGER,u INTEGER) WITHOUT ROWID; " +
-                    "CREATE TABLE edges(parent BLOB,move INTEGER,w INTEGER,d INTEGER,b INTEGER,u INTEGER,PRIMARY KEY(parent,move)) WITHOUT ROWID; " +
+                schema.CommandText = "CREATE TABLE positions(k BLOB PRIMARY KEY,w INTEGER,d INTEGER,b INTEGER,u INTEGER,e BLOB) WITHOUT ROWID; " +
                     "CREATE TABLE roots(k BLOB PRIMARY KEY) WITHOUT ROWID;";
                 schema.ExecuteNonQuery();
                 Aggregate(db, active, store, settings, progress, token, operation);
+                using (var rootQuery = db.CreateCommand())
+                {
+                    rootQuery.CommandText = "SELECT k FROM roots";
+                    using var rootReader = rootQuery.ExecuteReader();
+                    while (rootReader.Read()) roots.Add(Convert.ToHexString((byte[])rootReader[0]));
+                }
                 token.ThrowIfCancellationRequested();
                 progress?.Report(L.T("Seltene Fortsetzungen entfernen und Index komprimieren …"));
                 long reportAt = 0;
@@ -62,16 +68,25 @@ internal static class DatasetIndexBuilder
             }
             token.ThrowIfCancellationRequested();
             string? previousFile = store.Manifest.IndexFile, previousSignature = store.Manifest.IndexSignature;
+            long? previousPeak = store.Manifest.IndexPeakWorkspaceBytes;
+            var previousRoots = store.Manifest.IndexRoots;
+            string? previousSources = store.Manifest.IndexSourceSignature;
             try
             {
                 store.Manifest.IndexFile = file;
                 store.Manifest.IndexSignature = signature;
+                store.Manifest.IndexPeakWorkspaceBytes = operation?.PeakWorkspaceBytes;
+                store.Manifest.IndexSourceSignature = store.SourceSignature;
+                store.Manifest.IndexRoots = roots;
                 store.Save();
             }
             catch
             {
                 store.Manifest.IndexFile = previousFile;
                 store.Manifest.IndexSignature = previousSignature;
+                store.Manifest.IndexPeakWorkspaceBytes = previousPeak;
+                store.Manifest.IndexSourceSignature = previousSources;
+                store.Manifest.IndexRoots = previousRoots;
                 throw;
             }
             return path;
@@ -90,21 +105,20 @@ internal static class DatasetIndexBuilder
     {
         using var tx = db.BeginTransaction();
         using var pos = db.CreateCommand();
-        using var edge = db.CreateCommand();
         using var root = db.CreateCommand();
         root.Transaction = tx;
         root.CommandText = "INSERT OR IGNORE INTO roots VALUES($key)";
         root.Parameters.Add("$key", SqliteType.Blob);
-        foreach (var command in new[] { pos, edge })
+        foreach (var command in new[] { pos })
         {
             command.Transaction = tx;
             command.Parameters.Add("$key", SqliteType.Blob);
             foreach (string name in new[] { "$w", "$d", "$b", "$u" })
                 command.Parameters.Add(name, SqliteType.Integer);
         }
-        edge.Parameters.Add("$move", SqliteType.Integer);
-        pos.CommandText = "INSERT INTO positions VALUES($key,$w,$d,$b,$u) ON CONFLICT(k) DO UPDATE SET w=w+$w,d=d+$d,b=b+$b,u=u+$u";
-        edge.CommandText = "INSERT INTO edges VALUES($key,$move,$w,$d,$b,$u) ON CONFLICT(parent,move) DO UPDATE SET w=w+$w,d=d+$d,b=b+$b,u=u+$u";
+        pos.Parameters.Add("$edges", SqliteType.Blob);
+        db.CreateFunction<byte[], byte[], byte[]>("merge_edges", DatasetEdgePayload.Merge);
+        pos.CommandText = "INSERT INTO positions VALUES($key,$w,$d,$b,$u,$edges) ON CONFLICT(k) DO UPDATE SET w=w+$w,d=d+$d,b=b+$b,u=u+$u,e=merge_edges(e,$edges)";
         long done = 0, total = active.Sum(e => e.Games);
         var games = active.SelectMany(e => DatasetStore.Games(store.PathFor(e), token)).AsParallel()
             .WithDegreeOfParallelism(Math.Clamp(settings.IndexWorkers, 1, 32)).WithCancellation(token).Select(Positions);
@@ -115,30 +129,20 @@ internal static class DatasetIndexBuilder
             var counts = DatasetCounts.From(game.Result);
             root.Parameters["$key"].Value = game.Items[0].Key;
             root.ExecuteNonQuery();
-            foreach (var command in new[] { pos, edge })
+            foreach (var command in new[] { pos })
             {
                 command.Parameters["$w"].Value = counts.White;
                 command.Parameters["$d"].Value = counts.Draw;
                 command.Parameters["$b"].Value = counts.Black;
                 command.Parameters["$u"].Value = counts.Unknown;
             }
-            var seenPositions = new HashSet<string>();
-            var seenEdges = new HashSet<(string, ushort)>();
-            for (int i = 0; i < game.Items.Count; i++)
+            // One contribution per position and per edge in a game, even after
+            // repetition; different continuations from that position are retained.
+            foreach (var items in game.Items.GroupBy(i => Convert.ToHexString(i.Key)))
             {
-                var item = game.Items[i];
-                string key = Convert.ToHexString(item.Key);
-                if (seenPositions.Add(key))
-                {
-                    pos.Parameters["$key"].Value = item.Key;
-                    pos.ExecuteNonQuery();
-                }
-                if (item.Move is ushort move && seenEdges.Add((key, move)))
-                {
-                    edge.Parameters["$key"].Value = item.Key;
-                    edge.Parameters["$move"].Value = move;
-                    edge.ExecuteNonQuery();
-                }
+                pos.Parameters["$key"].Value = items.First().Key;
+                pos.Parameters["$edges"].Value = DatasetEdgePayload.Encode(items.Where(i => i.Move.HasValue).Select(i => i.Move!.Value).Distinct().Select(move => (move, counts)));
+                pos.ExecuteNonQuery();
             }
             if (++done % 1000 == 0)
             {
@@ -156,6 +160,7 @@ internal static class DatasetIndexBuilder
         query.Parameters.AddWithValue("$cutoff", cutoff);
         if (cutoff > 0)
         {
+            db.CreateFunction<byte[], string>("move_codes", bytes => System.Text.Json.JsonSerializer.Serialize(DatasetEdgePayload.Decode(bytes).Select(e => e.Move)));
             db.CreateFunction<byte[], long, byte[]>("position_after", (key, code) =>
             {
                 operation?.Wait(token);
@@ -168,34 +173,25 @@ internal static class DatasetIndexBuilder
             using var prune = db.CreateCommand();
             prune.Parameters.AddWithValue("$cutoff", cutoff);
             prune.CommandText = "CREATE TABLE kept(k BLOB PRIMARY KEY) WITHOUT ROWID; " +
-                "WITH RECURSIVE reachable(k) AS (SELECT k FROM roots UNION SELECT position_after(e.parent,e.move) FROM reachable r " +
-                "JOIN positions p ON p.k=r.k JOIN edges e ON e.parent=r.k WHERE p.w+p.d+p.b+p.u>$cutoff) INSERT INTO kept SELECT k FROM reachable;";
+                "WITH RECURSIVE reachable(k) AS (SELECT k FROM roots UNION SELECT position_after(p.k,e.value) FROM reachable r " +
+                "JOIN positions p ON p.k=r.k JOIN json_each(move_codes(p.e)) e WHERE p.w+p.d+p.b+p.u>$cutoff) INSERT INTO kept SELECT k FROM reachable;";
             token.ThrowIfCancellationRequested();
             using var cancellation = token.Register(prune.Cancel);
             prune.ExecuteNonQuery();
         }
         // RLE preserves the expanded key's order. No dataset-sized final sort.
         db.CreateFunction<byte[], byte[]>("position_expand", DatasetPositionKey.Expand);
-        query.CommandText = "SELECT position_expand(p.k) AS sortkey,p.w,p.d,p.b,p.u,e.move,e.w,e.d,e.b,e.u FROM positions p " +
+        query.CommandText = "SELECT position_expand(p.k) AS sortkey,p.w,p.d,p.b,p.u,p.e FROM positions p " +
             (cutoff > 0 ? "JOIN kept ON kept.k=p.k " : "") +
-            "LEFT JOIN edges e ON e.parent=p.k AND ($cutoff=0 OR p.w+p.d+p.b+p.u>$cutoff) ORDER BY p.k,e.move";
+            "ORDER BY p.k";
         using var sortingCancellation = token.Register(query.Cancel);
         using var reader = query.ExecuteReader();
-        DatasetIndexRecord? current = null;
         while (reader.Read())
         {
             token.ThrowIfCancellationRequested();
             var key = (byte[])reader[0];
-            if (current is null || !current.Key.AsSpan().SequenceEqual(key))
-            {
-                if (current is not null)
-                    yield return current;
-                current = new(key, new(reader.GetInt64(1), reader.GetInt64(2), reader.GetInt64(3), reader.GetInt64(4)), []);
-            }
-            if (!reader.IsDBNull(5))
-                current.Edges.Add((checked((ushort)reader.GetInt32(5)), new(reader.GetInt64(6), reader.GetInt64(7), reader.GetInt64(8), reader.GetInt64(9))));
+            var counts = new DatasetCounts(reader.GetInt64(1), reader.GetInt64(2), reader.GetInt64(3), reader.GetInt64(4));
+            yield return new(key, counts, cutoff > 0 && counts.Total <= cutoff ? [] : DatasetEdgePayload.Decode((byte[])reader[5]));
         }
-        if (current is not null)
-            yield return current;
     }
 }

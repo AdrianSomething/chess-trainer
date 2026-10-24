@@ -20,7 +20,7 @@ public sealed class DatasetResultsStrip : Control
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
-        TextRenderer.DrawText(e.Graphics, $"{counts.Total:N0} " + L.T("Partien") + (counts.Unknown > 0 ? $" · ? {counts.Unknown:N0}" : ""), Font, new Rectangle(0, 0, Width, 25), UiPalette.Gainsboro);
+        TextRenderer.DrawText(e.Graphics, $"{counts.Total:N0} " + L.T("Partien") + (counts.Unknown > 0 ? $" · ? {counts.Unknown:N0}" : ""), Font, new Rectangle(0, 0, Width, 25), UiPalette.Gainsboro, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
         double total = Math.Max(1, counts.Total);
         float x = 0;
         foreach (var segment in new[] { (counts.White, Color.White, Color.Black), (counts.Draw, Color.Gray, Color.White), (counts.Black, Color.Black, Color.White), (counts.Unknown, Color.DimGray, Color.White) })

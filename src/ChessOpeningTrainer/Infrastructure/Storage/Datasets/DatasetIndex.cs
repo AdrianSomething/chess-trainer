@@ -31,7 +31,7 @@ public sealed class DatasetIndex : IDisposable
             byte[] magic = reader.ReadBytes(8);
             version = magic.SequenceEqual("COTDSI02"u8.ToArray()) ? 2 : magic.SequenceEqual(DatasetIndexFormat.Magic) ? 3 : 0;
             if (version == 0)
-                throw new InvalidDataException("Unsupported dataset index. Rebuild it in Data sets.");
+                throw new InvalidDataException("Unsupported dataset index. Rebuild it in Datasets.");
             long offset = reader.ReadInt64();
             StopAtGames = reader.ReadInt32();
             PositionCount = reader.ReadInt64();
@@ -60,7 +60,7 @@ public sealed class DatasetIndex : IDisposable
     public static byte[] Key(Position p) => DatasetPositionKey.Legacy(p);
     internal static Position PositionFromKey(byte[] key) => DatasetPositionKey.Decode(key);
 
-    private DatasetIndexRecord? Find(Position position)
+    internal DatasetIndexRecord? Find(Position position)
     {
         byte[] key = Key(position);
         int low = 0, high = blocks.Count - 1, candidate = -1;
@@ -85,7 +85,7 @@ public sealed class DatasetIndex : IDisposable
             {
                 records = DatasetIndexFormat.Decode(decompressor.Unwrap(reader.ReadBytes(block.Length), 4_000_000).ToArray(), version);
             }
-            catch (ZstdException ex) { throw new InvalidDataException("Damaged dataset index. Rebuild it in Data sets.", ex); }
+            catch (ZstdException ex) { throw new InvalidDataException("Damaged dataset index. Rebuild it in Datasets.", ex); }
             while (cacheOrder.Count >= 32)
                 cache.Remove(cacheOrder.Dequeue());
             cache[candidate] = records;
@@ -115,5 +115,8 @@ public sealed class DatasetIndex : IDisposable
         decompressor.Dispose();
     }
     public static string Build(DatasetStore store, DatasetSettings settings, IProgress<string>? progress, CancellationToken token, DatasetOperation? operation = null)
-        => DatasetIndexBuilder.Build(store, settings, progress, token, operation);
+    {
+        using var owned = operation is null ? new DatasetOperation() : null;
+        return DatasetIndexBuilder.Build(store, settings, progress, token, operation ?? owned);
+    }
 }
