@@ -5,7 +5,7 @@ public sealed partial class MainForm
 {
     private void LayoutGame()
     {
-        bool showStats = mode == "Lernen" && showDatasetStats.Checked && !question;
+        bool showStats = showDatasetStats.Checked && (mode == "Freeplay" || mode == "Lernen" && !question);
         int size = Math.Max(mode == "Lernen" ? 300 : 360, Math.Min(ClientSize.Height - (mode is "Lernen" or "Freeplay" ? 160 : 115) - (showStats ? 44 : 0), ClientSize.Width - 470));
         board.SetBounds(68, 92, size, size);
         title.Width = Math.Max(300, ClientSize.Width - 90);
@@ -28,7 +28,7 @@ public sealed partial class MainForm
         int returnSpace = mode is "Lernen" or "Freeplay" ? 88 : 44;
         int variantHeight = Math.Clamp(ClientSize.Height - returnSpace - top - 148, 66, 126);
         suggestions.Location = new Point(x, top);
-        showDatasetStats.Visible = mode == "Lernen";
+        showDatasetStats.Visible = mode is "Lernen" or "Freeplay";
         showDatasetStats.SetBounds(x + Math.Max(0, w - 125), top, 125, 24);
         suggestions.AutoSize = false; suggestions.Width = Math.Max(100, w - (showDatasetStats.Visible ? 130 : 0));
         variantCaption.SetBounds(x, top + 28, w, 23);

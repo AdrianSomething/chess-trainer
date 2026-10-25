@@ -165,7 +165,7 @@ public sealed partial class MainForm : LocalizedForm
         historyCaption.Text = "Zugfolge · Stellung zum Anschauen anklicken";
         game.Controls.AddRange([back, title, board, evaluation, book, feedback, suggestions, variations, history, actions, variantCaption, historyCaption]);
         game.Controls.AddRange([showDatasetStats, datasetStats]);
-        datasetBinding = new(board, datasetStats, () => showDatasetStats.Checked && mode == "Lernen" && !question, dataDir);
+        datasetBinding = new(board, datasetStats, () => showDatasetStats.Checked && (mode == "Freeplay" || mode == "Lernen" && !question), dataDir);
         showDatasetStats.CheckedChanged += (_, _) => { datasetBinding.Refresh(); LayoutGame(); };
         actions.Controls.AddRange([retry, regenerate]);
         game.Controls.AddRange([branch, exploreBack, automaticEngine, reveal, reset, freeFromHere]);
@@ -248,6 +248,7 @@ public sealed partial class MainForm : LocalizedForm
             if (!settingSuggestions)
                 suggestionPreference = suggestions.Checked;
             variations.Visible = suggestions.Checked && (!question || review) && !HideUnansweredLines;
+            LayoutGame();
             Analyze();
         };
         regenerate.Click += (_, _) => Regenerate();

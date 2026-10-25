@@ -6,9 +6,9 @@ namespace ChessOpeningTrainer;
 /// is published. A threshold never changes the counts of a retained position.</summary>
 internal static class DatasetIndexBuilder
 {
-    private sealed record GamePositions(string Result, List<(byte[] Key, ushort? Move)> Items);
+    internal sealed record GamePositions(string Result, List<(byte[] Key, ushort? Move)> Items);
 
-    private static GamePositions Positions(DatasetGame game)
+    internal static GamePositions Positions(DatasetGame game)
     {
         var p = Position.FromFen(game.StartFen);
         var items = new List<(byte[], ushort?)>();

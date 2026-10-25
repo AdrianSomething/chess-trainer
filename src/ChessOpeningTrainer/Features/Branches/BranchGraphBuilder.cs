@@ -132,9 +132,10 @@ public static class BranchGraphBuilder
             }
         }
 
-        bool improved = betaLayout ?? !Preferences.Current.BranchLegacyPositioning;
-        bool refine = globalRefinement ?? Preferences.Current.BranchGlobalRefinementBeta;
-        bool sugiyama = sugiyamaLayout ?? Preferences.Current.BranchSugiyamaBeta;
+        bool improved = betaLayout ?? true;
+        bool explicitLayout = betaLayout.HasValue || globalRefinement.HasValue;
+        bool refine = globalRefinement ?? (!explicitLayout && Preferences.Current.BranchLayout == "alternative");
+        bool sugiyama = sugiyamaLayout ?? (!explicitLayout && Preferences.Current.BranchLayout != "legacy" && Preferences.Current.BranchLayout != "alternative");
         string layoutKey = BranchLayoutCache.Key(vertices, improved, fastLayout, crossingPostPass) + (sugiyama ? ":sugiyama-1" : refine ? ":global-beta-3-centered" : "");
         bool cachedLayout = BranchLayoutCache.Apply(layoutKey, vertices);
         if (!cachedLayout && !fastLayout && !improved)

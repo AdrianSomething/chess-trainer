@@ -30,6 +30,11 @@ internal static class DatasetPositionKey
     public static Position Decode(byte[] key)
     {
         byte[] board = Expand(key);
+        return FromExpanded(board);
+    }
+    internal static Position FromExpanded(byte[] board)
+    {
+        if (board.Length != 35) throw new InvalidDataException("Invalid position key length.");
         var position = new Position { WhiteToMove = board[32] != 0, Castling = new string("KQkq".Where((_, i) => (board[33] & (1 << i)) != 0).ToArray()), EnPassant = board[34] == 0 ? null : board[34] - 1 };
         for (int i = 0; i < 32; i++)
         {

@@ -1,15 +1,17 @@
 # Branch layout alternatives
 
-The normal layout remains available. **Stronger crossing reduction** adds a
+Since 0.26.3, Settings → Branches offers one layout dropdown: **Sugiyama**
+(default), **Legacy** (the 0.26.2 normal layout), and **Alternative: stronger
+crossing reduction**. The branch sidebar no longer contains separate layout
+checkboxes. Stored pre-0.26.3 checkbox fields remain readable but the new explicit
+choice controls placement. **Stronger crossing reduction** adds a
 bounded search followed by fixed-order centering. The 0.26.2 coordinate pass
 projects a whole column with a minimum-gap constraint, so a neighbour can move
 with the node it previously blocked. It retains the best centering candidate
 without increasing the measured crossing count. Node ordering stays unchanged
 in that coordinate pass.
 
-**Sugiyama layout (beta)** is a separate, opt-in alternative in the branch side
-settings. When selected it takes precedence over stronger crossing reduction;
-unchecking it restores the previous choice. Its implementation uses the existing
+**Sugiyama layout** is the new default. Its implementation uses the existing
 DAG ranks, normalizes longer edges with temporary dummy vertices, alternates
 median and barycentre layer sweeps, then assigns non-overlapping coordinates.
 Only a candidate with fewer measured crossings, or equal crossings and better

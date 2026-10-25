@@ -46,8 +46,8 @@ exact identities. Its B-tree pages and row overhead are not compressed like the
 final sorted blocks. In 0.26.2 each position owns a small binary adjacency payload:
 there is no separate edge B-tree repeating its parent identity for every move.
 This reduces measured workspace by about 45% on the same 1,000-game input.
-Multi-pass external aggregation could trade more I/O for still less space, but
-is not claimed to be implemented. No arbitrary truncation or hash collisions are
+The opt-in 0.26.3 streaming builder now implements multi-pass external aggregation
+instead; see the comparison below. No arbitrary truncation or hash collisions are
 introduced to make the numbers appear smaller.
 
 There is no unconditional 1:32 size guarantee relative to an already compressed Lichess download. Unique late-game sequences still contain information. The optional cutoff trades those continuations for a smaller index without changing retained outcome counts.
@@ -112,3 +112,104 @@ Offline checks cover all 20,480 source/target/promotion encodings, legal SAN rou
 The first-1,000 final sizes are identical to 0.26.1; its measured workspace was
 6,520,832 bytes. These prefixes are not random samples and do not establish a
 whole-archive ratio, an upper workspace bound or a guaranteed run time.
+
+## Streaming compact index (0.26.3 beta)
+
+Enable **Settings → Datasets → Streaming compact index (beta)**, then rebuild.
+It is off by default. Existing formats 2/3 remain readable; this builder writes
+format 4. Changing the option exposes the rebuild action even for a current
+snapshot; it never silently changes the active file. Older apps cannot read
+format 4. Rebuild with the option disabled before returning to an older app.
+Previously completed snapshots are not automatically deleted.
+
+### Design and costs
+
+1. Reconstruct legal positions in the selected number of workers. Normalize
+   uncapturable en passant, retain castling/side-to-move, and count each position
+   and distinct outgoing move once per game, just like the stable implementation.
+2. Aggregate a bounded batch (at most 100,000 distinct positions / 300,000
+   contributed edges), sort it, and write a compressed run. No temporary SQL
+   position table or secondary edge index is created.
+3. Merge at most 16 runs at a time with a priority queue, summing identical keys
+   and move counters. Delete consumed runs only after their replacement is
+   complete. Runs are already compressed; later rounds do not materialize a
+   raw expanded position table.
+4. For a nonzero minimum, traverse the complete graph with a disk-backed
+   one-bit-per-position visited map and two alternating sequential frontier
+   files. This handles cycles and transpositions exactly. It retains a boundary
+   position's counters but omits its outgoing edges. The whole graph is not
+   stored as an in-memory hash set.
+5. Write independently addressable blocks (up to 4,096 positions, with a bounded
+   raw payload). Each block uses whichever compressed representation is smaller:
+   interleaved prefix-coded records or separated key/counter/edge columns. Keep
+   15-bit moves and shared/pure-result counters. A sparse directory locates a
+   block by binary search; only that block is decoded for a position lookup.
+   A decoded block caches a flat key/offset slab and materializes only the
+   requested adjacency list, rather than thousands of unused record objects.
+
+For **n input plies**, not just number of games, sorting/merge work is O(n log n)
+in the worst case with fixed-size chess keys and bounded chess move degree.
+Reachability is O((V + E) log V) and V/E are bounded by input occurrences. This is
+an algorithmic bound, not a prediction of elapsed time: disk contention,
+compression, OS paging and chess-rule reconstruction still matter. Aggregation
+and merge fan-in are bounded; directory metadata is O(V / block size), and the
+on-disk visited map uses approximately V/8 bytes. Temporary disk peak includes
+both old/new runs during a merge and the complete index during pruning. Input
+datasets and prior completed snapshots are not counted as newly owned workspace.
+
+A known move sequence is replayed to a position in O(sequence length), followed
+by directory/within-block binary searches and one block decompression. Full
+identities are retained: there is no hash-collision approximation and no loss
+of transposition counts. Keeping only a move-prefix trie would omit these
+position-wide statistics, so it is not used as a disguised space saving.
+
+The first 10,000 records of the supplied February 2017 archive (673,034 plies,
+607,280 positions; not a random sample) produced these local measurements:
+
+| Measure | Stable builder | Streaming beta |
+| --- | ---: | ---: |
+| Full index | 6,428,497 B | 5,608,682 B |
+| Full-build peak workspace | 34,316,288 B | 11,347,938 B |
+| Full build | 6.62 s | 9.43 s |
+| Cutoff-5 index | 72,366 B | 56,426 B |
+| Cutoff-5 build | 6.00 s | 12.29 s |
+| 500 different lookups, full-index p95 / maximum | 0.08 / 4.31 ms | 5.05 / 21.95 ms |
+
+This trades slower construction/larger per-lookup decompression for about 67%
+less workspace and 13% less full-index space in that bounded test. Timings are
+machine/load dependent and the OS disk cache was not flushed. **The requested
+two-second ceiling on a 10-million-game dataset has not been certified.**
+Neither a universal compression factor nor a maximum saving is promised.
+
+Final 0.26.3 measurements after lazy block decoding, using the first 100,000
+records (6,680,290 plies; 5,810,734 full / 75,172 cutoff-5 positions):
+
+| Measure | Stable builder | Streaming beta |
+| --- | ---: | ---: |
+| Full index | 61,471,970 B | 53,494,271 B |
+| Full-build peak workspace | 327,626,752 B | 108,268,082 B |
+| Full build | 74.52 s | 73.24 s |
+| Cutoff-5 index | 775,949 B | 611,250 B |
+| Cutoff-5 build | 72.19 s | 109.34 s |
+| Full-index open | 4.04 ms | 0.37 ms |
+| 500 different lookups, full-index p95 / maximum | 0.09 / 3.38 ms | 0.74 / 17.01 ms |
+
+The normalized game store occupied 19,668,992 B. This confirms approximately
+67% less workspace, 13% less full-index space and 21% less cutoff-5 space on
+this corpus. The earlier 10,000-record timings predate lazy adjacency decoding.
+These are bounded prefix tests, not ten-million-game or cold-disk guarantees.
+Full local regression, engine-generation checks and a clean public-source build
+passed. Synthetic CI tests exact counts/edges and cancellation, not noisy timing.
+
+The activity ring freezes during pause and Resume is highlighted; pause is an
+in-process safe-boundary pause, not a durable index-build checkpoint. Closing
+with cancellation deletes only this build's temporary runs and partial output,
+and retains the previous complete index and all imported datasets. Import and
+download checkpoint behavior is unchanged. Confirmation buttons use the app's
+language, independently of the Windows display language.
+
+The tree browser also folds a forced **prefix before a later fork** into its
+first move plus an ellipsis. Expand it to reveal the whole linear section;
+the subsequent fork remains separately expandable. Terminal forced tails keep
+their up-to-five-move wide preview. Opening Freeplay now offers **Game statistics**
+beside Top 3, and immediately reflows history when Top 3 is toggled.

@@ -41,6 +41,8 @@ public sealed class UserPreferences
     public bool BranchLegacyPositioning { get; set; }
     public bool BranchGlobalRefinementBeta { get; set; }
     public bool BranchSugiyamaBeta { get; set; }
+    // New explicit choice supersedes the retained pre-0.26.3 checkbox fields.
+    public string BranchLayout { get; set; } = "sugiyama";
     public double BranchColumnSpacing { get; set; } = 1;
     public bool VisionIndirectDefenders { get; set; }
     public int VisionMemoryDifficulty { get; set; } = 1;

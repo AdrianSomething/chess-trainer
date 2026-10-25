@@ -11,7 +11,7 @@ internal static class DatasetIndexFormat
 {
     public static readonly byte[] Magic = "COTDSI03"u8.ToArray();
     public const int BlockRecords = 256;
-    internal sealed record Block(byte[] FirstKey, long Offset, int Length);
+    internal sealed record Block(byte[] FirstKey, long Offset, int Length, long FirstOrdinal = 0, int Records = 0);
 
     public static void Write(string path, IEnumerable<DatasetIndexRecord> records, int cutoff, CancellationToken token)
     {
@@ -84,7 +84,7 @@ internal static class DatasetIndexFormat
         {
             int prefix = reader.ReadByte();
             const int length = 35;
-            if (prefix > 35 || records.Count >= BlockRecords)
+            if (prefix > 35 || records.Count >= (version >= 4 ? DatasetCompactFormat.MaxRecords : BlockRecords))
                 throw new InvalidDataException("Invalid index block.");
             byte[] key = new byte[length];
             previous.AsSpan(0, prefix).CopyTo(key);
@@ -146,7 +146,7 @@ internal static class DatasetIndexFormat
         }
         writer.Write((byte)value);
     }
-    private static ulong ReadUInt(BinaryReader reader)
+    internal static ulong ReadUInt(BinaryReader reader)
     {
         ulong value = 0;
         for (int shift = 0; shift < 63; shift += 7)

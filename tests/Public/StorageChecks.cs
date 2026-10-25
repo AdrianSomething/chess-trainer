@@ -49,6 +49,10 @@ internal static class StorageChecks
         lineStore.Register(lineStore.Write([Line("1. e4 e5 2. Nf3 Nc6 3. Bc4")], "Synthetic later fork", 0, 100, null, default));
         linePath = DatasetIndex.Build(lineStore, settings, null, default);
         var forked = DatasetGraphModel.Build(linePath, new Dictionary<int, string> { [0] = "" }, default, true);
-        Check(forked.Vertices.Take(5).All(v => v.DisplayWidth is null), "No compaction before a later fork");
+        Check(forked.Vertices.Count == 2 && forked.Vertices[1].Incoming.Single().EndsWith("…"), "Forced prefix before a fork starts collapsed with ellipsis");
+        var prefix = forked.Expansion[forked.Vertices[1]];
+        var unfolded = DatasetGraphModel.Build(linePath, new Dictionary<int, string> { [0] = "", [prefix.Depth] = prefix.Path }, default, true);
+        Check(unfolded.Vertices.Count == 5 && unfolded.Vertices[^1].Collapsed, "Expanding a forced prefix reveals its line but leaves the following fork closed");
+        Check(unfolded.Vertices[1].Nodes.Any(n => n.IsSubbranch), "Forced prefix can be collapsed again");
     }
 }

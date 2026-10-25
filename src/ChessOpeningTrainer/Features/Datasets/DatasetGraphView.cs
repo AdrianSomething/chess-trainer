@@ -58,7 +58,8 @@ public sealed class DatasetGraphView : UserControl
             string path = expansion.Path;
             int targetDepth = expansion.Depth;
             bool wasOpen = expanded.GetValueOrDefault(targetDepth) == path;
-            foreach (int depth in expanded.Keys.Where(d => targetDepth >= 0 && d >= targetDepth).ToArray())
+            int Depth(int d) => d < 0 ? -d - 1 : d;
+            foreach (int depth in expanded.Keys.Where(d => Depth(d) >= Depth(targetDepth)).ToArray())
                 expanded.Remove(depth);
             if (!wasOpen)
                 expanded[targetDepth] = path;

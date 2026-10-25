@@ -18,7 +18,7 @@ internal static class Program
         {
             Preferences.Initialize(root);
             if (args.Length == 0 || args[0] == "rules") { RulesChecks.Run(); BoardColorChecks.Run(); }
-            if (args.Length == 0 || args[0] == "datasets") StorageChecks.Run(root);
+            if (args.Length == 0 || args[0] == "datasets") { StorageChecks.Run(root); CompactStorageChecks.Run(root); }
             Console.WriteLine($"PASS: {checks} synthetic checks.");
             return 0;
         }

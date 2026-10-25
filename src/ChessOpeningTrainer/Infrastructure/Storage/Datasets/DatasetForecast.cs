@@ -18,7 +18,7 @@ public static class DatasetForecast
         int limit = Math.Clamp(settings.SampleSize, 100, 2000);
         var sample = new List<DatasetGame>();
         var random = new Random(260);
-        var workers = new DatasetSettings { IndexWorkers = Math.Clamp(settings.EstimateWorkers, 1, 16), FilterWorkers = Math.Clamp(settings.EstimateWorkers, 1, 16), SampleSize = 100 };
+        var workers = new DatasetSettings { StreamingIndexBeta = settings.StreamingIndexBeta, IndexWorkers = Math.Clamp(settings.EstimateWorkers, 1, 16), FilterWorkers = Math.Clamp(settings.EstimateWorkers, 1, 16), SampleSize = 100 };
         foreach (var entry in active)
         {
             token.ThrowIfCancellationRequested();

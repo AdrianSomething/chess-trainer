@@ -13,6 +13,10 @@ position and all 20,480 packed source/target/promotion combinations.
 orientations for every bundled skin; it does not require desktop automation.
 `StorageChecks` covers synthetic transpositions, exact outcome aggregation,
 cutoff measurement versus actual output, cancellation and forced-tail browsing.
+`CompactStorageChecks` compares the stable and streaming builders against each
+other and an independent once-per-game counter oracle, including transpositions,
+repetitions, custom starts, en passant, castling, promotion, multiple merge rounds,
+block boundaries, pruning and cancellation cleanup. All games are synthetic.
 Each invocation owns a unique `work/public-checks-*` profile and removes it.
 There are no real player records, external network calls or Stockfish processes.
 

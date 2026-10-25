@@ -10,7 +10,16 @@ Work is on `dev/0.26.0`; the stable release and its README download remain uncha
 | [#7: storage](https://github.com/AdrianSomething/chess-trainer/issues/7) | Packed moves, exact shared positions, variable counters, identical-counter reuse, smaller temporary keys, no stored destination key per edge, optional rare-continuation pruning, measured sample forecasts, live working-file size and cancellation cleanup | Full multi-million-game benchmarks are still needed. No universal 1:32 compression guarantee. See the measured bounded comparison in [DATASETS.md](DATASETS.md). |
 | [#8: graph layout](https://github.com/AdrianSomething/chess-trainer/issues/8) | Bounded crossing-reduction heuristic, cached geometry and order-preserving centering; adjustments are rejected if they increase measured crossings | Crossing minimization is heuristic, not a guarantee of an optimal drawing. Retain manual checks on large and unusual graphs. |
 
-Issues remain open: the broader 0.26 goals are not all completed by 0.26.2-beta.
+Issues remain open: the broader 0.26 goals are not all completed by 0.26.3-beta.
+
+## 0.26.3-beta corrections
+
+- Settings → Datasets exposes **Streaming compact index (beta)**, off by default. It replaces temporary SQL aggregation with compressed sorted runs; rebuilding writes adaptive format 4. Old indexes stay readable and changing the switch does not overwrite an existing tree.
+- Exact counters and graph reachability are compared against the stable builder, including repeated positions, transpositions, custom FENs, castling, en passant and promotion. Larger datasets still need wider performance validation; no 10-million-game latency guarantee is inferred from small tests.
+- Dataset pause freezes the ring and highlights Resume; confirmation buttons follow the app language. The black-win filter is translated.
+- Forced prefixes leading to a fork are now collapsible first-move/ellipsis nodes; terminal tails retain their wide preview.
+- Settings → Branches now selects Sugiyama (default), Legacy (the previous normal layout), or the stronger-crossing alternative. The old independent layout checkboxes are removed from the branch sidebar; old serialized fields remain readable.
+- Opening Freeplay immediately reflows history when Top 3 is toggled and exposes Game statistics on the same row.
 
 ## 0.26.2-beta corrections
 
@@ -26,7 +35,7 @@ Issues remain open: the broader 0.26 goals are not all completed by 0.26.2-beta.
 
 ## Compatibility and testing
 
-- Old normalized datasets and format-2 frequency indexes remain readable. A rebuild creates format 3; keep an older snapshot when testing an older app version.
+- Old normalized datasets and format-2/3 frequency indexes remain readable. A normal rebuild creates format 3; the new opt-in builder creates format 4, which requires 0.26.3 or later. Earlier complete index files are not removed automatically. Opening JSON remains compatible.
 - No opening migration, personal data import, source-file deletion or main-branch merge is part of this beta.
 - Local tests use isolated synthetic profiles; the bounded archive benchmark reads only a 1,000-record prefix of the provided file.
 - Native form/lifecycle smoke tests supplement unit/integration tests. They do not replace human visual acceptance of every theme, DPI and screen size.

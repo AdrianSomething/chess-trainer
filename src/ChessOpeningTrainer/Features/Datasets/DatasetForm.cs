@@ -18,6 +18,9 @@ public sealed class DatasetForm : LocalizedForm
     private DatasetOperation? job;
     private CancellationTokenSource? operation;
     private bool closeAfter;
+    private bool compactSetting = Preferences.Current.Datasets.StreamingIndexBeta;
+    private int storedFormat;
+    private string latestStatus = "";
     private readonly ToolTip tips = new();
     private CancellationTokenSource? forecast;
     private Label? forecastLabel;
@@ -30,13 +33,15 @@ public sealed class DatasetForm : LocalizedForm
     {
         store = new(dataDirectory);
         this.engine = engine;
+        ReadStoredFormat();
+        Preferences.Changed += SettingsChanged;
         Text = "Datensätze";
         Size = new(1120, 790);
         MinimumSize = new(870, 600);
         BackColor = UiPalette.FromArgb(31, 35, 39);
         ForeColor = UiPalette.Gainsboro;
         cancel = DatasetControls.Button("Abbrechen", () => { if (job is not null) job.PreserveCheckpoint = false; operation?.Cancel(); }, 155);
-        pause = DatasetControls.Button("Pause", () => { job?.TogglePause(); pause!.Text = L.T(job?.Paused == true ? "Fortsetzen" : "Pause"); }, 155);
+        pause = DatasetControls.Button("Pause", () => { job?.TogglePause(); RefreshPause(); }, 155);
         savePartial = DatasetControls.Button("Stoppen und speichern", () => job?.StopAndSave(), 225);
         operationButtons.Controls.AddRange([pause, cancel, savePartial]);
         Controls.AddRange([body, operationButtons, status]);
@@ -56,7 +61,7 @@ public sealed class DatasetForm : LocalizedForm
                 WorkKind.Filter => "Zuschneiden abbrechen und schließen? Der unvollständige neue Datensatz wird verworfen; das Original bleibt erhalten.",
                 _ => "Baumerstellung abbrechen und schließen? Der bisherige Baum und deine Datensätze bleiben erhalten. Der Neubau muss später neu gestartet werden."
             };
-            if (closeAfter || L.Message(this, question, "Datensätze", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (closeAfter || DatasetConfirmation.Ask(this, question, "Datensätze"))
             {
                 closeAfter = true;
                 if (job is not null)
@@ -143,7 +148,7 @@ public sealed class DatasetForm : LocalizedForm
             long bytes = File.Exists(store.PathFor(entry)) ? new FileInfo(store.PathFor(entry)).Length : 0;
             var card = new DatasetCard(entry, bytes, store.Save, ActiveChanged, Render, () => Trim(entry), () =>
             {
-                if (L.Message(this, "Diesen importierten Datensatz endgültig löschen? Die ursprüngliche Importdatei bleibt erhalten.", entry.Name, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DatasetConfirmation.Ask(this, "Diesen importierten Datensatz endgültig löschen? Die ursprüngliche Importdatei bleibt erhalten.", entry.Name))
                 {
                     store.Delete(entry);
                     Changed?.Invoke();
@@ -174,7 +179,7 @@ public sealed class DatasetForm : LocalizedForm
     private void RefreshBuild()
     {
         if (buildButton is { IsDisposed: false })
-            buildButton.Visible = store.IsStale && store.Manifest.Entries.Any(e => e.Active);
+            buildButton.Visible = (store.IsStale || storedFormat != (compactSetting ? 4 : 3)) && store.Manifest.Entries.Any(e => e.Active);
         if (viewTreeButton is { IsDisposed: false })
             viewTreeButton.Text = (store.IsStale ? L.T("(alt) ") : "") + L.T("Datensatzbaum anzeigen");
     }
@@ -201,7 +206,7 @@ public sealed class DatasetForm : LocalizedForm
                     L.T("Arbeitsraum beim Aufbau (Maximum): ") + (store.Manifest.IndexPeakWorkspaceBytes is long peak ? $"{peak / 1e6:0.000} MB" : L.T("Bei diesem älteren Baum nicht erfasst."));
                 return;
             }
-            long? measured = await Task.Run(() => DatasetPruningForecast.Measure(store, cts.Token), cts.Token);
+            long? measured = await Task.Run(() => DatasetPruningForecast.Measure(store, cts.Token, compactSetting), cts.Token);
             var estimate = await Task.Run(() => DatasetForecast.Estimate(store.DirectoryPath, active, cutoff, Preferences.Current.Datasets, cts.Token), cts.Token);
             if (IsDisposed || target.IsDisposed || cts.IsCancellationRequested)
                 return;
@@ -356,7 +361,8 @@ public sealed class DatasetForm : LocalizedForm
         job = state;
         operation = cts;
         workKind = kind;
-        status.Busy = true;
+        latestStatus = L.T("Vorgang läuft …");
+        RefreshPause();
         body.Enabled = false;
         operationButtons.Visible = true;
         savePartial.Visible = canSave;
@@ -366,12 +372,12 @@ public sealed class DatasetForm : LocalizedForm
         status.Text = L.T("Vorgang läuft …");
         try
         {
-            await action(new Progress<string>(s => { if (!IsDisposed) status.Text = s; }), cts.Token);
+            await action(new Progress<string>(s => { if (!IsDisposed && ReferenceEquals(job, state)) { latestStatus = s; RefreshPause(); } }), cts.Token);
             status.Text = L.T(state.SaveRequested ? "Gestoppt. Bereits verarbeitete Partien und Downloads wurden gespeichert." : "Abgeschlossen.");
         }
         catch (OperationCanceledException) { status.Text = L.T("Angehalten. Der bisherige Datensatzbaum bleibt erhalten."); }
         catch (Exception ex) { status.Text = L.T("Fehler: ") + ex.GetBaseException().Message; }
-        finally { operation = null; job = null; if (!IsDisposed) { status.Busy = false; body.Enabled = true; operationButtons.Visible = false; Changed?.Invoke(); Render(); if (closeAfter) Close(); } }
+        finally { operation = null; job = null; if (!IsDisposed) { ReadStoredFormat(); status.Busy = false; body.Enabled = true; operationButtons.Visible = false; Changed?.Invoke(); Render(); if (closeAfter) Close(); } }
     }
     private void ShowGraph()
     {
@@ -382,10 +388,34 @@ public sealed class DatasetForm : LocalizedForm
         view.BackRequested += Render;
         body.Controls.Add(view);
     }
+    private void RefreshPause()
+    {
+        bool paused = job?.Paused == true;
+        status.Busy = job is not null && !paused;
+        status.Text = paused ? L.T("Pausiert – mit Fortsetzen weiterarbeiten.") + "\n" + latestStatus : latestStatus;
+        pause.Text = L.T(paused ? "Fortsetzen" : "Pause");
+        pause.BackColor = UiPalette.FromArgb(paused ? 76 : 43, paused ? 85 : 49, paused ? 94 : 55);
+    }
+    private void ReadStoredFormat()
+    {
+        storedFormat = 0;
+        if (!store.HasIndex) return;
+        try { using var index = new DatasetIndex(store.IndexPath(store.Manifest.IndexFile!)); storedFormat = index.FormatVersion; }
+        catch (InvalidDataException) { }
+        catch (IOException) { }
+        catch (UnauthorizedAccessException) { }
+    }
+    private void SettingsChanged()
+    {
+        if (IsDisposed || compactSetting == Preferences.Current.Datasets.StreamingIndexBeta) return;
+        compactSetting = Preferences.Current.Datasets.StreamingIndexBeta;
+        ActiveChanged();
+    }
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
+            Preferences.Changed -= SettingsChanged;
             forecastDelay.Dispose();
             forecast?.Cancel();
             operation?.Cancel();

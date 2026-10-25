@@ -2,6 +2,15 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.26.3-beta — Development
+
+- Add an opt-in streaming compact dataset index: bounded aggregation, compressed sorted runs, multi-pass merge/reduce, adaptive row/column blocks, and disk-bitset reachability pruning. Preserve exact results, repetitions, transpositions and custom starting positions; keep formats 2/3 readable.
+- Stop the dataset activity ring while paused, highlight Resume, and use app-language confirmation buttons rather than Windows-language Yes/No buttons. Translate the black-win trim filter.
+- Collapse forced lines leading to later forks into an expandable first-move/ellipsis node; keep terminal-line previews and reversible expansion.
+- Make Sugiyama the default branch layout. Move the three mutually exclusive choices (Sugiyama, Legacy, stronger-crossing alternative) into Settings → Branches.
+- Reflow opening Freeplay history immediately when Top 3 changes; add the shared optional Game statistics strip beside that checkbox.
+- Extend synthetic CI checks for compact/legacy equivalence, multi-pass merging, transpositions, pruning and cancellation. Stable releases and opening file formats are unchanged.
+
 ## 0.26.2-beta — Development
 
 - Correct reversed board-square parity in the shared renderer: a1/d8 are dark, d1/h1 are light. Add off-screen pixel checks for every square, both orientations and all bundled skins.

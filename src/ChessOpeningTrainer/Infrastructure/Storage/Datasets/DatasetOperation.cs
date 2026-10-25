@@ -27,6 +27,12 @@ public sealed class DatasetOperation : IDisposable
         PeakWorkspaceBytes = Math.Max(PeakWorkspaceBytes, bytes);
         return bytes;
     }
+    internal long ObserveFiles(IEnumerable<string> paths)
+    {
+        long bytes = paths.Where(File.Exists).Sum(p => new FileInfo(p).Length);
+        PeakWorkspaceBytes = Math.Max(PeakWorkspaceBytes, bytes);
+        return bytes;
+    }
     public bool PreserveCheckpoint
     {
         get; set;

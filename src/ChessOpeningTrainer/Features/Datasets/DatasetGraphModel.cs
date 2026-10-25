@@ -13,30 +13,23 @@ public sealed class DatasetGraphModel
         using var index = new DatasetIndex(indexPath);
         var model = new DatasetGraphModel();
         float row = 0;
-        var leadsToFork = new HashSet<string>();
-        // A compact node represents an entire terminal forced line, not the
-        // first five moves of a line that branches farther down the graph.
-        List<(Position Position, string Uci, string San)>? TerminalTail(Position start, HashSet<string> ancestors)
+        // Terminal tails show up to five SAN moves. A forced prefix ending in
+        // a fork instead shows its first move and an expansion ellipsis.
+        (List<(Position Position, string Uci, string San)> Tail, bool Terminal) ForcedTail(Position start, HashSet<string> ancestors)
         {
             var tail = new List<(Position, string, string)>();
             var visited = new HashSet<string>(ancestors);
-            var ownKeys = new List<string>();
             var p = start;
             while (true)
             {
                 token.ThrowIfCancellationRequested();
                 string key = Convert.ToHexString(DatasetIndex.Key(p));
-                if (!visited.Add(key)) return null;
-                ownKeys.Add(key);
+                if (!visited.Add(key)) return (tail, false);
                 var children = index.Children(p);
-                if (children.Count == 0) return tail;
-                if (children.Count != 1 || leadsToFork.Contains(key))
-                {
-                    leadsToFork.UnionWith(ownKeys);
-                    return null;
-                }
+                if (children.Count == 0) return (tail, true);
+                if (children.Count != 1) return (tail, false);
                 var move = MoveGenerator.GenerateLegal(p).FirstOrDefault(m => m.Uci == children[0].Move);
-                if (move is null) return null;
+                if (move is null) return (tail, false);
                 var next = p.Clone(); next.Apply(move);
                 tail.Add((next, move.Uci, SanNotation.Format(p, move)));
                 p = next;
@@ -48,21 +41,22 @@ public sealed class DatasetGraphModel
             int startDepth = path.Length;
             string startPath = string.Join(' ', path);
             bool grouped = false;
+            bool terminalGroup = false;
             bool forcedAnchor = compact && !root && !expandForced && expanded.GetValueOrDefault(-startDepth - 1) == startPath;
             expandForced |= forcedAnchor;
             if (compact && !root && !expandForced && !ancestors.Contains(Convert.ToHexString(DatasetIndex.Key(position))))
             {
-                var tail = TerminalTail(position, ancestors);
-                if (tail is { Count: > 0 })
+                var (tail, terminal) = ForcedTail(position, ancestors);
+                if (tail.Count > 0)
                 {
-                    caption += " " + string.Join(' ', tail.Take(4).Select(t => t.San)) + (tail.Count > 4 ? " …" : "");
-                    path = [.. path, .. tail.Select(t => t.Uci)];
-                    position = tail[^1].Position;
+                    caption += terminal ? " " + string.Join(' ', tail.Take(4).Select(t => t.San)) + (tail.Count > 4 ? " …" : "") : " …";
+                    if (terminal) { path = [.. path, .. tail.Select(t => t.Uci)]; position = tail[^1].Position; }
                     grouped = true;
+                    terminalGroup = terminal;
                 }
             }
             var v = new BranchVertex { Id = model.Vertices.Count, Position = position, Depth = path.Length, IsLearnerMove = true };
-            if (grouped)
+            if (terminalGroup)
                 v.DisplayWidth = Math.Clamp(caption.Length * 7 + 24, 140, 300);
             v.Incoming.Add(caption);
             model.Vertices.Add(v);
@@ -72,7 +66,7 @@ public sealed class DatasetGraphModel
             bool repeated = ancestors.Contains(key);
             var children = repeated ? [] : index.Children(position);
             bool branch = root || children.Count > 1;
-            bool open = !branch || expanded.GetValueOrDefault(path.Length) == string.Join(' ', path);
+            bool open = !grouped && (!branch || expanded.GetValueOrDefault(path.Length) == string.Join(' ', path));
             if (children.Count > 0 && branch || grouped || forcedAnchor)
                 v.Nodes.Add(new OpeningNode { IsSubbranch = true });
             v.Collapsed = grouped || !open;
