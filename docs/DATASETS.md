@@ -1,4 +1,4 @@
-# Datasets — 0.26.2-beta
+# Datasets — 0.26.4-beta
 
 ## Workflow
 
@@ -22,11 +22,11 @@ The **frequency index** keeps only position identities, played moves and four ab
 - Position keys are exact 35-byte board/state descriptions, not probabilistic hashes. Sorted adjacent keys share a prefix; only the changed suffix is written.
 - Outcome counts use unsigned variable-length integers, so small counts do not occupy eight bytes each.
 - In format 3, a single-outcome position uses one tagged counter instead of four; an edge whose counters equal its parent's refers to those counts using the unused high move bit. Mixed results retain every exact counter.
-- Groups of up to 256 records are independently Zstandard-compressed. A sparse block directory permits binary search without decompressing the entire tree. Readers cache at most 32 decoded blocks.
-- SQLite is a **temporary, disk-backed aggregation workspace**, not the final index format. It is deleted after success/cancellation. The final `.cotidx` file contains no JSON, PGN tags, names, timestamps or engine evaluations.
-- Temporary position keys run-length-encode empty square pairs. Inverse run lengths preserve the original key's lexical order, avoiding a second dataset-sized sort before export. The destination key is not stored per edge: source position plus packed move reconstructs it exactly. The final index deliberately retains fixed-key prefix coding: two superficially shorter alternative encodings compressed worse in the bounded benchmark.
+- Format 4 uses independently Zstandard-compressed blocks of up to 4,096 records, with a bounded raw payload and adaptive row/column coding. A sparse block directory permits binary search without decompressing the entire tree. Readers cache at most 32 decoded blocks.
+- Compressed sorted runs are the **temporary, disk-backed aggregation workspace**. They are deleted after success/cancellation. SQLite remains the normalized, filterable game store, but is no longer an index builder. The final `.cotidx` file contains no JSON, PGN tags, names, timestamps or engine evaluations.
+- In-memory aggregation keys run-length-encode empty square pairs. The destination key is not stored per edge: source position plus packed move reconstructs it exactly. Final blocks retain fixed-key prefix coding.
 
-Existing format-2 indexes remain readable. Rebuilding writes format 3. Version 0.26.0 cannot read the newer index; keep its old snapshot if testing a downgrade. Opening files and learning progress are unaffected.
+Existing format-2/3/4 indexes remain readable. Rebuilding writes format 4, requiring 0.26.3 or later; keep an old compatible snapshot if testing a downgrade. Opening files and learning progress are unaffected.
 
 ### Why an index can exceed a game list
 
@@ -41,13 +41,13 @@ index (about 10.5 bytes per position after compression), versus a 204,800-byte
 normalized game store. This is a design trade-off, not an information-theoretic
 requirement that every possible tree encoding must be this large.
 
-The temporary database must update counters in arbitrary order while retaining
+The previous temporary database had to update counters in arbitrary order while retaining
 exact identities. Its B-tree pages and row overhead are not compressed like the
 final sorted blocks. In 0.26.2 each position owns a small binary adjacency payload:
 there is no separate edge B-tree repeating its parent identity for every move.
 This reduces measured workspace by about 45% on the same 1,000-game input.
-The opt-in 0.26.3 streaming builder now implements multi-pass external aggregation
-instead; see the comparison below. No arbitrary truncation or hash collisions are
+The 0.26.3 streaming builder implements multi-pass external aggregation
+instead and is the only builder as of 0.26.4; see the historical comparison below. No arbitrary truncation or hash collisions are
 introduced to make the numbers appear smaller.
 
 There is no unconditional 1:32 size guarantee relative to an already compressed Lichess download. Unique late-game sequences still contain information. The optional cutoff trades those continuations for a smaller index without changing retained outcome counts.
@@ -56,13 +56,17 @@ There is no unconditional 1:32 size guarantee relative to an already compressed 
 
 **Minimum games per node** defaults to **0**, meaning no depth limit. With **5**, any position reached by at most five games becomes a leaf with its exact outcome counts. Its outgoing moves are omitted. Positions still reachable through a frequent transposition remain available. Pruning uses the complete aggregated dataset, not a sample.
 
+**0 and 1 are different:** 0 disables pruning; 1 retains a singleton position's counters but removes its continuations. The default is intentionally unchanged.
+
 For a current completed tree, the sidebar shows the actual file size and the recorded peak aggregation workspace, not an approximation. Older trees have no historical workspace measurement; the app says so rather than inventing one.
 
 When the selected sources are unchanged and the minimum is increased, the app can measure a prospective smaller index using the complete stored counts, including transpositions. This read-only preview uses the actual final encoder and is limited to 100,000 retained positions / five seconds of traversal. No source file or current index is replaced. It cannot restore continuations omitted by an earlier, higher minimum.
 
-For a new full-depth build, the forecast measures the encoder and workspace on a bounded stratified sample (up to 2,000 games), then extrapolates. This remains approximate. For a new **pruned** build without complete counts, there is deliberately no large, misleading rare-tail range: a 1,000-game sample cannot determine which positions recur five times across 500,000 games. The UI explains that complete frequencies are needed. Building once at a lower minimum enables subsequent stricter-cutoff measurements; the preview's safety limits may still prevent an exact measurement of a huge retained graph.
+For a new build, the forecast measures the encoder on a bounded stratified sample (up to 2,000 games) and a random half of that same sample. It extrapolates their observed size growth using a bounded power law, at the **same absolute cutoff** for both measurements. The pruned estimate is capped by the projected full-depth size. This produces an educated point estimate even without complete frequencies; sparse or unrepresentative samples can still be inaccurate. It does not scale each singleton's frequency up as though the entire archive repeated that game. Exact measurements from a suitable existing index take precedence.
 
-The live working-file measurement includes the owned SQLite database and journal/WAL files, not unrelated profile files. An activity ring remains visible through pruning/export, where a reliable phase ETA is unavailable. Aggregation ETA uses recent throughput rather than extrapolating only its initially faster phase. Filtering still uses the import-time random reservoir for estimates and applies filters to every game when creating a subset. Existing datasets keep their original sample size. A random maximum-game limit samples matching row IDs instead of retaining every selected game's full contents in RAM.
+Workspace is estimated separately: the larger of scaled measured sample peak and **2.25 times the projected full-depth size**. A small sample often fits one run and never merges, whereas a real merge temporarily holds both input runs and their replacement. Pruning only happens after full aggregation, so a smaller pruned output does not imply a similarly small workspace. This budget is a heuristic, not an upper bound or an allocation/reservation. Actual completed tree size and measured workspace replace estimates after the build.
+
+The live working-file measurement includes this operation's compressed runs and output, not unrelated profile files or imported datasets. Merge reporting shows **pass/total passes**, **block group/total groups**, and consumed/total input entries in the current pass. Its ETA starts with the merge phase and excludes pauses. Future passes initially use current throughput and size; coalescing duplicate keys may revise the estimate downward. An activity ring remains visible through pruning/export, where a reliable phase ETA is unavailable. Aggregation ETA uses recent throughput. Filtering still uses the import-time random reservoir for estimates and applies filters to every game when creating a subset. Existing datasets keep their original sample size. A random maximum-game limit samples matching row IDs instead of retaining every selected game's full contents in RAM.
 
 An exact full-depth position index may be larger than its normalized game store: rare late-game positions need queryable identities and counts, whereas a game store can encode just successive moves. Transpositions and shared openings help, but do not make every late-game position shared. Use the cutoff to remove rare continuations; the app does not silently truncate depth or fabricate a compression ratio.
 
@@ -113,14 +117,14 @@ The first-1,000 final sizes are identical to 0.26.1; its measured workspace was
 6,520,832 bytes. These prefixes are not random samples and do not establish a
 whole-archive ratio, an upper workspace bound or a guaranteed run time.
 
-## Streaming compact index (0.26.3 beta)
+## Streaming compact index (default since 0.26.4)
 
-Enable **Settings → Datasets → Streaming compact index (beta)**, then rebuild.
-It is off by default. Existing formats 2/3 remain readable; this builder writes
-format 4. Changing the option exposes the rebuild action even for a current
-snapshot; it never silently changes the active file. Older apps cannot read
-format 4. Rebuild with the option disabled before returning to an older app.
-Previously completed snapshots are not automatically deleted.
+Every new build uses this path; the beta switch and superseded SQL builder have
+been removed. Existing formats 2/3 remain readable and can be explicitly rebuilt
+as format 4; the active file is never silently converted. Apps older than 0.26.3
+cannot read format 4. Previously completed snapshots are not automatically deleted.
+The following benchmark tables compare the two implementations as they existed
+in 0.26.3; they do not imply that the old builder remains selectable.
 
 ### Design and costs
 
@@ -207,6 +211,21 @@ with cancellation deletes only this build's temporary runs and partial output,
 and retains the previous complete index and all imported datasets. Import and
 download checkpoint behavior is unchanged. Confirmation buttons use the app's
 language, independently of the Windows display language.
+
+### 0.26.4 forecast spot check
+
+On the same bounded 10,000-record prefix, a 1,000-game reservoir produced:
+
+| Quantity | Forecast | Actual |
+| --- | ---: | ---: |
+| Full-depth index | 5,401,186 B | 5,608,682 B |
+| Cutoff-5 index | 51,885 B | 56,426 B |
+| Full-build peak workspace | 12,152,668 B | 11,347,056 B |
+
+The cutoff-5 workspace forecast remained 12,152,668 B because the full merge
+still precedes pruning. These are spot checks, not accuracy guarantees for other
+archives or thresholds. The final index sizes match the preceding format-4
+implementation; this update changes reporting/default selection, not its codec.
 
 The tree browser also folds a forced **prefix before a later fork** into its
 first move plus an ellipsis. Expand it to reveal the whole linear section;

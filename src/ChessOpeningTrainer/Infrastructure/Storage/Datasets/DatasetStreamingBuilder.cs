@@ -23,6 +23,7 @@ internal static class DatasetStreamingBuilder
         try
         {
             var runs = new List<string>();
+            var runCounts = new Dictionary<string, long>();
             var buffer = new Dictionary<string, DatasetIndexRecord>();
             int bufferedEdges = 0;
             void Flush()
@@ -31,12 +32,13 @@ internal static class DatasetStreamingBuilder
                 operation.Wait(token);
                 string run = NewRun();
                 DatasetCompactFormat.Write(run, buffer.Values.OrderBy(r => r.Key, Keys.Instance), 0, token);
+                runCounts[run] = buffer.Count;
                 runs.Add(run); buffer.Clear(); bufferedEdges = 0; Observe();
             }
             long done = 0, total = active.Sum(e => e.Games);
             var games = active.SelectMany(e => DatasetStore.Games(store.PathFor(e), token)).AsParallel()
                 .WithDegreeOfParallelism(Math.Clamp(settings.IndexWorkers, 1, 32)).WithCancellation(token)
-                .Select(DatasetIndexBuilder.Positions);
+                .Select(DatasetGamePositions.Project);
             foreach (var game in games)
             {
                 operation.Wait(token);
@@ -56,30 +58,41 @@ internal static class DatasetStreamingBuilder
                     Report($"{done:N0}/{total:N0} " + L.T("Partien") + " · " + operation.Timing(done, total));
             }
             Flush();
-            if (runs.Count == 0) { string empty = NewRun(); DatasetCompactFormat.Write(empty, [], 0, token); runs.Add(empty); }
+            if (runs.Count == 0) { string empty = NewRun(); DatasetCompactFormat.Write(empty, [], 0, token); runs.Add(empty); runCounts[empty] = 0; }
             int round = 0;
+            var mergeProgress = new DatasetMergeProgress(operation, runs.Count);
             while (runs.Count > 1)
             {
                 var next = new List<string>();
+                long consumedRecords = 0, inputRecords = runs.Sum(p => runCounts[p]);
+                int groupNumber = 0, groups = (runs.Count + 15) / 16;
+                mergeProgress.StartPass();
+                void MergeReport() => Report(mergeProgress.Describe(round + 1, groupNumber, groups, consumedRecords, inputRecords));
                 foreach (var group in runs.Chunk(16))
                 {
                     operation.Wait(token);
-                    if (group.Length == 1) { next.Add(group[0]); continue; }
+                    groupNumber++;
+                    MergeReport();
+                    if (group.Length == 1) { next.Add(group[0]); consumedRecords += runCounts[group[0]]; MergeReport(); continue; }
                     string merged = NewRun();
+                    long outputRecords = 0;
                     long reportAt = 0;
                     IEnumerable<DatasetIndexRecord> Tracked()
                     {
-                        foreach (var record in Merge(group, token))
+                        foreach (var record in Merge(group, token, () => consumedRecords++))
                         {
                             operation.Wait(token);
                             if (Environment.TickCount64 - reportAt > 750)
-                            { reportAt = Environment.TickCount64; Report(L.T("Sortierblöcke zusammenführen") + $" · {round + 1}"); }
+                            { reportAt = Environment.TickCount64; MergeReport(); }
+                            outputRecords++;
                             yield return record;
                         }
                     }
                     DatasetCompactFormat.Write(merged, Tracked(), 0, token);
+                    runCounts[merged] = outputRecords;
                     Observe(); next.Add(merged);
-                    foreach (string consumed in group) File.Delete(consumed);
+                    foreach (string consumed in group) { File.Delete(consumed); runCounts.Remove(consumed); }
+                    MergeReport();
                 }
                 runs = next; round++;
             }
@@ -121,7 +134,7 @@ internal static class DatasetStreamingBuilder
         foreach (var e in b.Edges) edges[e.Move] = Add(edges.GetValueOrDefault(e.Move), e.Counts);
         return new(a.Key, Add(a.Counts, b.Counts), edges.OrderBy(e => e.Key).Select(e => (e.Key, e.Value)).ToList());
     }
-    private static IEnumerable<DatasetIndexRecord> Merge(string[] paths, CancellationToken token)
+    private static IEnumerable<DatasetIndexRecord> Merge(string[] paths, CancellationToken token, Action consumed)
     {
         var readers = new List<DatasetIndex>(); var iterators = new List<IEnumerator<DatasetIndexRecord>>();
         var queue = new PriorityQueue<int, byte[]>(Keys.Instance);
@@ -137,6 +150,7 @@ internal static class DatasetStreamingBuilder
             while (queue.TryDequeue(out int i, out _))
             {
                 token.ThrowIfCancellationRequested();
+                consumed();
                 var record = iterators[i].Current;
                 if (pending is not null && !pending.Key.AsSpan().SequenceEqual(record.Key)) { yield return pending; pending = null; }
                 pending = pending is null ? record : Combine(pending, record);

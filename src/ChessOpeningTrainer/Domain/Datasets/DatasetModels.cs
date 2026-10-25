@@ -2,7 +2,6 @@ namespace ChessOpeningTrainer;
 
 public sealed class DatasetSettings
 {
-    public bool StreamingIndexBeta { get; set; }
     public int IndexWorkers { get; set; } = Math.Min(4, Environment.ProcessorCount);
     public int FilterWorkers { get; set; } = Math.Min(4, Environment.ProcessorCount);
     public int EstimateWorkers { get; set; } = 1;

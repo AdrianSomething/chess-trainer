@@ -2,6 +2,14 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.26.4-beta — Development
+
+- Make the streaming compact dataset builder the only/default build path; remove the old SQL aggregation builder and its beta switch. Keep readers for existing index formats and preserve the compact format, exact counters and merge/pruning rules.
+- Show current/total merge passes and block groups, consumed entries and a merge-specific remaining-time estimate that excludes pauses.
+- Forecast pruned tree size from growth between two nested samples at the selected cutoff. Prefer exact measurements when a complete suitable index exists. Budget simultaneous merge inputs/output separately from final tree size.
+- Keep Minimum games per node at 0: 1 is not equivalent, because it stops continuations at positions occurring in only one game.
+- Replace the branch-mode screenshot with the supplied updated image.
+
 ## 0.26.3-beta — Development
 
 - Add an opt-in streaming compact dataset index: bounded aggregation, compressed sorted runs, multi-pass merge/reduce, adaptive row/column blocks, and disk-bitset reachability pruning. Preserve exact results, repetitions, transpositions and custom starting positions; keep formats 2/3 readable.

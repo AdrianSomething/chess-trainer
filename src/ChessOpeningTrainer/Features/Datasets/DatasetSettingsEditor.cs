@@ -8,10 +8,6 @@ public static class DatasetSettingsEditor
         var settings = Preferences.Current.Datasets;
         var tips = new ToolTip();
         layout.Disposed += (_, _) => tips.Dispose();
-        var compact = new CheckBox { Text = L.T("Streaming-Kompaktindex (Beta)"), Checked = settings.StreamingIndexBeta, Width = 470, Height = 32 };
-        compact.CheckedChanged += (_, _) => { settings.StreamingIndexBeta = compact.Checked; Preferences.Save(); };
-        L.SetToolTip(tips, compact, "Ersetzt die temporäre Positionsdatenbank durch komprimierte Sortierläufe und größere Indexblöcke. Exakte Häufigkeiten und Transpositionen bleiben erhalten. Gilt beim nächsten Neubau; bestehende Bäume bleiben lesbar.");
-        layout.Controls.Add(SettingsReset.Wrap(compact, false));
         void Add(string caption, string explanation, int value, int max, Action<int> set, int min = 1)
         {
             var row = DatasetControls.Number(caption, value, min, max, n => { set((int)n); Preferences.Save(); });

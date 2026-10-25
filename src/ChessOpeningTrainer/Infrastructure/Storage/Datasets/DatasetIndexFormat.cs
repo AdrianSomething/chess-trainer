@@ -1,5 +1,3 @@
-using ZstdSharp;
-
 namespace ChessOpeningTrainer;
 
 internal sealed record DatasetIndexRecord(byte[] Key, DatasetCounts Counts,
@@ -13,40 +11,6 @@ internal static class DatasetIndexFormat
     public const int BlockRecords = 256;
     internal sealed record Block(byte[] FirstKey, long Offset, int Length, long FirstOrdinal = 0, int Records = 0);
 
-    public static void Write(string path, IEnumerable<DatasetIndexRecord> records, int cutoff, CancellationToken token)
-    {
-        using var file = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-        using var output = new BinaryWriter(file);
-        output.Write(Magic);
-        output.Write(0L);
-        output.Write(cutoff);
-        output.Write(0L);
-        var directory = new List<Block>();
-        long count = 0;
-        using var compressor = new Compressor(6);
-        foreach (var group in records.Chunk(BlockRecords))
-        {
-            token.ThrowIfCancellationRequested();
-            byte[] bytes = compressor.Wrap(Encode(group)).ToArray();
-            directory.Add(new(group[0].Key, file.Position, bytes.Length));
-            output.Write(bytes);
-            count += group.Length;
-        }
-        long directoryOffset = file.Position;
-        output.Write(directory.Count);
-        foreach (var block in directory)
-        {
-            output.Write(block.FirstKey);
-            output.Write(block.Offset);
-            output.Write(block.Length);
-        }
-        file.Position = Magic.Length;
-        output.Write(directoryOffset);
-        output.Write(cutoff);
-        output.Write(count);
-        output.Flush();
-        file.Flush(true);
-    }
 
     public static byte[] Encode(IEnumerable<DatasetIndexRecord> records)
     {

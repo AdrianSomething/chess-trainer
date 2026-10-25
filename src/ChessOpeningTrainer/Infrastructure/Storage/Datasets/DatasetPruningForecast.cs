@@ -6,13 +6,13 @@ namespace ChessOpeningTrainer;
 /// a small game sample. The existing index is read-only; scratch output is owned.</summary>
 public static class DatasetPruningForecast
 {
-    public static long? Measure(DatasetStore store, CancellationToken token, bool compact = false)
+    public static long? Measure(DatasetStore store, CancellationToken token)
     {
         if (!store.HasIndex || store.Manifest.IndexSourceSignature != store.SourceSignature || store.Manifest.IndexRoots.Count == 0)
             return null;
         using var index = new DatasetIndex(store.IndexPath(store.Manifest.IndexFile!));
         int cutoff = store.Manifest.StopAtGames;
-        if (cutoff == index.StopAtGames && index.FormatVersion == (compact ? 4 : 3)) return new FileInfo(store.IndexPath(store.Manifest.IndexFile!)).Length;
+        if (cutoff == index.StopAtGames && index.FormatVersion == 4) return new FileInfo(store.IndexPath(store.Manifest.IndexFile!)).Length;
         if (cutoff < index.StopAtGames) return null;
         var watch = Stopwatch.StartNew();
         var pending = new Stack<Position>(store.Manifest.IndexRoots.Select(k => DatasetIndex.PositionFromKey(Convert.FromHexString(k))));
@@ -41,8 +41,7 @@ public static class DatasetPruningForecast
         try
         {
             records.Sort((a, b) => a.Key.AsSpan().SequenceCompareTo(b.Key));
-            if (compact) DatasetCompactFormat.Write(scratch, records, cutoff, token);
-            else DatasetIndexFormat.Write(scratch, records, cutoff, token);
+            DatasetCompactFormat.Write(scratch, records, cutoff, token);
             return new FileInfo(scratch).Length;
         }
         finally { if (File.Exists(scratch)) File.Delete(scratch); }

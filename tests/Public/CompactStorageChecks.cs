@@ -29,24 +29,31 @@ internal static class CompactStorageChecks
             void Observe() { string key = Convert.ToHexString(DatasetIndex.Key(p)); positions[key] = p.Clone(); if (visited.Add(key)) expected[key] = Sum(expected.GetValueOrDefault(key), DatasetCounts.From(game.Result)); }
             Observe(); foreach (string uci in game.Moves) { p.Apply(MoveGenerator.GenerateLegal(p).Single(m => m.Uci == uci)); Observe(); }
         }
+        long fullPositions = 0;
         foreach (int cutoff in new[] { 0, 1, 3 })
         {
             store.Manifest.StopAtGames = cutoff;
             using var stable = new DatasetIndex(DatasetIndex.Build(store, new(), null, default));
+            Check(stable.FormatVersion == 4, "Streaming format is the only default builder");
+            if (cutoff == 0) fullPositions = stable.PositionCount;
+            if (cutoff == 1) Check(stable.PositionCount < fullPositions, "Cutoff 1 removes singleton continuations; 0 retains them");
             using var operation = new DatasetOperation();
             // Small runs force >16 runs and multiple merge passes in CI without
             // relying on large downloads or a special production setting.
             var builder = typeof(DatasetIndex).Assembly.GetType("ChessOpeningTrainer.DatasetStreamingBuilder")!;
+            var reports = new List<string>();
             string path = (string)builder.GetMethod("Build", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null,
-                [store, new DatasetSettings { StreamingIndexBeta = true, IndexWorkers = 2 }, null, CancellationToken.None, operation, 31])!;
+                [store, new DatasetSettings { IndexWorkers = 2 }, new CallbackProgress(reports.Add), CancellationToken.None, operation, 31])!;
+            Check(reports.Any(r => r.Contains("2/2")), "Merge progress exposes total passes");
+            Check(reports.Any(r => r.Contains(L.T("Blockgruppe")) && r.Contains(L.T("Verbleibend"))), "Merge groups and separate ETA are visible");
             using var compact = new DatasetIndex(path);
             Check(compact.FormatVersion == 4, "New compact format selected");
             Check(stable.PositionCount == compact.PositionCount, "Same exact pruned reachability");
             foreach (var pair in positions)
             {
                 var p = pair.Value;
-                Check(stable.Counts(p) == compact.Counts(p), "Compact and stable result counters agree");
-                Check(stable.Children(p).SequenceEqual(compact.Children(p)), "Compact and stable continuation counters agree");
+                Check(stable.Counts(p) == compact.Counts(p), "Single-run and multi-pass result counters agree");
+                Check(stable.Children(p).SequenceEqual(compact.Children(p)), "Single-run and multi-pass continuation counters agree");
                 if (cutoff == 0) Check(compact.Counts(p) == expected[pair.Key], "Independent once-per-game counter oracle");
             }
             Check(!Directory.EnumerateDirectories(store.DirectoryPath, "*.runs").Any(), "Owned merge workspace removed after success");
@@ -54,7 +61,7 @@ internal static class CompactStorageChecks
         }
         string previous = store.Manifest.IndexFile!;
         using var cancelled = new CancellationTokenSource(); cancelled.Cancel();
-        try { DatasetIndex.Build(store, new() { StreamingIndexBeta = true }, null, cancelled.Token); Check(false, "Cancellation must throw"); }
+        try { DatasetIndex.Build(store, new(), null, cancelled.Token); Check(false, "Cancellation must throw"); }
         catch (OperationCanceledException) { }
         Check(store.Manifest.IndexFile == previous && File.Exists(store.IndexPath(previous)), "Compact cancellation keeps previous snapshot");
         Check(!Directory.EnumerateDirectories(store.DirectoryPath, "*.runs").Any(), "Cancelled workspace removed");
@@ -65,7 +72,7 @@ internal static class CompactStorageChecks
             try
             {
                 builder.GetMethod("Build", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null,
-                    [store, new DatasetSettings { StreamingIndexBeta = true }, new CallbackProgress(_ => midMerge.Cancel()), midMerge.Token, operation, 31]);
+                    [store, new DatasetSettings(), new CallbackProgress(_ => midMerge.Cancel()), midMerge.Token, operation, 31]);
                 Check(false, "Mid-merge cancellation must throw");
             }
             catch (TargetInvocationException ex) when (ex.InnerException is OperationCanceledException) { }
@@ -73,7 +80,43 @@ internal static class CompactStorageChecks
             Check(!Directory.EnumerateDirectories(store.DirectoryPath, "*.runs").Any(), "Partially written compressed runs cleaned on cancellation");
         }
         Check(new UserPreferences().BranchLayout == "sugiyama", "Sugiyama is default");
-        Check(!new DatasetSettings().StreamingIndexBeta, "Experimental format is opt-in");
+        Check(new DatasetManifest().StopAtGames == 0, "Default keeps every continuation");
+        var progressType = typeof(DatasetIndex).Assembly.GetType("ChessOpeningTrainer.DatasetMergeProgress")!;
+        var countPasses = progressType.GetMethod("CountPasses", BindingFlags.Static | BindingFlags.NonPublic)!;
+        foreach (var pair in new[] { (0, 0), (1, 0), (16, 1), (17, 2), (256, 2), (257, 3) })
+            Check((int)countPasses.Invoke(null, [pair.Item1])! == pair.Item2, "Merge pass total handles fan-in boundaries");
+        using (var timing = new DatasetOperation())
+        {
+            var merge = Activator.CreateInstance(progressType, timing, 17)!;
+            progressType.GetMethod("StartPass", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(merge, null);
+            var describe = progressType.GetMethod("Describe", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            Check(((string)describe.Invoke(merge, [1, 1, 2, 2L, 500000L])!).EndsWith("…"), "Merge reader startup is not extrapolated into an absurd ETA");
+            Check(((string)describe.Invoke(merge, [2, 1, 1, 500000L, 500000L])!).EndsWith("00:00:00"), "Finished merge has zero remaining work");
+            timing.TogglePause();
+            var active = typeof(DatasetOperation).GetProperty("ActiveSeconds", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            double pausedAt = (double)active.GetValue(timing)!;
+            Thread.Sleep(20);
+            Check((double)active.GetValue(timing)! == pausedAt, "Merge phase clock excludes pause time");
+            timing.TogglePause();
+        }
+        var existingScratch = Directory.GetDirectories(Path.GetTempPath(), "cot-estimate-*").ToHashSet();
+        var estimate = DatasetForecast.Estimate(store.DirectoryPath, store.Manifest.Entries.ToArray(), 0, new() { SampleSize = 100 }, default);
+        var prunedEstimate = DatasetForecast.Estimate(store.DirectoryPath, store.Manifest.Entries.ToArray(), 3, new() { SampleSize = 100 }, default);
+        Check(estimate.LowerBytes == estimate.UpperBytes && estimate.UpperBytes > 0, "Numeric point forecast");
+        Check(estimate.TemporaryBytes >= estimate.UpperBytes * 2, "Scaled forecast reserves simultaneous merge inputs and output");
+        Check(prunedEstimate.UpperBytes > 0 && prunedEstimate.UpperBytes <= estimate.UpperBytes, "Pruned sample extrapolation is bounded by full tree");
+        Check(prunedEstimate.TemporaryBytes >= estimate.UpperBytes * 2, "Pruning does not hide full aggregation workspace");
+        Check(Directory.GetDirectories(Path.GetTempPath(), "cot-estimate-*").All(existingScratch.Contains), "Forecast owns and cleans its scratch directories");
+        var small = new DatasetStore(Path.Combine(root, "small-forecast"));
+        small.Register(small.Write(games.Take(5), "Exact forecast fixture", 0, 100, null, default));
+        var exactEstimate = DatasetForecast.Estimate(small.DirectoryPath, small.Manifest.Entries.ToArray(), 1, new(), default);
+        small.Manifest.StopAtGames = 1;
+        using (var measured = new DatasetOperation())
+        {
+            string built = DatasetIndex.Build(small, new(), null, default, measured);
+            Check(exactEstimate.UpperBytes == new FileInfo(built).Length, "Whole-sample forecast measures actual selected cutoff");
+            Check(exactEstimate.TemporaryBytes == measured.PeakWorkspaceBytes, "Whole-sample forecast includes pruning workspace overlap");
+        }
     }
     private sealed class CallbackProgress(Action<string> action) : IProgress<string>
     {

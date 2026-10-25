@@ -38,6 +38,7 @@ public sealed class DatasetOperation : IDisposable
         get; set;
     }
     public bool Paused => !running.IsSet;
+    internal double ActiveSeconds { get { lock (sync) return elapsed.Elapsed.TotalSeconds; } }
     public bool SaveRequested => Volatile.Read(ref stopAndSave) != 0;
     public void TogglePause()
     {

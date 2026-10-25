@@ -10,7 +10,16 @@ Work is on `dev/0.26.0`; the stable release and its README download remain uncha
 | [#7: storage](https://github.com/AdrianSomething/chess-trainer/issues/7) | Packed moves, exact shared positions, variable counters, identical-counter reuse, smaller temporary keys, no stored destination key per edge, optional rare-continuation pruning, measured sample forecasts, live working-file size and cancellation cleanup | Full multi-million-game benchmarks are still needed. No universal 1:32 compression guarantee. See the measured bounded comparison in [DATASETS.md](DATASETS.md). |
 | [#8: graph layout](https://github.com/AdrianSomething/chess-trainer/issues/8) | Bounded crossing-reduction heuristic, cached geometry and order-preserving centering; adjustments are rejected if they increase measured crossings | Crossing minimization is heuristic, not a guarantee of an optimal drawing. Retain manual checks on large and unusual graphs. |
 
-Issues remain open: the broader 0.26 goals are not all completed by 0.26.3-beta.
+Issues remain open: the broader 0.26 goals are not all completed by 0.26.4-beta.
+
+## 0.26.4-beta corrections
+
+- Streaming compact indexing is now the sole build path. Remove the superseded SQL index builder, edge payload writer and beta checkbox; keep existing index readers. The sorting, merge fan-in, exact counts and pruning algorithm are unchanged.
+- Merge progress shows pass/total passes, block group/total groups, processed input entries and a separate approximate merge ETA. Pauses do not inflate the measured duration; later passes can revise the estimate as duplicate keys coalesce.
+- Pruned-size forecasts now extrapolate retained-size growth from two nested samples at the same cutoff instead of displaying a missing-frequency warning. A suitable complete index still takes precedence for exact measurement.
+- Workspace estimates account for simultaneous input/output runs (2.25 times projected full-depth size, or the scaled measured sample peak if larger). They are separate from the smaller pruned output and are estimates, not reserved disk quotas.
+- Minimum games per node remains 0 by default: unlike 0, a value of 1 removes outgoing continuations at singleton positions. No silent semantic change or profile migration.
+- Update the supplied branch screenshot. No stable download-link change, release or main-branch merge.
 
 ## 0.26.3-beta corrections
 
@@ -35,8 +44,8 @@ Issues remain open: the broader 0.26 goals are not all completed by 0.26.3-beta.
 
 ## Compatibility and testing
 
-- Old normalized datasets and format-2/3 frequency indexes remain readable. A normal rebuild creates format 3; the new opt-in builder creates format 4, which requires 0.26.3 or later. Earlier complete index files are not removed automatically. Opening JSON remains compatible.
-- No opening migration, personal data import, source-file deletion or main-branch merge is part of this beta.
+- Old normalized datasets and format-2/3 frequency indexes remain readable. Every rebuild now creates format 4, which requires 0.26.3 or later. Earlier complete index files are not removed automatically. Opening JSON remains compatible.
+- No opening migration, personal data import or main-branch merge is part of this beta. Removal of the superseded builder affects source code only, not user files.
 - Local tests use isolated synthetic profiles; the bounded archive benchmark reads only a 1,000-record prefix of the provided file.
 - Native form/lifecycle smoke tests supplement unit/integration tests. They do not replace human visual acceptance of every theme, DPI and screen size.
 - GitHub Actions is enabled for the development branch in 0.26.2; [CI_ASSESSMENT.md](CI_ASSESSMENT.md) describes its limited scope.

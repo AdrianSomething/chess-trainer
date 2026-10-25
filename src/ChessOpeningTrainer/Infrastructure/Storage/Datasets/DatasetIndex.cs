@@ -181,8 +181,6 @@ public sealed class DatasetIndex : IDisposable
     public static string Build(DatasetStore store, DatasetSettings settings, IProgress<string>? progress, CancellationToken token, DatasetOperation? operation = null)
     {
         using var owned = operation is null ? new DatasetOperation() : null;
-        return settings.StreamingIndexBeta
-            ? DatasetStreamingBuilder.Build(store, settings, progress, token, operation ?? owned!)
-            : DatasetIndexBuilder.Build(store, settings, progress, token, operation ?? owned);
+        return DatasetStreamingBuilder.Build(store, settings, progress, token, operation ?? owned!);
     }
 }

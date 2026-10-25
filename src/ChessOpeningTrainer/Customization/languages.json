@@ -10,7 +10,6 @@
 {"de":"Arbeitsraum beim Aufbau (Maximum): ","en":"Build workspace (peak): "},
 {"de":"Bei diesem älteren Baum nicht erfasst.","en":"Not recorded for this older tree."},
 {"de":"Neuer Baum (vollständig gemessen): ","en":"New tree (fully measured): "},
-{"de":"Die Größe nach dem Ausdünnen benötigt vollständige Häufigkeiten. Nach einem Aufbau kann ein höheres Minimum exakt vermessen werden.","en":"Pruned size needs complete frequencies. After building a tree, a higher minimum can be measured exactly."},
 {"de":"Sugiyama-Positionierung (Beta)","en":"Sugiyama layout (beta)"},
 {"de":"Partiestatistik","en":"Game statistics"},
 {"de":"Stoppen und speichern","en":"Stop and save"},
@@ -1164,9 +1163,10 @@
     ,{"de":"Legacy (bisheriges Standardlayout)","en":"Legacy (previous default layout)"}
     ,{"de":"Alternative: stärkere Kreuzungsreduktion","en":"Alternative: stronger crossing reduction"}
     ,{"de":"Sugiyama ordnet den Graphen in Schichten und reduziert Kreuzungen. Legacy behält das bisherige Standardlayout; Alternative verwendet die stärkere Kreuzungsreduktion. Offene Branchfenster übernehmen Änderungen.","en":"Sugiyama arranges the graph in layers and reduces crossings. Legacy retains the previous default layout; Alternative applies stronger crossing reduction. Open branch windows follow changes."}
-    ,{"de":"Streaming-Kompaktindex (Beta)","en":"Streaming compact index (beta)"}
-    ,{"de":"Ersetzt die temporäre Positionsdatenbank durch komprimierte Sortierläufe und größere Indexblöcke. Exakte Häufigkeiten und Transpositionen bleiben erhalten. Gilt beim nächsten Neubau; bestehende Bäume bleiben lesbar.","en":"Replaces the temporary position database with compressed sorted runs and larger index blocks. Exact frequencies and transpositions are preserved. Applies to the next rebuild; existing trees remain readable."}
     ,{"de":"Pausiert – mit Fortsetzen weiterarbeiten.","en":"Paused — select Resume to continue."}
     ,{"de":"Sortierblöcke zusammenführen","en":"Merging sorted blocks"}
+    ,{"de":"Durchlauf","en":"Pass"}
+    ,{"de":"Blockgruppe","en":"Block group"}
+    ,{"de":"Einträge","en":"Entries"}
   ]
 }

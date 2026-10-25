@@ -58,8 +58,8 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Pre-analysed tutorial game | Features/Tutorial/TutorialSampleGame.cs; embedded Samples/tutorial-game.json, isolated tutorial storage |
 | Opening menu bookmarks / order | App/OpeningMenuOrder.cs; UserPreferences.BookmarkedOpenings stores IDs only |
 | Audio recovery | Infrastructure/Customization/SoundVoice.cs |
-| Dataset index / pruning / size forecast | DatasetIndexBuilder, DatasetIndexFormat, DatasetIndex, DatasetForecast; PackedMove is the shared 15-bit translation layer |
-| Opt-in streaming dataset index | DatasetStreamingBuilder owns bounded sorted runs/merge; DatasetCompactFormat owns v4 blocks; DatasetStreamingPrune owns disk-bitset reachability. DatasetIndex reads v2/v3/v4. |
+| Dataset index / pruning / size forecast | DatasetIndex, DatasetForecast, DatasetPruningForecast; PackedMove is the shared 15-bit translation layer. DatasetIndexFormat retains the shared codec and older-format decoding. |
+| Streaming dataset index | DatasetGamePositions projects legal games; DatasetStreamingBuilder owns bounded sorted runs/merge; DatasetMergeProgress owns phase reporting; DatasetCompactFormat owns v4 blocks; DatasetStreamingPrune owns disk-bitset reachability. DatasetIndex reads v2/v3/v4. |
 | Dataset navigation / position frequencies | DatasetGraphModel reuses BranchCanvas; DatasetResultsStrip is shared with BranchForm.Datasets |
 | Dataset pause / import checkpoints | DatasetOperation owns pause/cancel timing; DatasetImportJob checkpoints committed records and publication state |
 | Dataset compact identity / shared bars | DatasetPositionKey uses order-preserving temporary RLE; DatasetFrequencyBinding owns background reader/cache lifetime across board views |

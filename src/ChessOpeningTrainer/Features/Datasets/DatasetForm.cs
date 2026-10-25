@@ -18,7 +18,6 @@ public sealed class DatasetForm : LocalizedForm
     private DatasetOperation? job;
     private CancellationTokenSource? operation;
     private bool closeAfter;
-    private bool compactSetting = Preferences.Current.Datasets.StreamingIndexBeta;
     private int storedFormat;
     private string latestStatus = "";
     private readonly ToolTip tips = new();
@@ -34,7 +33,6 @@ public sealed class DatasetForm : LocalizedForm
         store = new(dataDirectory);
         this.engine = engine;
         ReadStoredFormat();
-        Preferences.Changed += SettingsChanged;
         Text = "Datensätze";
         Size = new(1120, 790);
         MinimumSize = new(870, 600);
@@ -179,7 +177,7 @@ public sealed class DatasetForm : LocalizedForm
     private void RefreshBuild()
     {
         if (buildButton is { IsDisposed: false })
-            buildButton.Visible = (store.IsStale || storedFormat != (compactSetting ? 4 : 3)) && store.Manifest.Entries.Any(e => e.Active);
+            buildButton.Visible = (store.IsStale || storedFormat != 4) && store.Manifest.Entries.Any(e => e.Active);
         if (viewTreeButton is { IsDisposed: false })
             viewTreeButton.Text = (store.IsStale ? L.T("(alt) ") : "") + L.T("Datensatzbaum anzeigen");
     }
@@ -206,13 +204,13 @@ public sealed class DatasetForm : LocalizedForm
                     L.T("Arbeitsraum beim Aufbau (Maximum): ") + (store.Manifest.IndexPeakWorkspaceBytes is long peak ? $"{peak / 1e6:0.000} MB" : L.T("Bei diesem älteren Baum nicht erfasst."));
                 return;
             }
-            long? measured = await Task.Run(() => DatasetPruningForecast.Measure(store, cts.Token, compactSetting), cts.Token);
+            long? measured = await Task.Run(() => DatasetPruningForecast.Measure(store, cts.Token), cts.Token);
             var estimate = await Task.Run(() => DatasetForecast.Estimate(store.DirectoryPath, active, cutoff, Preferences.Current.Datasets, cts.Token), cts.Token);
             if (IsDisposed || target.IsDisposed || cts.IsCancellationRequested)
                 return;
             string size = Math.Round(estimate.LowerBytes / 1e6, 1) == Math.Round(estimate.UpperBytes / 1e6, 1) ? $"{estimate.UpperBytes / 1e6:0.0} MB" : $"{estimate.LowerBytes / 1e6:0.0}–{estimate.UpperBytes / 1e6:0.0} MB";
             target.Text = (measured is long exact ? L.T("Neuer Baum (vollständig gemessen): ") + $"{exact / 1e6:0.000} MB" :
-                estimate.PruningUnknown ? L.T("Die Größe nach dem Ausdünnen benötigt vollständige Häufigkeiten. Nach einem Aufbau kann ein höheres Minimum exakt vermessen werden.") : L.T("Baum: ca. ") + size) +
+                L.T("Baum: ca. ") + size) +
                 "\n" + L.T("Temporärer Arbeitsraum: ca. ") + $"{estimate.TemporaryBytes / 1e6:0.0} MB";
         }
         catch (OperationCanceledException) { }
@@ -405,17 +403,10 @@ public sealed class DatasetForm : LocalizedForm
         catch (IOException) { }
         catch (UnauthorizedAccessException) { }
     }
-    private void SettingsChanged()
-    {
-        if (IsDisposed || compactSetting == Preferences.Current.Datasets.StreamingIndexBeta) return;
-        compactSetting = Preferences.Current.Datasets.StreamingIndexBeta;
-        ActiveChanged();
-    }
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            Preferences.Changed -= SettingsChanged;
             forecastDelay.Dispose();
             forecast?.Cancel();
             operation?.Cancel();
