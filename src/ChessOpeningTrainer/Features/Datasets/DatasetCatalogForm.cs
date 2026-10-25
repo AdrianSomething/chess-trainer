@@ -21,7 +21,7 @@ public sealed class DatasetCatalogForm : LocalizedForm
         download.Dock = DockStyle.Bottom;
         Controls.AddRange([list, totals, download]);
         download.Enabled = false;
-        list.SelectionChanged += () => { var items = list.Selection; totals.Text = $"{items.Count} · {items.Sum(i => i.Bytes) / 1e9:0.000} GB · {items.Sum(i => i.Games):N0} " + L.T("Partien"); download.Enabled = items.Count > 0; };
+        list.SelectionChanged += () => { var items = list.Selection; totals.Text = $"{items.Count} " + L.T("Datensätze") + $" · {items.Sum(i => i.Bytes) / 1e9:0.000} GB · {items.Sum(i => i.Games):N0} " + L.T("Partien"); download.Enabled = items.Count > 0; };
         Shown += async (_, _) => await LoadCatalog();
         FormClosed += (_, _) => lifetime.Cancel();
     }

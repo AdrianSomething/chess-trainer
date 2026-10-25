@@ -2,6 +2,14 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.26.5-beta — Development
+
+- Paint the Lichess download catalog as one virtualized, double-buffered surface. Wheel and thumb dragging update immediately without moving hundreds of child controls; selected rows have one continuous highlight across all columns.
+- Label the selected dataset count explicitly in both languages, retaining click/Ctrl/Shift selection.
+- Give each download and import an independent pause-aware elapsed/remaining clock. Keep the queue-wide total separate, including when downloads and imports overlap.
+- Paint branch selection outlines after all nodes, captions and other borders so neighboring nodes cannot hide the selection.
+- Add synthetic rendering, selection, scrolling and independent-clock regressions. No index format or stable-release change.
+
 ## 0.26.4-beta — Development
 
 - Make the streaming compact dataset builder the only/default build path; remove the old SQL aggregation builder and its beta switch. Keep readers for existing index formats and preserve the compact format, exact counters and merge/pruning rules.

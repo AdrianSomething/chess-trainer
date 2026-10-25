@@ -10,7 +10,14 @@ Work is on `dev/0.26.0`; the stable release and its README download remain uncha
 | [#7: storage](https://github.com/AdrianSomething/chess-trainer/issues/7) | Packed moves, exact shared positions, variable counters, identical-counter reuse, smaller temporary keys, no stored destination key per edge, optional rare-continuation pruning, measured sample forecasts, live working-file size and cancellation cleanup | Full multi-million-game benchmarks are still needed. No universal 1:32 compression guarantee. See the measured bounded comparison in [DATASETS.md](DATASETS.md). |
 | [#8: graph layout](https://github.com/AdrianSomething/chess-trainer/issues/8) | Bounded crossing-reduction heuristic, cached geometry and order-preserving centering; adjustments are rejected if they increase measured crossings | Crossing minimization is heuristic, not a guarantee of an optimal drawing. Retain manual checks on large and unusual graphs. |
 
-Issues remain open: the broader 0.26 goals are not all completed by 0.26.4-beta.
+Issues remain open: the broader 0.26 goals are not all completed by 0.26.5-beta.
+
+## 0.26.5-beta corrections
+
+- Virtualize the Lichess catalog: draw visible rows and the scrollbar together, with a single full-row selection highlight and an explicit selected-dataset count.
+- Separate each download/import clock from the overall queue clock; a new item starts at zero without disturbing concurrent work or pause accounting.
+- Render selected branch outlines in a final overlay pass above neighboring nodes and all other markings.
+- Keep the streaming dataset index, existing files, stable downloads and main branch unchanged.
 
 ## 0.26.4-beta corrections
 

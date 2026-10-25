@@ -54,6 +54,7 @@ internal static class DatasetImportJob
             return state.Entry;
         }
         SaveJournal();
+        var timing = operation.StartTiming();
         long bytesRead = 0, lastReport = 0;
         try
         {
@@ -138,7 +139,7 @@ internal static class DatasetImportJob
                         if (state.Records % 1000 == 0 || Environment.TickCount64 - lastReport > 350)
                         {
                             lastReport = Environment.TickCount64;
-                            progress?.Report($"{state.Entry.Name} · {state.Entry.Games:N0} " + L.T("Partien") + $" · {state.Entry.Skipped:N0} " + L.T("übersprungen") + "\n" + operation.Timing(Interlocked.Read(ref bytesRead), info.Length));
+                            progress?.Report($"{state.Entry.Name} · {state.Entry.Games:N0} " + L.T("Partien") + $" · {state.Entry.Skipped:N0} " + L.T("übersprungen") + "\n" + timing.Describe(Interlocked.Read(ref bytesRead), info.Length));
                         }
                     }
                     Save();

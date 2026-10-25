@@ -170,13 +170,6 @@ public sealed class BranchCanvas : Control
                 using var borderPath = v.Outline(); g.DrawPath(borderPen, borderPath);
             }
 
-            if (!explicitSelectionCleared && (selectedKey is not null ? renderCache.Keys(v).Exact.Contains(selectedKey)
-                : highlight is not null && renderCache.Keys(v).Normalized.Contains(highlight)))
-            {
-                using var ring = new Pen(UiPalette.Orange, 3);
-                using var outlinePath = v.Outline(4);
-                g.DrawPath(ring, outlinePath);
-            }
 
             if (!HideSubbranchColors && v.SubbranchColor is Color outline)
             {
@@ -223,6 +216,22 @@ public sealed class BranchCanvas : Control
                         x += g.MeasureString(label, font).Width + 8;
                     }
                 }
+            }
+        }
+        PaintSelection(g);
+    }
+
+    private void PaintSelection(Graphics g)
+    {
+        // Draw selection last, above neighboring nodes, captions and all borders.
+        foreach (var v in Vertices)
+        {
+            if (!explicitSelectionCleared && (selectedKey is not null ? renderCache.Keys(v).Exact.Contains(selectedKey)
+                : highlight is not null && renderCache.Keys(v).Normalized.Contains(highlight)))
+            {
+                using var ring = new Pen(UiPalette.Orange, 3);
+                using var outlinePath = v.Outline(4);
+                g.DrawPath(ring, outlinePath);
             }
         }
     }

@@ -62,6 +62,7 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Streaming dataset index | DatasetGamePositions projects legal games; DatasetStreamingBuilder owns bounded sorted runs/merge; DatasetMergeProgress owns phase reporting; DatasetCompactFormat owns v4 blocks; DatasetStreamingPrune owns disk-bitset reachability. DatasetIndex reads v2/v3/v4. |
 | Dataset navigation / position frequencies | DatasetGraphModel reuses BranchCanvas; DatasetResultsStrip is shared with BranchForm.Datasets |
 | Dataset pause / import checkpoints | DatasetOperation owns pause/cancel timing; DatasetImportJob checkpoints committed records and publication state |
+| Dataset catalog / queue clocks | DatasetDownloadList paints visible rows and the themed scrollbar; DatasetTiming gives each import/download an independent pause-aware clock |
 | Dataset compact identity / shared bars | DatasetPositionKey uses order-preserving temporary RLE; DatasetFrequencyBinding owns background reader/cache lifetime across board views |
 | Languages and tooltips | Infrastructure/Customization/L.cs, Customization/languages.json, UI/Common/LocalizedToolTips.cs |
 | Theme and native controls | UI/Theming/UiPalette.cs, ComboArrowSurface.cs, WindowTitleTheme.cs |

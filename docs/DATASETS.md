@@ -1,4 +1,4 @@
-# Datasets — 0.26.4-beta
+# Datasets — 0.26.5-beta
 
 ## Workflow
 
@@ -9,6 +9,11 @@ Open **Datasets** from the home menu. Import one or more PGN, PGN.ZST, PGN.GZ or
 The app creates normalized, local datasets under the profile's `DataSets` directory; **Open dataset folder** opens that location directly. Existing data is not silently moved. Original import files are unchanged. Double-click a name and confirm with Enter or the checkmark; clicking elsewhere cancels the rename. Bookmark datasets, activate any combination, or create a trimmed subset. A separately kept subset is initially inactive. A subset can replace the app-owned original only after successful creation. Deleting a dataset requires confirmation. Duplicate games in separately imported, overlapping datasets are not automatically deduplicated; activate non-overlapping sources when unbiased game counts matter.
 
 Build the active datasets into a frequency tree. Changing the active selection or continuation cutoff does not modify the existing tree. An outdated-tree warning remains until rebuilding, or disappears if you restore the selection and cutoff used for the current snapshot. Cancelling a rebuild retains the previous tree. Old completed index snapshots are currently retained on disk; they are not automatically deleted while another view might still use them.
+
+The download catalog paints only visible rows, with a continuous selection fill
+and immediate scrollbar updates. Its footer labels the selected dataset count.
+Each download and import has its own pause-aware elapsed/remaining clock;
+the total queue clock continues across items and overlapping download/import work.
 
 ## What is retained?
 

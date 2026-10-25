@@ -23,6 +23,10 @@ directories and removed after completion or cancellation.
 Each invocation owns a unique `work/public-checks-*` profile and removes it.
 There are no real player records, external network calls or Stockfish processes.
 
+`Dataset265Checks` renders the catalog and overlapping branch nodes off-screen,
+checks continuous row highlighting, immediate scroll position and Ctrl/Shift
+selection, and exercises independent item/queue clocks with a synthetic time source.
+
 The small console runner exits nonzero on the first failed assertion. Thousands
 of cheap assertions share one process; they are not thousands of CI jobs.
 The larger local UI/engine harness remains private. These checks complement it;

@@ -92,6 +92,7 @@ public static class DatasetDownloader
             File.Move(Journal(root) + ".tmp", Journal(root), true);
         }
         Save();
+        var timing = operation?.StartTiming();
         long offset = File.Exists(partial) ? new FileInfo(partial).Length : 0;
         using var request = new HttpRequestMessage(HttpMethod.Get, job.Option.Url);
         if (offset > 0)
@@ -135,7 +136,8 @@ public static class DatasetDownloader
                 copied += count;
                 if (Environment.TickCount64 - last > 400)
                 {
-                    progress?.Report($"{job.Option.Name}: {copied / 1e6:0.0} / {total / 1e6:0.0} MB");
+                    progress?.Report($"{job.Option.Name}: {copied / 1e6:0.0} / {total / 1e6:0.0} MB" +
+                        (timing is null ? "" : " · " + timing.Describe(copied - offset, total - offset)));
                     last = Environment.TickCount64;
                 }
             }
