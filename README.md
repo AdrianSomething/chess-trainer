@@ -24,6 +24,7 @@ Windows release assets are available on the [0.26.5 Releases page](https://githu
 - Use **Learn-Mode** to learn your opening like index cards.
 - Use **Freeplay-Mode** to practice the move sequences in order in a game against an engine.
 - Use **Opening Branch Generator** to customize and create your own branches in a queue system with the help of an engine (or just add an opening json file directly into the Opening folder).
+- Use **Database-Mode** to download played games from Lichess and analyse how relevant your repertoire is in a real environment.
 
 ### Puzzle Mode:
 ![Puzzle-Mode](docs/images/puzzlemode.png)
