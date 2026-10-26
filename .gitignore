@@ -46,3 +46,13 @@
 
 # One-time migration utilities are workspace maintenance, not application source.
 /tools/SourceOrganizer/
+
+# Private optional engine-training artifacts and Python environments.
+**/__pycache__/
+.venv/
+*.pt
+*.pth
+*.safetensors
+stop.request
+/EngineLab/
+/addons/engine-lab/experiments/

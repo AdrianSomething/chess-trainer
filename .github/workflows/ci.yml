@@ -36,6 +36,11 @@ jobs:
         run: dotnet build tests/Public/ChessTrainer.Checks.csproj -c Release -p:PublicRelease=true
       - name: Rules and codec checks
         run: dotnet run --project tests/Public/ChessTrainer.Checks.csproj -c Release --no-build -- rules
+      - name: Keyboard, coverage and training-rule checks
+        run: dotnet run --project tests/Public/ChessTrainer.Checks.csproj -c Release --no-build -- v027
+      - name: Engine Lab schedule checks (no GPU dependencies)
+        working-directory: addons/engine-lab
+        run: python -m unittest discover -p "test_*.py"
       - name: Synthetic storage and graph checks
         run: dotnet run --project tests/Public/ChessTrainer.Checks.csproj -c Release --no-build -- datasets
 

@@ -33,7 +33,7 @@ public sealed class DatasetSequenceEditor : UserControl
         var options = MoveGenerator.GenerateLegal(positions[^1]).Where(m => m.From == from && m.To == to).ToList();
         if (options.Count == 0)
             return false;
-        var move = options.Count == 1 ? options[0] : PromotionPicker.Choose(FindForm()!, options, positions[^1].WhiteToMove);
+        var move = options.Count == 1 ? options[0] : board.ChoosePromotion(FindForm()!, options, positions[^1].WhiteToMove);
         if (move is null)
             return false;
         var next = positions[^1].Clone();

@@ -2,6 +2,15 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.27.0-beta — Development
+
+- Add shared keyboard move entry with simplified notation, candidate selection, rotation-aware navigation and promotion support.
+- Add dataset-weighted Opening Coverage Score with ranked missing continuations that open staged branch edits.
+- Add per-section dataset continuation/cutoff settings and engine-validated preferred move plans to the opening generator.
+- Add an optional Engine Lab: headless shared-rule protocol, multi-instance position laboratory, GPU evolutionary template, teacher distillation, checkpoint resume and Stockfish depth comparison.
+- Preserve opening/index compatibility and keep research dependencies and experiment files outside normal app operation.
+- Extend deterministic public checks; retain the existing local engine-generation regression suite. See docs/BETA_0.27.md for experimental limitations.
+
 ## 0.26.5 — 2026-10-26
 
 Stable promotion of the tested 0.26.5-beta application, with no functional changes during promotion.

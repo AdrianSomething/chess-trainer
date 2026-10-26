@@ -1,6 +1,8 @@
 namespace ChessOpeningTrainer;
 public sealed class DepthSection
 {
+    public int MinimumCommonReplies { get; set; }
+    public int StopBelowGames { get; set; }
     public int EndDepth { get; set; } = 10;
     public int ComplexThreshold { get; set; } = 4;
     public int RetainBest { get; set; } = 0;

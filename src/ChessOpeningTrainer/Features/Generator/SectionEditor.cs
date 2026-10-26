@@ -12,8 +12,8 @@ public sealed class SectionEditor : TableLayoutPanel
     private int initializedColumns;
     private bool changingCount;
     private int complexityStartDepth = 5;
-    private static readonly string[] names = ["Abschnittstiefengrenze", "Komplexitätsgrenze", "Leichtigkeitsgrenze", "Enginesuchtiefe", "Maximaler gegnerischer Verlust", "Maximaler Kompressionsverlust", "Komplexitätsreserve (KGR): Topzüge", "KGR-Bewertungsgrenze (Weißsicht)", "Maximale Zugvariation"];
-    private static readonly string[] descriptions = ["Exklusive Endtiefe dieses Abschnitts in Halbzügen ab Startstellung. Grenzen müssen ansteigen.", "Ab dieser Anzahl plausibler Gegnerzüge endet die Fortsetzung, sobald die Mindesttiefe erreicht ist.", "Gegnerzüge mit dieser oder schlechterer Bewertung aus Gegnersicht werden nicht gelernt (Bauern).", "Stockfish-Suchtiefe pro Stellung. Höher bedeutet mehr Rechenzeit; unabhängig von der Baumtiefe.", "Maximaler Bewertungsverlust einer Gegnerantwort gegenüber deren bestem Zug (Bauern).", "Maximal erlaubter eigener Bewertungsverlust für das Zusammenführen von Ästen (Bauern).", "Trotz Komplexitätsabbruch bis zu X beste Gegnerzüge weiterführen. 0 = aus; Maximal-Tiefe bleibt verbindlich.", "Mindestbewertung der Fortsetzung aus Weißsicht wie in der Bewertungsleiste. 0 = ausgeglichen.", "Zufällige eigene Antwort unter legalen Zügen mit Bewertung strikt über bester Zug minus diesem Verlust (Bauern). 0 = bester Zug. Lernkompression hat Vorrang."];
+    private static readonly string[] names = ["Abschnittstiefengrenze", "Komplexitätsgrenze", "Leichtigkeitsgrenze", "Enginesuchtiefe", "Maximaler gegnerischer Verlust", "Maximaler Kompressionsverlust", "Komplexitätsreserve (KGR): Topzüge", "KGR-Bewertungsgrenze (Weißsicht)", "Maximale Zugvariation", "Häufigste Antworten fortsetzen", "Abbruch unter Partienzahl"];
+    private static readonly string[] descriptions = ["Exklusive Endtiefe dieses Abschnitts in Halbzügen ab Startstellung. Grenzen müssen ansteigen.", "Ab dieser Anzahl plausibler Gegnerzüge endet die Fortsetzung, sobald die Mindesttiefe erreicht ist.", "Gegnerzüge mit dieser oder schlechterer Bewertung aus Gegnersicht werden nicht gelernt (Bauern).", "Stockfish-Suchtiefe pro Stellung. Höher bedeutet mehr Rechenzeit; unabhängig von der Baumtiefe.", "Maximaler Bewertungsverlust einer Gegnerantwort gegenüber deren bestem Zug (Bauern).", "Maximal erlaubter eigener Bewertungsverlust für das Zusammenführen von Ästen (Bauern).", "Trotz Komplexitätsabbruch bis zu X beste Gegnerzüge weiterführen. 0 = aus; Maximal-Tiefe bleibt verbindlich.", "Mindestbewertung der Fortsetzung aus Weißsicht wie in der Bewertungsleiste. 0 = ausgeglichen.", "Zufällige eigene Antwort unter legalen Zügen mit Bewertung strikt über bester Zug minus diesem Verlust (Bauern). 0 = bester Zug. Lernkompression hat Vorrang.", "Mindestens so viele häufigste Gegnerzüge fortsetzen, auch an der Komplexitätsgrenze. 0 = aus; höchstens die Komplexitätsgrenze. Datensatz-Mindestbelege und maximale Tiefe bleiben gültig.", "Gegnerstellung unter dieser Partienzahl nicht weiter vertiefen. 0 = aus. Unter der globalen Mindestbelegzahl gelten nur die Engine-Regeln."];
     private string language = Preferences.Current.Language;
     public event Action? Changed;
     public SectionEditor()
@@ -47,8 +47,8 @@ public sealed class SectionEditor : TableLayoutPanel
             headings.Add(heading); Controls.Add(heading, col + 1, 0);
             var defaults = new DepthSection { EndDepth = 10 + col * 5 };
             decimal[] data = [defaults.EndDepth, defaults.ComplexThreshold, (decimal)defaults.EasyThreshold, defaults.SearchDepth,
-                (decimal)defaults.MaxReplyLoss, (decimal)defaults.CompressionLoss, defaults.RetainBest, (decimal)defaults.RetainMinEval, (decimal)defaults.LearnerVariationLoss];
-            decimal[] min = [1, 2, -20, 5, 0, 0, 0, -20, 0], max = [60, 50, 0, 24, 20, 5, 50, 20, 20];
+                (decimal)defaults.MaxReplyLoss, (decimal)defaults.CompressionLoss, defaults.RetainBest, (decimal)defaults.RetainMinEval, (decimal)defaults.LearnerVariationLoss, defaults.MinimumCommonReplies, defaults.StopBelowGames];
+            decimal[] min = [1, 2, -20, 5, 0, 0, 0, -20, 0, 0, 0], max = [60, 50, 0, 24, 20, 5, 50, 20, 20, 50, 1000000000];
             var fields = new NumericUpDown[names.Length];
             for (int row = 0; row < names.Length; row++)
             {
@@ -67,7 +67,7 @@ public sealed class SectionEditor : TableLayoutPanel
                 field.ValueChanged += (_, _) =>
                 {
                     if (changingCount) return;
-                    if (parameter == 0) UpdateSectionLayout(() => { });
+                    if (parameter is 0 or 1) UpdateSectionLayout(() => { });
                     else Changed?.Invoke();
                 };
             }
@@ -94,7 +94,7 @@ public sealed class SectionEditor : TableLayoutPanel
         ResumeLayout(true);
     }
 
-    public List<DepthSection> Values => columns.Select(c => new DepthSection { EndDepth = (int)c[0].Value, ComplexThreshold = (int)c[1].Value, EasyThreshold = (double)c[2].Value, SearchDepth = (int)c[3].Value, MaxReplyLoss = (double)c[4].Value, CompressionLoss = (double)c[5].Value, RetainBest = (int)c[6].Value, RetainMinEval = (double)c[7].Value, LearnerVariationLoss = (double)c[8].Value }).ToList();
+    public List<DepthSection> Values => columns.Select(c => new DepthSection { EndDepth = (int)c[0].Value, ComplexThreshold = (int)c[1].Value, EasyThreshold = (double)c[2].Value, SearchDepth = (int)c[3].Value, MaxReplyLoss = (double)c[4].Value, CompressionLoss = (double)c[5].Value, RetainBest = (int)c[6].Value, RetainMinEval = (double)c[7].Value, LearnerVariationLoss = (double)c[8].Value, MinimumCommonReplies = (int)c[9].Value, StopBelowGames = (int)c[10].Value }).ToList();
 
     public int ComplexityStartDepth
     {
@@ -117,9 +117,9 @@ public sealed class SectionEditor : TableLayoutPanel
             {
                 var s = values[col];
                 decimal[] data = [s.EndDepth, s.ComplexThreshold, (decimal)s.EasyThreshold, s.SearchDepth,
-                    (decimal)s.MaxReplyLoss, (decimal)s.CompressionLoss, s.RetainBest, (decimal)s.RetainMinEval, (decimal)s.LearnerVariationLoss];
+                    (decimal)s.MaxReplyLoss, (decimal)s.CompressionLoss, s.RetainBest, (decimal)s.RetainMinEval, (decimal)s.LearnerVariationLoss, s.MinimumCommonReplies, s.StopBelowGames];
                 // Remove bounds inherited from the previously selected job first.
-                columns[col][0].Minimum = 1; columns[col][0].Maximum = 60;
+                columns[col][0].Minimum = 1; columns[col][0].Maximum = 60; columns[col][9].Maximum = 50;
                 for (int row = 0; row < data.Length; row++)
                     columns[col][row].Value = Math.Clamp(data[row], columns[col][row].Minimum, columns[col][row].Maximum);
             }
@@ -180,6 +180,7 @@ public sealed class SectionEditor : TableLayoutPanel
                     if (boundary.Maximum != nextMaximum) boundary.Maximum = nextMaximum;
                     if (boundary.Minimum != nextMinimum) boundary.Minimum = nextMinimum;
                     previous = boundary.Value;
+                    columns[col][9].Maximum = columns[col][1].Value;
                 }
                 for (int col = 0; col < cachedColumns.Count; col++)
                 {

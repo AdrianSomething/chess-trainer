@@ -165,6 +165,7 @@ public static class OpeningStore
             Description = o.Description,
             Source = o.Source,
             StartFen = o.StartFen,
+            GenerationStartFen = o.GenerationStartFen,
             RootNodeId = o.Tree.Id,
             Nodes = nodes
         };

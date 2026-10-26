@@ -220,7 +220,7 @@ public sealed class PgnComposer : LocalizedForm
         var options = MoveGenerator.GenerateLegal(p).Where(m => m.From == from && m.To == to).ToList();
         if (options.Count == 0)
             return false;
-        var move = options.Count == 1 ? options[0] : PromotionPicker.Choose(this, options, p.WhiteToMove);
+        var move = options.Count == 1 ? options[0] : board.ChoosePromotion(this, options, p.WhiteToMove);
         if (move is null)
             return false;
         draft.Moves.Add(move.Uci);

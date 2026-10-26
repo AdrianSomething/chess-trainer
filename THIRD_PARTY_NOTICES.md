@@ -49,3 +49,7 @@ The maintainer reports creating Customization/icons/assessment-sheet.png with Fi
 Audacity was used to edit audio; Audacity is not bundled. Its application license does not automatically license the audio it edits. Codex assisted development; no OpenAI credentials, proprietary runtime or remote model service is required to run this application.
 
 See COPYRIGHT.md and docs/ASSET_PROVENANCE.md for scope and remaining provenance limitations.
+
+## Optional Engine Lab dependencies
+
+The Python example under `addons/engine-lab` uses separately installed PyTorch. Python, PyTorch, CUDA libraries and model weights are **not bundled** in the app or source package. PyTorch's [upstream license and third-party notices](https://github.com/pytorch/pytorch/blob/main/LICENSE) apply to the installation supplied by its distributor. The example code itself follows this repository's GPL license. Existing Stockfish distribution/source obligations remain unchanged; the add-on communicates with the same bundled engine through UCI via the application host.

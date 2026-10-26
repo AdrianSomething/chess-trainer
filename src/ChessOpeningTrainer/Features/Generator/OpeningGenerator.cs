@@ -16,7 +16,7 @@ public sealed class OpeningGenerator
         return r.Lines.Where(l => Score(l) > o.EasyThreshold && best - Score(l) <= (replyLoss ?? o.MaxReplyLoss)).ToList();
     }
 
-    public static EngineLine ChooseLearner(Position p, IReadOnlyList<EngineLine> lines, GeneratorOptions o, Func<Position, bool> known)
+    public static EngineLine ChooseLearner(Position p, IReadOnlyList<EngineLine> lines, GeneratorOptions o, Func<Position, bool> known, PreferredProgress preference = default)
     {
         var best = lines[0];
         var legal = MoveGenerator.GenerateLegal(p).ToDictionary(m => m.Uci);
@@ -37,7 +37,8 @@ public sealed class OpeningGenerator
         // Compression has priority, including when its allowed loss is larger
         // than the variation budget. Zero retains the original deterministic
         // best-move fallback and does not consume random choices.
-        if (o.LearnerVariationLoss <= 0) return best;
+        if (PreferredMovePolicy.Choose(p, lines, o, preference) is { } preferred) return preferred;
+        if (o.PreferredMoves.Count > 0 || o.LearnerVariationLoss <= 0) return best;
         var choices = lines.Where(line => line.BestMove is { } u && legal.ContainsKey(u)
             && Score(line) > Score(best) - o.LearnerVariationLoss + 1e-8).ToArray();
         return choices.Length == 0 ? best : choices[Random.Shared.Next(choices.Length)];
@@ -52,6 +53,8 @@ public sealed class OpeningGenerator
         var sampleOptions = new GeneratorOptions
         {
             LearnWhite = options.LearnWhite,
+            MinimumCommonReplies = options.MinimumCommonReplies, StopBelowGames = options.StopBelowGames, MinimumDatasetGames = options.MinimumDatasetGames, DatasetIndexFile = options.DatasetIndexFile,
+            PreferredMoves = options.PreferredMoves.ToList(), PreferenceDeviationLimit = options.PreferenceDeviationLimit, PreferenceMinimumEvaluation = options.PreferenceMinimumEvaluation, PreferenceMaximumLoss = options.PreferenceMaximumLoss,
             MinDepth = Math.Min(options.MinDepth, 4),
             MaxDepth = Math.Min(options.MaxDepth, 4),
             EasyThreshold = options.EasyThreshold,
@@ -75,7 +78,7 @@ public sealed class OpeningGenerator
             .Select(s => new DepthSection { EndDepth = Math.Min(s.EndDepth, sampleOptions.MaxDepth),
                 ComplexThreshold = s.ComplexThreshold, EasyThreshold = s.EasyThreshold, SearchDepth = Math.Min(s.SearchDepth, 7),
                 MaxReplyLoss = s.MaxReplyLoss, CompressionLoss = s.CompressionLoss, RetainBest = s.RetainBest,
-                RetainMinEval = s.RetainMinEval, LearnerVariationLoss = s.LearnerVariationLoss }).ToList();
+                RetainMinEval = s.RetainMinEval, LearnerVariationLoss = s.LearnerVariationLoss, MinimumCommonReplies = s.MinimumCommonReplies, StopBelowGames = s.StopBelowGames }).ToList();
         var sample = await GenerateAsync(start, "Schätzprobe", sampleOptions, _ => Task.FromResult(false), null, token, setup);
         token.ThrowIfCancellationRequested();
         int measured = OpeningStore.LearnerMoves(sample).Count();
@@ -87,6 +90,7 @@ public sealed class OpeningGenerator
     public async Task<OpeningDefinition> GenerateAsync(Position start, string name, GeneratorOptions options, Func<int, Task<bool>> continueAtLimit, IProgress<GeneratorProgress>? progress, CancellationToken token, IReadOnlyList<string>? setup = null, IProgress<GeneratorGraphSnapshot>? graph = null, IProgress<GeneratorSearchDepth>? searchDepthProgress = null, IOpeningSearch? sharedSearch = null)
     {
         options.Validate();
+        using var frequencies = new GeneratorDatasetPolicy(options);
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Bitte einen Namen eingeben.");
         var initial = setup is null ? start.Clone() : Position.FromFen(Position.InitialFen);
@@ -116,6 +120,7 @@ public sealed class OpeningGenerator
             Name = name,
             Perspective = options.LearnWhite ? "white" : "black",
             StartFen = initial.ToFen(),
+            GenerationStartFen = start.ToFen(),
             Source = "Stockfish · Graphgenerator",
             Description = $"Startsequenz inklusive; Baumtiefe {options.MinDepth}–{options.MaxDepth} Halbzüge danach. Kompressionsverlust ≤ {options.CompressionLoss:0.00} Bauern. Eigener Variationsverlust {options.LearnerVariationLoss:0.00} Bauern (0 = aus). Engine-Tiefe {options.SearchDepth}, ohne Zeitlimit."};
         if (options.Sections.Count > 0)
@@ -192,7 +197,7 @@ public sealed class OpeningGenerator
         var current = opening.Tree;
         var prefixPosition = initial.Clone();
         int offset = 0;
-        var queue = new Queue<(Position P, OpeningNode Node, int Depth, HashSet<string> Seen)>();
+        var queue = new Queue<(Position P, OpeningNode Node, int Depth, HashSet<string> Seen, PreferredProgress Preference)>();
         using var searches = CancellationTokenSource.CreateLinkedTokenSource(token);
         int workers = Math.Min(options.Workers, options.Threads), threads = Math.Max(1, options.Threads / Math.Min(options.Workers, options.Threads));
         var pending = new Dictionary<string, Task<EngineResult>>();
@@ -249,7 +254,7 @@ public sealed class OpeningGenerator
                 current = next;
             }
 
-            queue.Enqueue((start.Clone(), current, 0, []));
+            queue.Enqueue((start.Clone(), current, 0, [], default));
             ReportGraph(queue.Count, force: true);
             var expanded = new HashSet<OpeningNode>();
             while (queue.TryDequeue(out var work))
@@ -292,10 +297,13 @@ public sealed class OpeningGenerator
                 bool late = effective.TwoStages && work.Depth >= effective.MiddleDepth;
                 var candidates = learner ? new List<EngineLine>
                 {
-                    ChooseLearner(work.P, r.Lines, effective, p => known.TryGetValue(Key(p, offset + work.Depth + 1), out var n) && !Reaches(n, work.Node))
+                    ChooseLearner(work.P, r.Lines, effective, p => known.TryGetValue(Key(p, offset + work.Depth + 1), out var n) && !Reaches(n, work.Node), work.Preference)
                 }
 
                 : Plausible(r, effective, late ? effective.LateReplyLoss : null);
+                var dataset = frequencies.Decide(work.P, effective);
+                if (!learner)
+                    candidates = candidates.Concat(r.Lines.Where(l => l.BestMove is { } u && dataset.Continue.Contains(u))).Distinct().OrderByDescending(Score).ToList();
                 HashSet<string?>? humanMoves = null;
                 if (!learner && options.HumanFilter)
                 {
@@ -303,7 +311,7 @@ public sealed class OpeningGenerator
                     humanMoves = Plausible(shallow, effective, late ? effective.LateReplyLoss : null).Select(l => l.BestMove).ToHashSet();
                 }
 
-                bool stop = !learner && (work.Depth >= options.MaxDepth || work.Depth >= options.MinDepth && candidates.Count >= (late ? effective.LateComplexThreshold : effective.ComplexThreshold));
+                bool stop = !learner && (dataset.Stop || work.Depth >= options.MaxDepth || work.Depth >= options.MinDepth && candidates.Count >= (late ? effective.LateComplexThreshold : effective.ComplexThreshold));
                 if (stop)
                     work.Node.Comment = work.Depth >= options.MaxDepth ? "Tiefengrenze: mögliche Gegenantworten" : "Komplexitätsgrenze: mögliche Gegenantworten";
                 foreach (var line in candidates)
@@ -320,9 +328,10 @@ public sealed class OpeningGenerator
                     if (learner)
                         cards++;
                     bool rescued = stop && work.Depth < options.MaxDepth && effective.RetainBest > 0 && candidates.Take(effective.RetainBest).Contains(line) && (work.P.WhiteToMove ? Score(line) : -Score(line)) >= effective.RetainMinEval;
+                    rescued = !dataset.Stop && (rescued || stop && work.Depth < options.MaxDepth && dataset.Continue.Contains(m.Uci));
                     if (created && stop && !rescued) terminalPreviewCounters.Add(next.Id!);
                     if (created && (!stop || rescued))
-                        queue.Enqueue((after, next, work.Depth + 1, new(work.Seen)));
+                        queue.Enqueue((after, next, work.Depth + 1, new(work.Seen), learner ? PreferredMovePolicy.Advance(work.P, m, effective, work.Preference) : work.Preference));
                 }
                 completedPreviewNodes.Add(work.Node.Id!);
             }

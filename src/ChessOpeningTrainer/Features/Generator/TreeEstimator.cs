@@ -7,6 +7,7 @@ public static class TreeEstimator
     public static async Task<TreeEstimate> Estimate(StockfishEngine engine, Position start, GeneratorOptions options, IReadOnlyList<string> setup, CancellationToken token, int seconds = 35)
     {
         options.Validate();
+        using var frequencies = new GeneratorDatasetPolicy(options);
         using var budget = CancellationTokenSource.CreateLinkedTokenSource(token);
         budget.CancelAfter(TimeSpan.FromSeconds(seconds));
         await using var pool = new EnginePool(engine, Math.Min(4, options.Workers), Math.Max(1, options.Threads / options.Workers), budget.Token);
@@ -18,6 +19,7 @@ public static class TreeEstimator
             var p = start.Clone();
             double count = prefix, weight = 1;
             var seen = new HashSet<string>();
+            PreferredProgress preference = default;
             for (int depth = 0; depth <= options.MaxDepth; depth++)
             {
                 budget.Token.ThrowIfCancellationRequested();
@@ -37,10 +39,15 @@ public static class TreeEstimator
                 var r = await task;
                 // Still one answer/card at a learner node, not one branch per
                 // eligible alternative. Sample the same own-move variation rule.
-                List<EngineLine> choices = learner ? [OpeningGenerator.ChooseLearner(p, r.Lines, effective, _ => false)] : OpeningGenerator.Plausible(r, effective, effective.TwoStages && depth >= effective.MiddleDepth ? effective.LateReplyLoss : null);
+                List<EngineLine> choices = learner ? [OpeningGenerator.ChooseLearner(p, r.Lines, effective, _ => false, preference)] : OpeningGenerator.Plausible(r, effective, effective.TwoStages && depth >= effective.MiddleDepth ? effective.LateReplyLoss : null);
+                (HashSet<string> Continue, bool Stop) dataset;
+                lock (frequencies) dataset = frequencies.Decide(p, effective);
+                if (dataset.Stop) break;
+                if (!learner) choices = choices.Concat(r.Lines.Where(l => l.BestMove is { } u && dataset.Continue.Contains(u))).Distinct().ToList();
                 int complex = effective.TwoStages && depth >= effective.MiddleDepth ? effective.LateComplexThreshold : effective.ComplexThreshold;
                 if (!learner && depth >= options.MinDepth && choices.Count >= complex && depth < options.MaxDepth)
-                    choices = choices.Take(effective.RetainBest).Where(l => (p.WhiteToMove ? OpeningGenerator.Score(l) : -OpeningGenerator.Score(l)) >= effective.RetainMinEval).ToList();
+                    choices = choices.Take(effective.RetainBest).Where(l => (p.WhiteToMove ? OpeningGenerator.Score(l) : -OpeningGenerator.Score(l)) >= effective.RetainMinEval)
+                        .Concat(choices.Where(l => l.BestMove is { } u && dataset.Continue.Contains(u))).Distinct().ToList();
                 if (choices.Count == 0 || !learner && depth >= options.MaxDepth)
                     break;
                 if (learner)
@@ -48,7 +55,9 @@ public static class TreeEstimator
                 else
                     weight *= choices.Count;
                 string? u = choices[Random.Shared.Next(choices.Count)].BestMove;
-                p.Apply(MoveGenerator.GenerateLegal(p).First(m => m.Uci == u));
+                var move = MoveGenerator.GenerateLegal(p).First(m => m.Uci == u);
+                if (learner) preference = PreferredMovePolicy.Advance(p, move, effective, preference);
+                p.Apply(move);
             }
 
             return count;

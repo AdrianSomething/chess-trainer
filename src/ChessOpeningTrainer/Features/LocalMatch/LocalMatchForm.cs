@@ -402,7 +402,7 @@ public sealed partial class LocalMatchForm : LocalizedForm
         var choices = MoveGenerator.GenerateLegal(position).Where(m => m.From == from && m.To == to).ToList();
         if (choices.Count == 0)
             return false;
-        var move = choices.Count == 1 ? choices[0] : PromotionPicker.Choose(this, choices, position.WhiteToMove);
+        var move = choices.Count == 1 ? choices[0] : board.ChoosePromotion(this, choices, position.WhiteToMove);
         Tick();
         if (move is null || !running)
             return false;

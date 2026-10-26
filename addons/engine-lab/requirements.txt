@@ -1,0 +1,2 @@
+# Install the CUDA-enabled PyTorch wheel appropriate for your driver from pytorch.org.
+torch>=2.6,<3

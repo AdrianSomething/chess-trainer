@@ -56,7 +56,7 @@ public sealed partial class MainForm
         var move = options[0];
         if (options.Count > 1)
         {
-            var chosen = PromotionPicker.Choose(this, options, Display.WhiteToMove);
+            var chosen = board.ChoosePromotion(this, options, Display.WhiteToMove);
             if (chosen is null)
                 return true;
             move = chosen;

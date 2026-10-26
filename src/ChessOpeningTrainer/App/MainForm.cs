@@ -292,7 +292,7 @@ public sealed partial class MainForm : LocalizedForm
         {
             if (!learningOnly)
             {
-                _ = supply.Maintain(lifetime.Token);
+                StartSupply();
                 if (!Preferences.Current.TutorialOffered) OfferTutorial();
             }
         };

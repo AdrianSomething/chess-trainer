@@ -10,6 +10,8 @@ public partial class BoardControl
         var square = PointToSquare(e.Location);
         if (e.Button == MouseButtons.Left)
         {
+            Focus();
+            if (KeyboardInputOpen) CloseKeyboardInput();
             MarkedSquares.Clear();
             Arrows.Clear();
             PreviewArrow = null;

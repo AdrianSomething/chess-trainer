@@ -34,6 +34,7 @@ public partial class BoardControl : Control
                 StartTurnTransition(value.WhiteToMove, 250);
             if (displayedFen != fen || !ReferenceEquals(position, value))
             {
+                if (KeyboardInputOpen) CloseKeyboardInput();
                 if (displayedFen != fen)
                 {
                     LastMoveDestination = null;

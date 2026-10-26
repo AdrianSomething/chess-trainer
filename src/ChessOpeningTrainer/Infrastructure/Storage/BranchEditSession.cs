@@ -177,7 +177,7 @@ public sealed class BranchEditSession
             return copy;
         }
         var result = new OpeningDefinition { SchemaVersion = source.SchemaVersion, Id = source.Id, Name = source.Name, Perspective = source.Perspective,
-            Description = source.Description, Source = source.Source, StartFen = source.StartFen, FilePath = source.FilePath, RootNodeId = source.RootNodeId, Tree = Node(source.Tree) };
+            Description = source.Description, Source = source.Source, StartFen = source.StartFen, GenerationStartFen = source.GenerationStartFen, FilePath = source.FilePath, RootNodeId = source.RootNodeId, Tree = Node(source.Tree) };
         if (source.SchemaVersion == 2) result.Nodes = nodes.Values.ToDictionary(n => n.Id!);
         return result;
     }

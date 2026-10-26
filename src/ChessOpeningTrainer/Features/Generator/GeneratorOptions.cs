@@ -2,6 +2,15 @@ namespace ChessOpeningTrainer;
 public sealed class GeneratorOptions
 {
     public List<DepthSection> Sections { get; set; } = [];
+    public int MinimumCommonReplies { get; set; }
+    public int StopBelowGames { get; set; }
+    public int MinimumDatasetGames { get; set; } = 10;
+    public List<PreferredStep> PreferredMoves { get; set; } = [];
+    public int PreferenceDeviationLimit { get; set; } = 3;
+    public double PreferenceMinimumEvaluation { get; set; } = -.5;
+    public double PreferenceMaximumLoss { get; set; } = .1;
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string? DatasetIndexFile { get; set; }
 
     public GeneratorOptions AtDepth(int depth)
     {
@@ -17,6 +26,8 @@ public sealed class GeneratorOptions
             effective.MaxReplyLoss = section.MaxReplyLoss;
             effective.CompressionLoss = section.CompressionLoss;
             effective.LearnerVariationLoss = section.LearnerVariationLoss;
+            effective.MinimumCommonReplies = section.MinimumCommonReplies;
+            effective.StopBelowGames = section.StopBelowGames;
             effective.TwoStages = false;
         }
 
@@ -48,11 +59,18 @@ public sealed class GeneratorOptions
 
     public void Validate()
     {
+        if (PreferenceDeviationLimit < 1 || !double.IsFinite(PreferenceMinimumEvaluation) || !double.IsFinite(PreferenceMaximumLoss) || PreferenceMaximumLoss < 0 ||
+            PreferredMoves.Any(m => m.From is < 0 or > 63 || m.To is < 0 or > 63 || !"PNBRQKpnbrqk".Contains(m.Piece)))
+            throw new ArgumentException("Ungültige Zugpräferenzen.");
+        if (MinimumDatasetGames < 0 || StopBelowGames < 0 || MinimumCommonReplies < 0 || MinimumCommonReplies > ComplexThreshold)
+            throw new ArgumentException("Ungültige Datensatzgrenzen.");
         if (Sections.Count > 5)
             throw new ArgumentException("Höchstens fünf Tiefenabschnitte.");
         int previous = 0;
         foreach (var s in Sections)
         {
+            if (s.StopBelowGames < 0 || s.MinimumCommonReplies < 0 || s.MinimumCommonReplies > s.ComplexThreshold)
+                throw new ArgumentException("Häufige Gegenantworten dürfen die Komplexitätsgrenze nicht überschreiten.");
             if (!double.IsFinite(s.LearnerVariationLoss) || s.LearnerVariationLoss < 0 || s.LearnerVariationLoss > 20)
                 throw new ArgumentException("Eigener Variationsverlust muss zwischen 0 und 20 Bauern liegen.");
             if (s.RetainBest < 0 || s.RetainBest > 50 || s.RetainMinEval < -20 || s.RetainMinEval > 20 || s.EndDepth <= previous || s.EndDepth > 60 || s.ComplexThreshold < 2 || s.EasyThreshold > 0 || s.SearchDepth < 5 || s.SearchDepth > 24 || s.MaxReplyLoss < 0 || s.CompressionLoss < 0 || s.CompressionLoss > 5)

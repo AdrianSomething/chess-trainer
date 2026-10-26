@@ -382,7 +382,7 @@ public sealed partial class FreeGameForm : LocalizedForm
         var choices = LegalMoves(Display).Where(m => m.From == from && m.To == to).ToList();
         if (choices.Count == 0)
             return false;
-        var m = choices.Count == 1 ? choices[0] : PromotionPicker.Choose(this, choices, Display.WhiteToMove);
+        var m = choices.Count == 1 ? choices[0] : board.ChoosePromotion(this, choices, Display.WhiteToMove);
         if (m is not null)
             _ = UserMove(m, animate);
         return true;

@@ -29,6 +29,30 @@ public class LocalizedForm : Form
         WindowTitleTheme.Apply(this);
     }
 
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (keyData == Keys.Tab)
+        {
+            static IEnumerable<Control> Descendants(Control parent)
+            {
+                foreach (Control child in parent.Controls)
+                {
+                    yield return child;
+                    foreach (var nested in Descendants(child)) yield return nested;
+                }
+            }
+            var controls = Descendants(this).ToArray();
+            // Keep normal form traversal while editing an ordinary parameter.
+            if (!controls.Any(c => c.Focused && c is TextBoxBase or UpDownBase or ComboBox))
+            {
+                var board = controls.OfType<BoardControl>().Where(b => b.CanOpenKeyboard)
+                    .OrderByDescending(b => b.ContainsFocus).ThenByDescending(b => b.Width * b.Height).FirstOrDefault();
+                if (board is not null) { board.OpenKeyboardInput(); return true; }
+            }
+        }
+        return base.ProcessCmdKey(ref msg, keyData);
+    }
+
     private void Attach(Control control)
     {
         if (texts.ContainsKey(control))

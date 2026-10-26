@@ -14,7 +14,7 @@ public sealed partial class PuzzleSessionForm
         var choices = MoveGenerator.GenerateLegal(Display).Where(m => m.From == from && m.To == to).ToList();
         if (choices.Count == 0)
             return false;
-        var move = choices.Count == 1 ? choices[0] : PromotionPicker.Choose(this, choices, Display.WhiteToMove);
+        var move = choices.Count == 1 ? choices[0] : board.ChoosePromotion(this, choices, Display.WhiteToMove);
         if (move is not null)
             _ = Move(move, animate, false);
         return true;

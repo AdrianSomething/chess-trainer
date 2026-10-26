@@ -7,6 +7,7 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        if (args.Contains("--training-host")) { TrainingProtocol.Run(AppContext.BaseDirectory).GetAwaiter().GetResult(); return; }
         ApplicationConfiguration.Initialize();
         Application.ApplicationExit += (_, _) => AnalysisSearch.Shutdown();
         try

@@ -122,6 +122,7 @@ public partial class BoardControl
             AssessmentBadge.Draw(g, new RectangleF(center.X + cell * .17f, center.Y - cell * .48f, cell * .32f, cell * .32f), assessment.Category);
         }
         g.TranslateTransform(-BoardLeft, -22);
+        PaintKeyboardSelection(g);
         ForegroundPaint?.Invoke(this, e);
     }
 

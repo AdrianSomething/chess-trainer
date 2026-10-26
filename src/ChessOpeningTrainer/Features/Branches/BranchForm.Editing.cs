@@ -88,7 +88,7 @@ public sealed partial class BranchForm
         if (editPosition is null || modeSelection?.Invoke() is null) return false;
         var choices = MoveGenerator.GenerateLegal(editPosition).Where(m => m.From == from && m.To == to).ToArray();
         if (choices.Length == 0) return false;
-        var move = choices.Length == 1 ? choices[0] : PromotionPicker.Choose(this, choices.ToList(), editPosition.WhiteToMove);
+        var move = choices.Length == 1 ? choices[0] : board.ChoosePromotion(this, choices.ToList(), editPosition.WhiteToMove);
         if (move is null) return false;
         ApplyDraftMove(move, animate); return true;
     }

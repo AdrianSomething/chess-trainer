@@ -95,6 +95,7 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
     };
     private readonly NumericUpDown min = N(0, 60, 5), cards = N(1, 10000, 200), threads = N(1, 16, 2), workers = N(1, 16, Math.Clamp((Environment.ProcessorCount - 2) / 2, 1, 8)), humanDepth = N(1, 16, 8), sectionCount = N(1, 5, 1);
     private readonly SectionEditor sections = new();
+    private readonly NumericUpDown datasetMinimum = N(0, 1000000000, 10);
     private readonly CheckBox merge = new()
     {
         Text = "Transpositionen über alle Tiefen vereinen",
@@ -188,9 +189,11 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
         };
         back.Click += (_, _) =>
         {
+            if (preferMode.Checked)
+            { if (preferredMoves.Count > 0) preferredMoves.RemoveAt(preferredMoves.Count - 1); RefreshPosition(); return; }
             if (operation is null && selectedJob is null && undo.TryPop(out var p))
             {
-                position = p;
+                position = p; preferredMoves.Clear();
                 RefreshPosition();
             }
         };
@@ -201,21 +204,24 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
         };
         reset.Click += (_, _) =>
         {
+            if (preferMode.Checked) { preferredMoves.Clear(); RefreshPosition(); return; }
             if (operation is null && selectedJob is null)
             {
-                position = Position.FromFen(Position.InitialFen);
+                preferredMoves.Clear(); position = Position.FromFen(Position.InitialFen);
                 undo.Clear();
                 RefreshPosition();
             }
         };
         controls.Controls.Add(back);
         controls.Controls.Add(reset);
+        InitializePreferredMoves(back, reset);
         Add("Name");
         controls.Controls.Add(name);
         color.Items.AddRange(["Schwarz lernen", "Weiß lernen"]);
         color.SelectedIndex = 0;
         color.SelectedIndexChanged += (_, _) =>
         {
+            preferredMoves.Clear();
             board.Flip = color.SelectedIndex == 0;
             board.Invalidate();
             evaluation.WhiteAtBottom = color.SelectedIndex == 1;
@@ -261,6 +267,8 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
         sections.Changed += Dirty;
         Field("Komplexitätsprüfung ab Tiefe (Halbzüge)", min);
         min.ValueChanged += (_, _) => sections.ComplexityStartDepth = (int)min.Value;
+        Field("Datensatz: Mindestbelege je Stellung", datasetMinimum);
+        L.SetToolTip(tips, datasetMinimum, "Datensatzregeln nur ab dieser Partienzahl anwenden. Seltenere oder unbekannte Stellungen folgen ausschließlich den Engine-Regeln. 0 = jede beobachtete Stellung.");
         Field("Kartenlimit je Bestätigungsblock", cards);
         controls.Controls.Add(pauseAllAtLimit);
         Field("Parallele Arbeiter (dauerhafte Engines)", workers);
@@ -298,7 +306,7 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
         estimate.Click += async (_, _) => { if (selectedJob is { State: GeneratorJobState.AwaitingApproval }) workQueue.Resume(selectedJob); else if (selectedJob is null) await Estimate(); };
         generate.Click += async (_, _) => await Generate();
         var navigation = new GeneratorInputNavigation(name, color, (ScrollNumber)sectionCount, sections, generate,
-            (ScrollNumber)min, (ScrollNumber)cards, (ScrollNumber)workers, (ScrollNumber)threads, (ScrollNumber)humanDepth);
+            (ScrollNumber)min, (ScrollNumber)datasetMinimum, (ScrollNumber)cards, (ScrollNumber)workers, (ScrollNumber)threads, (ScrollNumber)humanDepth);
         Disposed += (_, _) => navigation.Dispose();
         board.SquareClicked += sq =>
         {
@@ -308,7 +316,7 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
                 return;
             selected = sq;
             board.SelectedSquare = sq;
-            board.CandidateMoves = MoveGenerator.GenerateLegal(position).Where(m => m.From == sq).ToList();
+            board.CandidateMoves = (board.MoveProvider?.Invoke(board.Position!) ?? MoveGenerator.GenerateLegal(position)).Where(m => m.From == sq).ToList();
             board.Invalidate();
         };
         board.SquareDragged += (from, to) =>
@@ -386,6 +394,12 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
     private GeneratorOptions Options() => new()
     {
         LearnWhite = color.SelectedIndex == 1,
+        MinimumDatasetGames = (int)datasetMinimum.Value,
+        DatasetIndexFile = CurrentDatasetIndex(),
+        PreferredMoves = preferredMoves.ToList(),
+        PreferenceDeviationLimit = (int)preferenceDeviations.Value,
+        PreferenceMinimumEvaluation = (double)preferenceMinimum.Value,
+        PreferenceMaximumLoss = (double)preferenceLoss.Value,
         MinDepth = (int)min.Value,
         Sections = sections.Values,
         MaxDepth = sections.Values[^1].EndDepth,
@@ -396,20 +410,27 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
         HumanFilter = human.Checked,
         HumanDepth = (int)humanDepth.Value
     };
+    private string? CurrentDatasetIndex()
+    {
+        var store = new DatasetStore(Preferences.DataDirectory);
+        return store.HasIndex ? store.IndexPath(store.Manifest.IndexFile!) : null;
+    }
     private bool TryBoardMove(int from, int to, bool animate = true)
     {
+        if (preferMode.Checked) return AppendPreferredMove(from, to);
         var moves = MoveGenerator.GenerateLegal(position).Where(m => m.From == from && m.To == to).ToList();
         if (moves.Count == 0)
             return false;
         var move = moves[0];
         if (moves.Count > 1)
         {
-            var choice = PromotionPicker.Choose(this, moves, position.WhiteToMove);
+            var choice = board.ChoosePromotion(this, moves, position.WhiteToMove);
             if (choice is null)
                 return true;
             move = choice;
         }
 
+        preferredMoves.Clear();
         var before = position.Clone();
         undo.Push(before);
         position.Apply(move);
@@ -433,7 +454,8 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
     private void RefreshPosition()
     {
         board.StopAnimation();
-        board.Position = position;
+        board.Outcome = preferMode.Checked ? "" : null;
+        board.Position = preferMode.Checked ? PreferredMovePlan.Preview(position, preferredMoves) : position;
         board.Flip = color.SelectedIndex == 0;
         selected = null;
         board.SelectedSquare = null;
@@ -531,5 +553,11 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
 
     private Task Generate() { SubmitSelectedJob(); return Task.CompletedTask; }
 
-    private string EstimateKey(GeneratorOptions options, IReadOnlyList<string> setup) => position.ToFen() + "|" + string.Join(",", setup) + "|" + GeneratorTimingHistory.Configuration(options);
+    private string EstimateKey(GeneratorOptions options, IReadOnlyList<string> setup)
+    {
+        string dataset = "";
+        if (options.DatasetIndexFile is string path && File.Exists(path))
+        { var file = new FileInfo(path); dataset = $"{path}|{file.Length}|{file.LastWriteTimeUtc.Ticks}"; }
+        return position.ToFen() + "|" + string.Join(",", setup) + "|" + GeneratorTimingHistory.Configuration(options) + "|" + dataset;
+    }
 }

@@ -134,7 +134,7 @@ public sealed class StudyBoard : UserControl
             var options = MoveGenerator.GenerateLegal(displayed).Where(m => m.From == from && m.To == to).ToList();
             if (options.Count == 0)
                 return false;
-            var move = options.Count == 1 ? options[0] : PromotionPicker.Choose(FindForm() ?? (IWin32Window)this, options, displayed.WhiteToMove);
+            var move = options.Count == 1 ? options[0] : board.ChoosePromotion(FindForm() ?? (IWin32Window)this, options, displayed.WhiteToMove);
             if (move is null)
                 return false;
             if (Manual)

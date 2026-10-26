@@ -27,6 +27,7 @@ public sealed class GeneratorJob
     {
         Name = name; Start = start.Clone(); Setup = setup.ToArray(); PauseAllAtLimit = pauseAll;
         Options = JsonSerializer.Deserialize<GeneratorOptions>(JsonSerializer.Serialize(options))!;
+        Options.DatasetIndexFile = options.DatasetIndexFile;
         if (validate) Options.Validate();
         Forecast = new(expected, setup.Select((_, i) => (i % 2 == 0) == options.LearnWhite).Count(b => b), secondsPerCard);
         Forecast.SetWorking(false);

@@ -13,7 +13,7 @@ foreach ($file in $files) {
     }
     if ($file.Extension -eq '.pgn' -and $rel -notmatch '(^|/)Samples/demo-game\.pgn$') { $problems.Add("Unexpected PGN: $rel") }
     if ($rel -match 'example_pirc_defense\.json$|(^|/)(custom_|combined_).*\.json$') { $problems.Add("Unapproved opening: $rel") }
-    if ($file.Extension -in @('.cs','.json','.md','.txt','.xml','.csproj','.props','.cff','.pgn','.yml')) {
+    if ($file.Extension -in @('.cs','.json','.md','.txt','.xml','.csproj','.props','.cff','.pgn','.yml','.py')) {
         $content = [IO.File]::ReadAllText($file.FullName)
         if ($content -match '(?i)[A-Z]:\\Users\\(?!Public\\|Default\\)[^\\\s]+' -or
             $content -match '(gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|sk-[A-Za-z0-9_-]{32,}|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----)') {

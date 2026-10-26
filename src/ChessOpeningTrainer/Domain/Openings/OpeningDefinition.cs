@@ -13,6 +13,9 @@ public sealed class OpeningDefinition
     public string Description { get; set; } = "";
     public string? Source { get; set; }
     public string? StartFen { get; set; }
+    // Optional boundary after the manually supplied prefix; old opening files remain valid.
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? GenerationStartFen { get; set; }
     public OpeningNode Tree { get; set; } = new();
     public string? RootNodeId { get; set; }
     public Dictionary<string, OpeningNode>? Nodes { get; set; }

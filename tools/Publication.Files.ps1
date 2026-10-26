@@ -7,11 +7,11 @@ function Copy-PublicSource([string]$From, [string]$To) {
     $roots = @('README.md','LICENSE','COPYRIGHT.md','CONTRIBUTING.md','CHANGELOG.md','SECURITY.md','THIRD_PARTY_NOTICES.md','CITATION.cff','.gitignore','.gitattributes','.editorconfig','global.json')
     $toolNames = @('Get-Stockfish.ps1','Build-Release.ps1','Publication.Files.ps1','Audit-Publication.ps1','Create-AppIcon.ps1','repository-defaults.props')
     $files = foreach ($name in $roots) { Get-Item -LiteralPath (Join-Path $From $name) -ErrorAction Stop }
-    foreach ($folder in @('docs','.github','third_party','src/ChessOpeningTrainer','tests/Public')) {
+    foreach ($folder in @('docs','.github','third_party','src/ChessOpeningTrainer','tests/Public','addons/engine-lab')) {
         $files += Get-ChildItem -LiteralPath (Join-Path $From $folder) -File -Recurse | Where-Object {
             $rel = [IO.Path]::GetRelativePath($From, $_.FullName).Replace('\','/')
             $rel -notmatch '/(bin|obj|stockfish_release|versions|history)/' -and
-            $rel -notmatch '/sounds/user/' -and
+            $rel -notmatch '/sounds/user/|/__pycache__/|/experiments/' -and
             $rel -notmatch '/(custom_|combined_)' -and
             $rel -notmatch '/example_pirc_defense.json$' -and
             $rel -notmatch '/(OPENING_FORMAT_DE|AI_BRIEFING_FUER_OPENING_RECHERCHE|GENERATOR_README|README_STOCKFISH_DE)\.md$' -and
@@ -19,7 +19,7 @@ function Copy-PublicSource([string]$From, [string]$To) {
             $rel -notmatch '^docs/ai-development/.*_TEMPLATE\.md$' -and
             $rel -notmatch '^docs/(SCREENSHOTS|REPOSITORY_GUIDANCE)\.md$' -and
             $rel -notmatch '^docs/images/(home|learning)\.png$|^docs/images/feature-placeholder\.svg$' -and
-            $_.Extension -in @('.cs','.csproj','.json','.md','.png','.svg','.ico','.wav','.pgn','.manifest','.txt','.yml','.props') 
+            $_.Extension -in @('.cs','.csproj','.json','.md','.png','.svg','.ico','.wav','.pgn','.manifest','.txt','.yml','.props','.py') 
         }
     }
     foreach ($name in $toolNames) { $files += Get-Item -LiteralPath (Join-Path $From "tools/$name") }

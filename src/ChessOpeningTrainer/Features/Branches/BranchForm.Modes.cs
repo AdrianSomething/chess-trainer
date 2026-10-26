@@ -34,6 +34,7 @@ public sealed partial class BranchForm
         BuildEditingControls(editPanel); BuildAnalysisControls(gamesPanel); InitializeEditSessionFooter();
         modeSelector.Items.AddRange(["Lernmodus", "Bearbeitungsmodus", "Analysemodus"]); modeSelector.SelectedIndex = 0;
         top.Controls.Add(modeSelector); top.Controls.SetChildIndex(modeSelector, 0);
+        InitializeCoverage(top);
         settings.Controls.Add(hideSubbranchColors);
         hideSubbranchColors.CheckedChanged += (_, _) => ApplyModeCanvas();
         modeSelector.SelectionChangeCommitted += (_, _) => ChangeBranchMode((BranchMode)modeSelector.SelectedIndex);
@@ -69,6 +70,7 @@ public sealed partial class BranchForm
             EndEditorSession(keepCheckpoint: true);
         }
         CancelEditSearch(); branchMode = mode; board.StopAnimation();
+        coverageButton.Visible = mode == BranchMode.Analysis;
         if (IsEditingMode) BeginEditorSession();
         foreach (var control in learningControls) control.Visible = mode == BranchMode.Learning;
         editPanel!.Visible = IsEditingMode; gamesPanel!.Visible = mode == BranchMode.Analysis;

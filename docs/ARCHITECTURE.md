@@ -24,6 +24,7 @@ The application is a **modular monolith**: one WinForms assembly, with responsib
 | Features/Vision | Chess vision exercises, buffers and statistics |
 | Features/Datasets | Dataset catalog, import/download/trim views and lazy frequency-tree browsing |
 | Domain/Datasets and Infrastructure/Storage/Datasets | Filter contracts, streaming PGN, compact move/index codecs, local persistence and resumable HTTP |
+| Features/EngineLab and addons/engine-lab | Optional local training launcher, JSON-lines adapter and independent Python research scaffold |
 | Features/Tutorial | Window-local guided tour, input policy and first-run card |
 
 All paths above are relative to src/ChessOpeningTrainer.
@@ -32,6 +33,11 @@ All paths above are relative to src/ChessOpeningTrainer.
 
 | Change | Start here |
 | --- | --- |
+| Keyboard moves | Domain/Chess/SimplifiedMoveNotation.cs; UI/Board/BoardControl.Keyboard.cs; LocalizedForm routes Tab |
+| Dataset-guided generation / planned moves | GeneratorDatasetPolicy.cs, PreferredMovePolicy.cs, OpeningGeneratorForm.Preferences.cs; Domain/Openings/PreferredMovePlan.cs |
+| Opening coverage | Features/Branches/OpeningCoverage.cs and BranchForm.Coverage.cs |
+| Engine Lab protocol / rules | Infrastructure/Engine/TrainingProtocol.cs; Domain/Chess/TrainingGame.cs; App/Program.cs handles --training-host before UI initialization |
+| Engine Lab UI / lifecycle | Features/EngineLab; App/MainForm.EngineLab.cs suspends and restores puzzle preparation |
 | Rules / castling / en passant | Domain/Chess/MoveGenerator.cs and Position.cs |
 | Board input, silhouettes, drawing | UI/Board/BoardControl.Input.cs, .Pieces.cs, .Rendering.cs |
 | Shared history playback / reverse animation | UI/Board/HistoryPlayback.cs, BoardControl.Animation.cs, .ReverseAnimation.cs |

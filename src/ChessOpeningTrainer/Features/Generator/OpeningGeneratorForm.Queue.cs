@@ -119,11 +119,12 @@ public sealed partial class OpeningGeneratorForm
         updatingName = true; name.Text = job.Name; updatingName = false; nameEdited = true;
         var o = job.Options;
         color.SelectedIndex = o.LearnWhite ? 1 : 0;
-        min.Value = o.MinDepth; cards.Value = o.MaxPositions;
+        min.Value = o.MinDepth; cards.Value = o.MaxPositions; datasetMinimum.Value = o.MinimumDatasetGames;
         workers.Value = o.Workers; threads.Value = Math.Clamp(o.Threads / o.Workers, (int)threads.Minimum, (int)threads.Maximum);
         sectionCount.Value = Math.Max(1, o.Sections.Count); sections.SetValues(o.Sections);
         merge.Checked = o.MergeTranspositions; human.Checked = o.HumanFilter; humanDepth.Value = o.HumanDepth;
         pauseAllAtLimit.Checked = job.PauseAllAtLimit;
+        RestorePreferredMoves(o);
         }
         finally
         {
