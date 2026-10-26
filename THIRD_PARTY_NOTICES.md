@@ -19,6 +19,14 @@ The self-contained Windows package includes .NET runtime and Windows Desktop com
 
 Windows and installed system fonts are not included.
 
+## Dataset storage and compression — 0.26.0-beta
+
+- Microsoft.Data.Sqlite / Microsoft.Data.Sqlite.Core 10.0.12: MIT, .NET Foundation and contributors / Microsoft. License in `third_party/datasets/Microsoft.Data.Sqlite-LICENSE.txt`.
+- SQLitePCLRaw core, provider, bundle and native-package dependencies 2.1.12: Apache-2.0, Copyright 2014–2024 SourceGear, LLC. License in `third_party/datasets/SQLitePCLRaw-LICENSE.txt`. These packages are used unmodified. The bundled SQLite library itself is [public domain](https://sqlite.org/copyright.html).
+- ZstdSharp.Port 0.8.8: MIT, Oleg Stepanischev; pinned upstream commit `2cd0c019693bc786a5fe5c3be94e107b24e7267e`. License in `third_party/datasets/ZstdSharp-LICENSE.txt`. The port is based on Zstandard 1.5.7; its upstream BSD license is retained in `third_party/datasets/Zstandard-LICENSE.txt`.
+
+The application downloads no dataset by default. Lichess monthly standard-game exports are offered under CC0 by [database.lichess.org](https://database.lichess.org/). Imported user files retain their own provenance; importing a file does not relicense it. No downloaded games or dataset index are included in the public source or app package.
+
 ## Pixabay effects — complete Windows edition only
 
 These files remain subject to the [Pixabay Content License](https://pixabay.com/service/terms/), not GPL. [The license summary](https://pixabay.com/service/license-summary/) permits modification and use without mandatory attribution, but prohibits standalone distribution. We nevertheless credit the sources.

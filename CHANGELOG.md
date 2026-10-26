@@ -2,6 +2,78 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.26.5 — 2026-10-26
+
+Stable promotion of the tested 0.26.5-beta application, with no functional changes during promotion.
+
+- Add Lichess/local dataset imports, filtering, resumable download/import workflows and a lazy frequency-tree browser with shared game statistics.
+- Use exact transposition-aware compact indexes with bounded sorted-run aggregation, optional rare-continuation pruning, measured workspace reporting and size forecasts.
+- Make Sugiyama the standard branch layout, retain alternative layouts, and improve selection outlines.
+- Correct board-square colors and improve dataset scrolling, selection, translations and independent per-item timing.
+- Enable bounded Windows build and synthetic checks through GitHub Actions. Local regression checks supplement CI.
+- Include the updated branch screenshot, Windows executable package, corresponding application/Stockfish source and SHA-256 checksums. Keep 0.25.3 as the backup release.
+
+## 0.26.5-beta — Development
+
+- Paint the Lichess download catalog as one virtualized, double-buffered surface. Wheel and thumb dragging update immediately without moving hundreds of child controls; selected rows have one continuous highlight across all columns.
+- Label the selected dataset count explicitly in both languages, retaining click/Ctrl/Shift selection.
+- Give each download and import an independent pause-aware elapsed/remaining clock. Keep the queue-wide total separate, including when downloads and imports overlap.
+- Paint branch selection outlines after all nodes, captions and other borders so neighboring nodes cannot hide the selection.
+- Add synthetic rendering, selection, scrolling and independent-clock regressions. No index format or stable-release change.
+
+## 0.26.4-beta — Development
+
+- Make the streaming compact dataset builder the only/default build path; remove the old SQL aggregation builder and its beta switch. Keep readers for existing index formats and preserve the compact format, exact counters and merge/pruning rules.
+- Show current/total merge passes and block groups, consumed entries and a merge-specific remaining-time estimate that excludes pauses.
+- Forecast pruned tree size from growth between two nested samples at the selected cutoff. Prefer exact measurements when a complete suitable index exists. Budget simultaneous merge inputs/output separately from final tree size.
+- Keep Minimum games per node at 0: 1 is not equivalent, because it stops continuations at positions occurring in only one game.
+- Replace the branch-mode screenshot with the supplied updated image.
+
+## 0.26.3-beta — Development
+
+- Add an opt-in streaming compact dataset index: bounded aggregation, compressed sorted runs, multi-pass merge/reduce, adaptive row/column blocks, and disk-bitset reachability pruning. Preserve exact results, repetitions, transpositions and custom starting positions; keep formats 2/3 readable.
+- Stop the dataset activity ring while paused, highlight Resume, and use app-language confirmation buttons rather than Windows-language Yes/No buttons. Translate the black-win trim filter.
+- Collapse forced lines leading to later forks into an expandable first-move/ellipsis node; keep terminal-line previews and reversible expansion.
+- Make Sugiyama the default branch layout. Move the three mutually exclusive choices (Sugiyama, Legacy, stronger-crossing alternative) into Settings → Branches.
+- Reflow opening Freeplay history immediately when Top 3 changes; add the shared optional Game statistics strip beside that checkbox.
+- Extend synthetic CI checks for compact/legacy equivalence, multi-pass merging, transpositions, pruning and cancellation. Stable releases and opening file formats are unchanged.
+
+## 0.26.2-beta — Development
+
+- Correct reversed board-square parity in the shared renderer: a1/d8 are dark, d1/h1 are light. Add off-screen pixel checks for every square, both orientations and all bundled skins.
+
+- Enable a read-only, bounded Windows CI build with public synthetic rules, codec, storage and graph checks; no live archive downloads or automatic releases.
+- Align dataset cards, bookmark/rename controls and English naming with the home menu; use operation-specific close/resume messages.
+- Show actual tree size and recorded peak workspace; measure stricter cutoffs against complete position frequencies instead of presenting misleading sample-scaled rare-tail intervals.
+- Store temporary edge counters inside position rows. The 1,000-game comparison reduces peak aggregation workspace from 6,520,832 to 3,584,000 bytes without changing the final index or any counts.
+- Add an activity ring during indexing and use recent throughput for remaining-time estimates.
+- Collapse only terminal forced lines into a single wide node, restore their collapse handle after expansion, fit visible node bounds and show absolute game totals explicitly.
+- Improve order-preserving centering after stronger crossing reduction; add a separate opt-in, bounded Sugiyama-family layout with a crossing-count guard.
+- Keep stable downloads, opening formats and existing dataset indexes unchanged.
+
+## 0.26.1-beta — Development
+
+- Align dataset cards, download selection, settings, scrollbars and compact filter sections with the other modes; add bookmarks and explicit rename confirmation.
+- Add operation pause/resume, cancellation and stop-and-save, durable import checkpoints, elapsed/remaining estimates and download/import overlap with queue totals.
+- Accept valid zero-move games and retain rejection-reason counts for newly imported unsupported records.
+- Reduce temporary storage with order-preserving empty-square run coding and by reconstructing destination positions instead of storing them per edge. Use compact pure-result counters and share identical node/edge counters in the final index; read existing 0.26.0 indexes.
+- Base temporary-space forecasts on a measured sample workspace, show live working-file usage, and avoid identical lower/upper size ranges.
+- Add compact, expandable forced lines, stronger contrasting outcome borders, column spacing and selection retention to the dataset browser.
+- Add shared asynchronous game-frequency bars to learning, Custom Game, game analysis and the Opening Branch Generator.
+- Refine order-preserving branch centering without accepting additional measured crossings.
+- Keep GitHub Actions disabled by explicit request; update the CI recommendation and document remaining 0.26 issue scope.
+
+## 0.26.0-beta — Development
+
+- Add Data sets: stream PGN, ZIP, gzip and Zstandard archives, download selected Lichess months with checksum verification and resumable progress, and trim local datasets using rating, result, termination, clock and opening-prefix filters.
+- Build a disk-backed frequency DAG with exact outcome counts and transpositions. The final index uses binary moves, variable-length counters, prefix-coded positions and independently compressed blocks, not PGN or JSON trees.
+- Add an optional continuation cutoff (default 0: unlimited depth). A position reached in at most N games becomes a counted leaf. Active-selection/cutoff changes leave the last complete index intact and display an outdated-index warning.
+- Show a sample-based size range, lazy frequency-ordered branches, board previews, outcome bars and links to Custom Game and the Opening Branch Generator. Show dataset position counts in learning branches.
+- Add bounded order-preserving alignment to stronger crossing reduction; reject shifts that increase the measured crossing count.
+- Extend the bilingual tour with two dataset explanations (48 cards). Document a staged CI proposal; do not enable network download tests or publish private test data.
+
+This is a development build, not a stable release. See [dataset design and limits](docs/DATASETS.md).
+
 ## 0.25.3 — 2026-10-21
 
 Stable release of the 0.25 development series. Highlights since 0.24.0:

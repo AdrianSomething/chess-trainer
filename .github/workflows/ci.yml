@@ -1,0 +1,43 @@
+name: Windows build and synthetic checks
+
+on:
+  push:
+    branches: [main, 'dev/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up pinned SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Build public application and checks
+        run: dotnet build tests/Public/ChessTrainer.Checks.csproj -c Release -p:PublicRelease=true
+      - name: Rules and codec checks
+        run: dotnet run --project tests/Public/ChessTrainer.Checks.csproj -c Release --no-build -- rules
+      - name: Synthetic storage and graph checks
+        run: dotnet run --project tests/Public/ChessTrainer.Checks.csproj -c Release --no-build -- datasets
+
+# No private fixtures, live Lichess requests, engine downloads, release uploads,
+# or privileged pull_request_target jobs. More assertions do not mean more jobs.

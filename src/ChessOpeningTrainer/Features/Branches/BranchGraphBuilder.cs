@@ -3,7 +3,7 @@ namespace ChessOpeningTrainer;
 /// <summary>CPU-only graph preparation; safe to run off the UI thread. No Controls or HWNDs.</summary>
 public static class BranchGraphBuilder
 {
-    public static List<BranchVertex> Build(OpeningDefinition opening, bool groupVariations = true, bool hideHuman = false, bool hideSubbranches = false, IReadOnlySet<string>? collapsed = null, IReadOnlySet<string>? compact = null, bool? betaLayout = null, double? columnSpacing = null, bool fastLayout = false, bool crossingPostPass = true, bool? globalRefinement = null)
+    public static List<BranchVertex> Build(OpeningDefinition opening, bool groupVariations = true, bool hideHuman = false, bool hideSubbranches = false, IReadOnlySet<string>? collapsed = null, IReadOnlySet<string>? compact = null, bool? betaLayout = null, double? columnSpacing = null, bool fastLayout = false, bool crossingPostPass = true, bool? globalRefinement = null, bool? sugiyamaLayout = null)
     {
         var vertices = new List<BranchVertex>();
         var map = new Dictionary<string, BranchVertex>();
@@ -107,7 +107,7 @@ public static class BranchGraphBuilder
 
         if (visited != vertices.Count && groupVariations)
         {
-            return Build(opening, false, hideHuman, hideSubbranches, collapsed, compact, betaLayout, columnSpacing, fastLayout, crossingPostPass, globalRefinement);
+            return Build(opening, false, hideHuman, hideSubbranches, collapsed, compact, betaLayout, columnSpacing, fastLayout, crossingPostPass, globalRefinement, sugiyamaLayout);
         }
 
         foreach (var v in vertices.Where(v => !v.IsLearnerMove))
@@ -132,9 +132,11 @@ public static class BranchGraphBuilder
             }
         }
 
-        bool improved = betaLayout ?? !Preferences.Current.BranchLegacyPositioning;
-        bool refine = globalRefinement ?? Preferences.Current.BranchGlobalRefinementBeta;
-        string layoutKey = BranchLayoutCache.Key(vertices, improved, fastLayout, crossingPostPass) + (refine ? ":global-beta-1" : "");
+        bool improved = betaLayout ?? true;
+        bool explicitLayout = betaLayout.HasValue || globalRefinement.HasValue;
+        bool refine = globalRefinement ?? (!explicitLayout && Preferences.Current.BranchLayout == "alternative");
+        bool sugiyama = sugiyamaLayout ?? (!explicitLayout && Preferences.Current.BranchLayout != "legacy" && Preferences.Current.BranchLayout != "alternative");
+        string layoutKey = BranchLayoutCache.Key(vertices, improved, fastLayout, crossingPostPass) + (sugiyama ? ":sugiyama-1" : refine ? ":global-beta-3-centered" : "");
         bool cachedLayout = BranchLayoutCache.Apply(layoutKey, vertices);
         if (!cachedLayout && !fastLayout && !improved)
         {
@@ -181,7 +183,8 @@ public static class BranchGraphBuilder
         if (!cachedLayout)
         {
             if (crossingPostPass && !fastLayout) BranchCrossingReduction.Apply(vertices);
-            if (refine && !fastLayout) BranchGlobalRefinement.Apply(vertices);
+            if (sugiyama && !fastLayout) BranchSugiyamaLayout.Apply(vertices);
+            else if (refine && !fastLayout) { BranchGlobalRefinement.Apply(vertices); BranchAlignmentPass.Apply(vertices); BranchCenteredCoordinates.Apply(vertices); }
             BranchLayoutCache.Store(layoutKey, vertices);
         }
 

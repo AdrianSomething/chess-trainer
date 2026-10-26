@@ -6,6 +6,8 @@ using System.Text.Json.Serialization;
 namespace ChessOpeningTrainer;
 public static class Square
 {
+    // a1 is dark; d1 and the lower-right corner h1 are light.
+    public static bool IsDark(int square) => ((square % 8) + square / 8) % 2 == 0;
     public static string Name(int sq) => $"{(char)('a' + sq % 8)}{sq / 8 + 1}";
     public static bool TryParse(string text, out int square)
     {

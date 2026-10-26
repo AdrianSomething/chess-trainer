@@ -3,6 +3,9 @@ using ChessMove = ChessOpeningTrainer.Move;
 namespace ChessOpeningTrainer;
 public sealed partial class MainForm : LocalizedForm
 {
+    private readonly CheckBox showDatasetStats = new() { Text = "Partiestatistik", Width = 125, Height = 24 };
+    private readonly DatasetResultsStrip datasetStats = new();
+    private DatasetFrequencyBinding? datasetBinding;
     private readonly string dataDir = Environment.GetEnvironmentVariable("CHESS_TRAINER_DATA") ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ChessOpeningTrainer");
     private readonly ProgressStore progress;
     private readonly Button branch = Button("In Branch anzeigen");
@@ -161,6 +164,9 @@ public sealed partial class MainForm : LocalizedForm
         variantCaption.Text = "Enginevarianten · Schritte zum Anschauen anklicken";
         historyCaption.Text = "Zugfolge · Stellung zum Anschauen anklicken";
         game.Controls.AddRange([back, title, board, evaluation, book, feedback, suggestions, variations, history, actions, variantCaption, historyCaption]);
+        game.Controls.AddRange([showDatasetStats, datasetStats]);
+        datasetBinding = new(board, datasetStats, () => showDatasetStats.Checked && (mode == "Freeplay" || mode == "Lernen" && !question), dataDir);
+        showDatasetStats.CheckedChanged += (_, _) => { datasetBinding.Refresh(); LayoutGame(); };
         actions.Controls.AddRange([retry, regenerate]);
         game.Controls.AddRange([branch, exploreBack, automaticEngine, reveal, reset, freeFromHere]);
         opponentSettings = EngineOpponentControls.Create(learningDepth, learningIntelligence);
@@ -242,6 +248,7 @@ public sealed partial class MainForm : LocalizedForm
             if (!settingSuggestions)
                 suggestionPreference = suggestions.Checked;
             variations.Visible = suggestions.Checked && (!question || review) && !HideUnansweredLines;
+            LayoutGame();
             Analyze();
         };
         regenerate.Click += (_, _) => Regenerate();

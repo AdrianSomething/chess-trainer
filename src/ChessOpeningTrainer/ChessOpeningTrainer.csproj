@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>ChessOpeningTrainer</AssemblyName>
-    <Version>0.25.3</Version>
+    <Version>0.26.5</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <NoWarn>$(NoWarn);WFO1000</NoWarn>
@@ -22,6 +22,8 @@
     <DefineConstants>$(DefineConstants);PIXABAY_SOUNDS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="ZstdSharp.Port" Version="0.8.8" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
     <EmbeddedResource Include="app.ico" />
     <EmbeddedResource Include="Samples/tutorial-game.json" LogicalName="ChessOpeningTrainer.TutorialGame.json" />
     <Content Include="Customization\**\*">

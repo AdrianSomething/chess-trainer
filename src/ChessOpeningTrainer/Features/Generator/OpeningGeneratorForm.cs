@@ -17,6 +17,17 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
         }
     }
     public event Action<OpeningDefinition>? Generated;
+    public void PrepareSequence(IReadOnlyList<string> moves)
+    {
+        undo.Clear(); position = Position.FromFen(Position.InitialFen);
+        foreach (string uci in moves)
+        {
+            var move = MoveGenerator.GenerateLegal(position).First(m => m.Uci == uci);
+            undo.Push(position.Clone()); position.Apply(move);
+        }
+        color.SelectedIndex = position.WhiteToMove ? 1 : 0;
+        RefreshPosition();
+    }
     public void PrepareFrom(OpeningDefinition opening, Position target)
     {
         var path = GraphOperations.Positions(opening).First(w => OpeningStore.PositionKey(w.Position) == OpeningStore.PositionKey(target)).Path;
@@ -153,15 +164,18 @@ public sealed partial class OpeningGeneratorForm : LocalizedForm
         controls.BringToFront();
         Controls.Add(boardHost);
         Controls.Add(right);
-        boardHost.Controls.AddRange([board, evaluation, evalInfo]);
+        var datasetStats = new DatasetResultsStrip();
+        _ = new DatasetFrequencyBinding(board, datasetStats, () => true);
+        boardHost.Controls.AddRange([board, evaluation, evalInfo, datasetStats]);
         board.Position = position;
         void LayoutBoard()
         {
-            int size = Math.Max(300, Math.Min(boardHost.Width - 60, boardHost.Height - 205));
+            int size = Math.Max(300, Math.Min(boardHost.Width - 60, boardHost.Height - 250));
             board.SetBounds(52, 14, size, size);
             evaluation.SetBounds(4, 14, 42, size);
-            evalInfo.SetBounds(52, size + 22, size, 40);
-            LayoutQueueNavigation(size);
+            datasetStats.SetBounds(52, size + 18, size, 42);
+            evalInfo.SetBounds(52, size + 65, size, 40);
+            LayoutQueueNavigation(size + 44);
         }
 
         boardHost.Resize += (_, _) => LayoutBoard();

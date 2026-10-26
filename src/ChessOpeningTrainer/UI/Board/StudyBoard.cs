@@ -2,6 +2,10 @@ namespace ChessOpeningTrainer;
 public sealed class StudyBoard : UserControl
 {
     private readonly BoardControl board = new();
+    private readonly DatasetResultsStrip datasetStats = new();
+    private readonly DatasetFrequencyBinding datasetBinding;
+    private bool showDatasetStats;
+    public bool ShowDatasetStatistics { get => showDatasetStats; set { showDatasetStats = value; datasetBinding.Refresh(); LayoutBoard(); } }
     private readonly EvalScale evaluation = new();
     private readonly VariationRows lines = new();
     private readonly MoveHistory history = new();
@@ -78,6 +82,8 @@ public sealed class StudyBoard : UserControl
         ForeColor = UiPalette.Gainsboro;
         presenter = new(engine, evaluation, lines);
         playback = new(board);
+        datasetBinding = new(board, datasetStats, () => showDatasetStats);
+        Controls.Add(datasetStats);
         var toolbar = new FlowLayoutPanel
         {
             Dock = DockStyle.Top,
@@ -183,9 +189,10 @@ public sealed class StudyBoard : UserControl
 
     private void LayoutBoard()
     {
-        int side = Math.Max(200, Math.Min(Height - 46, Width - 360));
+        int side = Math.Max(200, Math.Min(Height - 46 - (showDatasetStats ? 44 : 0), Width - 360));
         board.MinimumSize = Size.Empty;
         board.SetBounds(48, 40, side, side);
+        datasetStats.SetBounds(48, board.Bottom + 2, side, 42);
         evaluation.SetBounds(5, 62, 38, Math.Max(50, side - 44));
         int x = side + 62, w = Math.Max(160, Width - x - 5);
         int detailHeight = Math.Clamp(Height / 3 + 20, 235, 255);

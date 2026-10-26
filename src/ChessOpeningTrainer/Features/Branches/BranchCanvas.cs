@@ -4,6 +4,9 @@ namespace ChessOpeningTrainer;
 public sealed class BranchCanvas : Control
 {
     private readonly BranchCanvasCache renderCache = new();
+    // Optional data-driven appearance; normal opening branches keep their existing style.
+    public Func<BranchVertex, BranchVertex, float>? EdgeWeight { get; set; }
+    public Func<BranchVertex, (Color Color, float Width)?>? NodeBorder { get; set; }
     public List<BranchVertex> Vertices { get; } = [];
     public IReadOnlyDictionary<string, int> AnalysisExits { get; set; } = new Dictionary<string, int>();
     public IReadOnlyDictionary<string, IReadOnlySet<string>> AnalysisCaptions { get; set; } = new Dictionary<string, IReadOnlySet<string>>();
@@ -73,9 +76,10 @@ public sealed class BranchCanvas : Control
     {
         if (Vertices.Count == 0)
             return;
-        float width = Vertices.Max(v => v.Location.X) + 145, height = Vertices.Max(v => v.Location.Y + v.Height / 2) + 60;
-        zoom = Math.Clamp(Math.Min((Width - 70) / width, (Height - 70) / height), .035f, 1.1f);
-        pan = new(35, 35);
+        float left = Vertices.Min(v => v.Location.X - v.Width / 2), right = Vertices.Max(v => v.Location.X + v.Width / 2 + 18);
+        float top = Vertices.Min(v => v.Location.Y - v.Height / 2), bottom = Vertices.Max(v => v.Location.Y + v.Height / 2 + 16);
+        zoom = Math.Clamp(Math.Min(Math.Max(1, Width - 70) / Math.Max(1, right - left), Math.Max(1, Height - 70) / Math.Max(1, bottom - top)), .035f, 1.1f);
+        pan = new(35 - left * zoom, 35 - top * zoom);
         Invalidate();
     }
 
@@ -134,7 +138,10 @@ public sealed class BranchCanvas : Control
         using var edge = new Pen(UiPalette.FromArgb(87, 106, 125), 1.3f / zoom);
         foreach (var v in Vertices)
             foreach (var child in v.Children)
+            {
+                edge.Width = Math.Clamp(EdgeWeight?.Invoke(v, child) ?? 1.3f, .7f, 5f) / zoom;
                 g.DrawBezier(edge, new PointF(v.Location.X + v.Width / 2, v.Location.Y), new PointF(v.Location.X + 98, v.Location.Y), new PointF(child.Location.X - 98, child.Location.Y), new PointF(child.Location.X - child.Width / 2, child.Location.Y));
+            }
         Color normalText = UiPalette.LightBackground ? UiPalette.ButtonText : Color.White;
         using var text = new SolidBrush(normalText);
         using var font = new Font("Segoe UI", 8);
@@ -155,14 +162,14 @@ public sealed class BranchCanvas : Control
             }
             if (v.CanCompact) Handle(v.VariantHandle, false, v.Compact);
             if (v.Nodes.Any(n => n.IsSubbranch)) Handle(v.SubbranchHandle, true, v.Collapsed);
-
-            if (!explicitSelectionCleared && (selectedKey is not null ? renderCache.Keys(v).Exact.Contains(selectedKey)
-                : highlight is not null && renderCache.Keys(v).Normalized.Contains(highlight)))
+            if (NodeBorder?.Invoke(v) is { } border)
             {
-                using var ring = new Pen(UiPalette.Orange, 3);
-                using var outlinePath = v.Outline(4);
-                g.DrawPath(ring, outlinePath);
+                using var contrast = new Pen(border.Color.GetBrightness() < .5f ? Color.White : Color.Black, border.Width + 1.5f);
+                using var contrastPath = v.Outline(); g.DrawPath(contrast, contrastPath);
+                using var borderPen = new Pen(border.Color, border.Width);
+                using var borderPath = v.Outline(); g.DrawPath(borderPen, borderPath);
             }
+
 
             if (!HideSubbranchColors && v.SubbranchColor is Color outline)
             {
@@ -209,6 +216,22 @@ public sealed class BranchCanvas : Control
                         x += g.MeasureString(label, font).Width + 8;
                     }
                 }
+            }
+        }
+        PaintSelection(g);
+    }
+
+    private void PaintSelection(Graphics g)
+    {
+        // Draw selection last, above neighboring nodes, captions and all borders.
+        foreach (var v in Vertices)
+        {
+            if (!explicitSelectionCleared && (selectedKey is not null ? renderCache.Keys(v).Exact.Contains(selectedKey)
+                : highlight is not null && renderCache.Keys(v).Normalized.Contains(highlight)))
+            {
+                using var ring = new Pen(UiPalette.Orange, 3);
+                using var outlinePath = v.Outline(4);
+                g.DrawPath(ring, outlinePath);
             }
         }
     }

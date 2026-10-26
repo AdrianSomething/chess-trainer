@@ -3,6 +3,7 @@ using System.Text.Json;
 namespace ChessOpeningTrainer;
 public sealed class UserPreferences
 {
+    public DatasetSettings Datasets { get; set; } = new();
     public bool GeneratorRestEnabled { get; set; }
     public int GeneratorWorkMinutes { get; set; } = 60;
     public int GeneratorRestMinutes { get; set; } = 5;
@@ -39,6 +40,9 @@ public sealed class UserPreferences
     // Keep the older serialized field above so existing settings remain readable.
     public bool BranchLegacyPositioning { get; set; }
     public bool BranchGlobalRefinementBeta { get; set; }
+    public bool BranchSugiyamaBeta { get; set; }
+    // New explicit choice supersedes the retained pre-0.26.3 checkbox fields.
+    public string BranchLayout { get; set; } = "sugiyama";
     public double BranchColumnSpacing { get; set; } = 1;
     public bool VisionIndirectDefenders { get; set; }
     public int VisionMemoryDifficulty { get; set; } = 1;

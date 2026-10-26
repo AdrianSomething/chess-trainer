@@ -8,7 +8,8 @@ public static class OpeningNameEditor
         {
             if (label.Parent is not { } parent || !label.Visible) return;
             var input = new TextBox { Text = opening.Name, Bounds = label.Bounds, Width = Math.Max(80, label.Width - 44) };
-            var accept = new Button { Text = "✓", Bounds = new(input.Right + 4, input.Top, 38, input.Height) };
+            var accept = new Button { Bounds = new(input.Right + 4, input.Top, input.Height, input.Height) };
+            RenameConfirmation.Style(accept);
             label.Visible = false;
             parent.Controls.AddRange([input, accept]); input.BringToFront(); accept.BringToFront();
             OutsideClickCancel? guard = null;

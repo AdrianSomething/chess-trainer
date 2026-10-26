@@ -4,6 +4,10 @@ The application stores progress, preferences, imported games and generated train
 
 No chess-site login, ChatGPT credential or cloud account is required. The application uses local engines and local training data, without a built-in account or telemetry service. Build scripts download dependencies; this is separate from playing and training in the installed application.
 
+Starting with 0.26.0-beta, Data sets optionally requests the public Lichess database catalog, checksums and selected monthly archives over HTTPS. Lichess receives normal connection information, including the IP address; no local games, settings or credentials are uploaded. Downloads occur only after a user request. A download queue and partial files remain locally for resumption.
+
+Imported dataset records omit names, profile links, comments, clock annotations and evaluations. They retain moves, results, ratings, initial time control and termination category for filtering. The final frequency index contains only position/move relationships and outcome counts. Original import files are not altered; dataset removal affects the app-owned copy. All dataset files live under the private profile's DataSets folder and are excluded from publication.
+
 ## Prepared public content
 
 - Two maintainer-approved generated opening graphs, with private free-text metadata removed.

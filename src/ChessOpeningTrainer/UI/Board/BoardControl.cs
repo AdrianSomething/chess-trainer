@@ -20,6 +20,7 @@ public partial class BoardControl : Control
         ['p'] = "♟"
     };
     private Position? position;
+    public event Action? PositionChanged;
     private string? displayedFen;
     private char[]? displayedSquares;
     public int? LastMoveDestination { get; private set; }
@@ -59,6 +60,7 @@ public partial class BoardControl : Control
             position = value;
             displayedFen = fen;
             displayedSquares = value?.Squares.ToArray();
+            PositionChanged?.Invoke();
         }
     }
 

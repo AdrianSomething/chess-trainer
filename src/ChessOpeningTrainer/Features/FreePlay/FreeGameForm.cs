@@ -4,6 +4,8 @@ public sealed partial class FreeGameForm : LocalizedForm
     private readonly Panel gameHost = new() { Dock = DockStyle.Fill };
     private PositionSetupControl? setupEditor;
     private readonly BoardControl board = new();
+    private readonly DatasetResultsStrip datasetStats = new();
+    private readonly CheckBox showDataset = new() { Text = "Partiestatistik", AutoSize = true };
     private readonly EvalScale evaluation = new();
     private readonly VariationRows variants = new();
     private readonly CheckBox opponent = new()
@@ -100,10 +102,15 @@ public sealed partial class FreeGameForm : LocalizedForm
         var header = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 44 };
         header.Controls.AddRange([edit, new Label { Text = "Freies Spiel", AutoSize = true, Font = new Font(Font.FontFamily, 18, FontStyle.Bold) }]);
         var options = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, WrapContents = false };
-        options.Controls.AddRange([showEval, showLines, opponent]);
+        var displayRow = new FlowLayoutPanel { Height = 26, Width = 300, WrapContents = false };
+        displayRow.Controls.AddRange([showLines, showDataset]);
+        options.Controls.AddRange([showEval, displayRow, opponent]);
+        var frequencies = new DatasetFrequencyBinding(board, datasetStats, () => showDataset.Checked);
+        showDataset.CheckedChanged += (_, _) => { frequencies.Refresh(); LayoutBoard(); };
         options.Controls.Add(EngineOpponentControls.Create(engineDepth, bestMovePercent));
         Controls.Add(gameHost);
         gameHost.Controls.AddRange([board, evaluation, variants, status, book, history, resume, continueHere, options, toolbar, header, flip]);
+        gameHost.Controls.Add(datasetStats);
         header.SendToBack();
         resume.AutoSize = false;
         foreach (var button in new[] { resume, continueHere })
@@ -122,12 +129,14 @@ public sealed partial class FreeGameForm : LocalizedForm
 
         void LayoutBoard()
         {
-            int size = Math.Min(ClientSize.Height - 110, ClientSize.Width - 430);
+            int size = Math.Min(ClientSize.Height - (showDataset.Checked ? 155 : 110), ClientSize.Width - 430);
             board.SetBounds(58, 90, size, size);
             evaluation.SetBounds(8, 90, 40, size);
+            datasetStats.SetBounds(58, board.Bottom + 2, size, 42);
             int x = size + 78, w = ClientSize.Width - x - 16;
             flip.SetBounds(x + w - 38, 90, 38, 32);
             flip.BringToFront();
+            displayRow.Width = w;
             options.SetBounds(x, 90, w, 155);
             status.SetBounds(x, 250, w, 42);
             book.SetBounds(x, 295, w, 65);

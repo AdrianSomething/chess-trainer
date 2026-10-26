@@ -5,11 +5,13 @@ public sealed partial class MainForm
 {
     private void LayoutGame()
     {
-        int size = Math.Max(mode == "Lernen" ? 300 : 360, Math.Min(ClientSize.Height - (mode is "Lernen" or "Freeplay" ? 160 : 115), ClientSize.Width - 470));
+        bool showStats = showDatasetStats.Checked && (mode == "Freeplay" || mode == "Lernen" && !question);
+        int size = Math.Max(mode == "Lernen" ? 300 : 360, Math.Min(ClientSize.Height - (mode is "Lernen" or "Freeplay" ? 160 : 115) - (showStats ? 44 : 0), ClientSize.Width - 470));
         board.SetBounds(68, 92, size, size);
         title.Width = Math.Max(300, ClientSize.Width - 90);
         evaluation.SetBounds(16, 92, 44, size);
-        next.SetBounds(16, board.Bottom + 10, size + 120 - 68, 40);
+        datasetStats.SetBounds(68, board.Bottom + 2, size, 42);
+        next.SetBounds(16, board.Bottom + 10 + (showStats ? 44 : 0), size + 120 - 68, 40);
         reveal.Bounds = next.Bounds;
         int x = size + 90, w = ClientSize.Width - x - 20;
         book.SetBounds(x, 92, w, 48);
@@ -26,6 +28,9 @@ public sealed partial class MainForm
         int returnSpace = mode is "Lernen" or "Freeplay" ? 88 : 44;
         int variantHeight = Math.Clamp(ClientSize.Height - returnSpace - top - 148, 66, 126);
         suggestions.Location = new Point(x, top);
+        showDatasetStats.Visible = mode is "Lernen" or "Freeplay";
+        showDatasetStats.SetBounds(x + Math.Max(0, w - 125), top, 125, 24);
+        suggestions.AutoSize = false; suggestions.Width = Math.Max(100, w - (showDatasetStats.Visible ? 130 : 0));
         variantCaption.SetBounds(x, top + 28, w, 23);
         variations.SetBounds(x, top + 52, w, variantHeight);
         int historyTop = suggestions.Visible ? top + (variations.Visible ? 58 + variantHeight : 56) : top;
@@ -58,6 +63,7 @@ public sealed partial class MainForm
 
         variations.Flip = !humanWhite;
         board.Position = Display;
+        datasetBinding?.Refresh();
         if (!review && snapshots.Count > 1 && board.SelectedSquare is null)
         {
             var before = snapshots[^2].Position;

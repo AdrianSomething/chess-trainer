@@ -86,6 +86,9 @@ public sealed class GameLibraryForm : LocalizedForm
         var highlights = Button("Highlights durchgehen");
         var settings = new MenuIconButton("settings") { Width = 40, Height = 34, AccessibleName = "Analyse-Einstellungen" };
         toolbar.Controls.AddRange([import, write, remove, all, graph, new Label { Text = "Standardspieler:", AutoSize = true, Margin = new(22, 6, 3, 0) }, player, cancel]);
+        var frequencies = new CheckBox { Text = "Partiestatistik", AutoSize = true, Margin = new(8,6,3,0) };
+        frequencies.CheckedChanged += (_, _) => study.ShowDatasetStatistics = frequencies.Checked;
+        toolbar.Controls.Add(frequencies);
         settings.Dock = DockStyle.Right;
         Controls.Add(study);
         Controls.Add(left);
@@ -94,6 +97,11 @@ public sealed class GameLibraryForm : LocalizedForm
         Controls.Remove(toolbar); toolbar.Dock = DockStyle.Fill;
         settings.Dock = DockStyle.Right;
         headerHost.Controls.Add(toolbar); headerHost.Controls.Add(settings); Controls.Add(headerHost);
+        toolbar.Layout += (_, _) =>
+        {
+            int height = Math.Max(58, toolbar.Controls.Cast<Control>().Where(c => c.Visible).Select(c => c.Bottom + 5).DefaultIfEmpty(58).Max());
+            if (headerHost.Height != height) headerHost.Height = height;
+        };
         study.Details.Controls.Add(detail);
         highlights.Dock = DockStyle.Top;
         highlights.AutoSize = false;

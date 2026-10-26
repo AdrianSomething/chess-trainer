@@ -134,8 +134,10 @@ public sealed partial class MainForm
         local.Click += (_, _) => new LocalMatchForm(dataDir, engine).Show();
         var vision = new MenuIconButton("vision", "Schachblick");
         vision.Click += (_, _) => new VisionForm(dataDir, engine, supply.Comparisons).Show();
-        var navigation = new[] { generator, puzzleButton, freeGame, local, ownGames, vision };
-        string[] captions = ["Opening-Branch-Generator", "Rätselmodus", "Freies Spiel", "Lokales Spiel", "Eigene Spiele und Analysen", "Schachblick"];
+        var datasets = new MenuIconButton("datasets", "Datensätze");
+        datasets.Click += (_, _) => OpenDatasets();
+        var navigation = new[] { generator, puzzleButton, freeGame, local, ownGames, vision, datasets };
+        string[] captions = ["Opening-Branch-Generator", "Rätselmodus", "Freies Spiel", "Lokales Spiel", "Eigene Spiele und Analysen", "Schachblick", "Datensätze"];
         foreach (var button in navigation) { button.Size = new(244, 52); button.Margin = new(0, 0, 0, 10); sidebar.Controls.Add(button); }
         var cards = new List<Panel>();
         int y = 66;
@@ -230,6 +232,7 @@ public sealed partial class MainForm
         header.SizeChanged += Arrange;
         content.SizeChanged += Arrange;
         Arrange(null, EventArgs.Empty);
+        AddDatasetWarning(header);
     }
 
     private static bool IsDefault(OpeningDefinition item) => item.Id is "example_english_white" or "example_pirc_black"
