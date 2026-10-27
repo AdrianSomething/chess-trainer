@@ -35,24 +35,28 @@ def main():
             raise Stopped()
     (output / "config.json").write_text(json.dumps(dataclasses.asdict(config), indent=2), encoding="utf-8")
     try:
-        with Host(args.host) as host:
-            # Evolution also ends with a Stockfish benchmark, even when round games omit it.
-            if not host.has_teacher:
-                raise RuntimeError("Stockfish is missing from the application package.")
-            if config.mode == "distillation":
-                import distillation
-                report = distillation.run(host, config, output, args.resume, emit, check_stop)
-            elif config.mode == "benchmark":
-                import torch
-                from model import Policy
-                from evolution import benchmark
-                best = torch.load(output / "best.pt", map_location="cpu", weights_only=True)
-                report = benchmark(host, Policy(config), best, config, random.Random(config.seed), emit, check_stop)
-                (output / "benchmark.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
-            else:
-                import evolution
-                report = evolution.run(host, config, output, args.resume, emit, check_stop)
-        emit(event="complete", report=report)
+        reports=[]
+        for run_index in range(config.runs):
+            check_stop()
+            directory=output if config.runs==1 else output/f"run-{run_index+1:03d}"
+            directory.mkdir(exist_ok=True)
+            run_config=dataclasses.replace(config,seed=config.seed+run_index,runs=1)
+            (directory/"config.json").write_text(json.dumps(dataclasses.asdict(run_config),indent=2),encoding="utf-8")
+            emit(event="run_start",run=run_index+1,runs=config.runs,directory=str(directory.resolve()))
+            with Host(args.host) as host:
+                if config.mode=="benchmark":
+                    from model import Policy
+                    from evolution import benchmark
+                    report=benchmark(host,Policy(run_config),directory/"best.pt",run_config,random.Random(run_config.seed),emit,check_stop)
+                    (directory/"benchmark.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
+                else:
+                    import importlib
+                    module=importlib.import_module({"evolution":"evolution","distillation":"distillation","selfplay":"selfplay","neat":"neat_training"}[config.mode])
+                    report=module.run(host,run_config,directory,args.resume,emit,check_stop)
+            reports.append(dict(run=run_index+1,directory=str(directory.resolve()),report=report))
+            emit(event="run_complete",run=run_index+1,runs=config.runs)
+        if config.runs>1:(output/"series-report.json").write_text(json.dumps(reports,indent=2),encoding="utf-8")
+        emit(event="complete",report=reports[-1]["report"])
         return 0
     except Stopped:
         emit(event="stopped", message="Stopped. The last fully completed round remains resumable.")

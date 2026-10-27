@@ -4977,6 +4977,622 @@
     {
       "de": "Anhalten",
       "en": "Stop"
+    },
+    {
+      "de": "Engine-Labor · Einrichtung",
+      "en": "Engine Lab · Setup"
+    },
+    {
+      "de": "Engine-Labor · Training",
+      "en": "Engine Lab · Training"
+    },
+    {
+      "de": "Engine-Labor · Ergebnis",
+      "en": "Engine Lab · Results"
+    },
+    {
+      "de": "Trainingsverfahren",
+      "en": "Training method"
+    },
+    {
+      "de": "Evolutionäres Populationstraining",
+      "en": "Evolutionary population training"
+    },
+    {
+      "de": "Backpropagation / Lehrer-Imitation",
+      "en": "Backpropagation / teacher imitation"
+    },
+    {
+      "de": "Vorlage",
+      "en": "Template"
+    },
+    {
+      "de": "Standardvorlage",
+      "en": "Default template"
+    },
+    {
+      "de": "Minimale Testvorlage (3 Runden)",
+      "en": "Minimal test template (3 rounds)"
+    },
+    {
+      "de": "Modell",
+      "en": "Model"
+    },
+    {
+      "de": "GPU · Kompakt (~0,1 GB)",
+      "en": "GPU · Compact (~0.1 GB)"
+    },
+    {
+      "de": "GPU · Ausgewogen (8-GB-Karte)",
+      "en": "GPU · Balanced (8 GB card)"
+    },
+    {
+      "de": "GPU · Backpropagation (8-GB-Karte)",
+      "en": "GPU · Backpropagation (8 GB card)"
+    },
+    {
+      "de": "NEAT · variable Topologie (CPU)",
+      "en": "NEAT · evolving topology (CPU)"
+    },
+    {
+      "de": "Rechengerät",
+      "en": "Compute device"
+    },
+    {
+      "de": "Angezeigte Bretter",
+      "en": "Displayed boards"
+    },
+    {
+      "de": "Unabhängige Durchgänge",
+      "en": "Independent runs"
+    },
+    {
+      "de": "Vorlagenname",
+      "en": "Template name"
+    },
+    {
+      "de": "Vorlage speichern",
+      "en": "Save template"
+    },
+    {
+      "de": "Gespeichertes Training fortsetzen",
+      "en": "Resume saved training"
+    },
+    {
+      "de": "Training fortsetzen",
+      "en": "Continue training"
+    },
+    {
+      "de": "Allgemeine Parameter",
+      "en": "General parameters"
+    },
+    {
+      "de": "Allgemein",
+      "en": "General"
+    },
+    {
+      "de": "Mutationsrate",
+      "en": "Mutation rate"
+    },
+    {
+      "de": "Fitness-Aufgaben",
+      "en": "Fitness tasks"
+    },
+    {
+      "de": "Lernaufgaben",
+      "en": "Learning tasks"
+    },
+    {
+      "de": "Engine-Turnier",
+      "en": "Engine tournament"
+    },
+    {
+      "de": "Gegen Stockfish",
+      "en": "Against Stockfish"
+    },
+    {
+      "de": "Mattaufgaben",
+      "en": "Mate tasks"
+    },
+    {
+      "de": "Engine-Zugaufgaben",
+      "en": "Teacher move tasks"
+    },
+    {
+      "de": "Stockfish-Imitation",
+      "en": "Stockfish imitation"
+    },
+    {
+      "de": "Actor-Critic-Selbstspiel",
+      "en": "Actor-critic self-play"
+    },
+    {
+      "de": "Stockfish-Tiefenvergleich",
+      "en": "Stockfish depth comparison"
+    },
+    {
+      "de": "Rechengeschwindigkeit",
+      "en": "Decision speed"
+    },
+    {
+      "de": "Selektion",
+      "en": "Selection"
+    },
+    {
+      "de": "Selektion und Reproduktion",
+      "en": "Selection and reproduction"
+    },
+    {
+      "de": "Ergebnisanalyse",
+      "en": "Result analysis"
+    },
+    {
+      "de": "Aufgabe hinzufügen",
+      "en": "Add task"
+    },
+    {
+      "de": "Überlebender Anteil",
+      "en": "Survivor fraction"
+    },
+    {
+      "de": "Elterngewichtung: Anfang",
+      "en": "Parent weighting: start"
+    },
+    {
+      "de": "Elterngewichtung: Ende",
+      "en": "Parent weighting: end"
+    },
+    {
+      "de": "Spiele je Modell",
+      "en": "Games per model"
+    },
+    {
+      "de": "Paarungen",
+      "en": "Pairings"
+    },
+    {
+      "de": "Zufällige Gegner",
+      "en": "Random opponents"
+    },
+    {
+      "de": "Ausscheidungsturnier",
+      "en": "Elimination tournament"
+    },
+    {
+      "de": "Verliererrunde",
+      "en": "Losers bracket"
+    },
+    {
+      "de": "Stockfish-Intelligenz (%)",
+      "en": "Stockfish intelligence (%)"
+    },
+    {
+      "de": "Aufgaben je Runde",
+      "en": "Tasks per round"
+    },
+    {
+      "de": "Matt: mindestens Züge",
+      "en": "Mate: minimum moves"
+    },
+    {
+      "de": "Matt: höchstens Züge",
+      "en": "Mate: maximum moves"
+    },
+    {
+      "de": "Aufgabenquelle",
+      "en": "Task source"
+    },
+    {
+      "de": "Aktueller Datensatz",
+      "en": "Current dataset"
+    },
+    {
+      "de": "Eigene Datei",
+      "en": "Custom file"
+    },
+    {
+      "de": "Aufgabendatei",
+      "en": "Task file"
+    },
+    {
+      "de": "Mattverteilung: Anfang",
+      "en": "Mate distribution: start"
+    },
+    {
+      "de": "Mattverteilung: Ende",
+      "en": "Mate distribution: end"
+    },
+    {
+      "de": "Punkte je richtigem Zug",
+      "en": "Points per correct move"
+    },
+    {
+      "de": "Punkte je gelöster Aufgabe",
+      "en": "Points per solved task"
+    },
+    {
+      "de": "Gewicht der Aufgabe",
+      "en": "Task weight"
+    },
+    {
+      "de": "Lehrer-Suchtiefe",
+      "en": "Teacher search depth"
+    },
+    {
+      "de": "Akzeptierter Bewertungsverlust",
+      "en": "Accepted evaluation loss"
+    },
+    {
+      "de": "Punkte: richtiger Zug",
+      "en": "Points: correct move"
+    },
+    {
+      "de": "Punkte: falscher Zug",
+      "en": "Points: incorrect move"
+    },
+    {
+      "de": "Trainingsstellungen je Runde",
+      "en": "Training positions per round"
+    },
+    {
+      "de": "Stellungsdatei",
+      "en": "Position file"
+    },
+    {
+      "de": "Lernrate",
+      "en": "Learning rate"
+    },
+    {
+      "de": "Batchgröße",
+      "en": "Batch size"
+    },
+    {
+      "de": "Maximale Stockfish-Tiefe",
+      "en": "Maximum Stockfish depth"
+    },
+    {
+      "de": "Spiele je Tiefe",
+      "en": "Games per depth"
+    },
+    {
+      "de": "Gemessene Entscheidungen",
+      "en": "Measured decisions"
+    },
+    {
+      "de": "Siegpunkte",
+      "en": "Win points"
+    },
+    {
+      "de": "Punkte je eigenem Zug",
+      "en": "Points per own move"
+    },
+    {
+      "de": "Niederlage",
+      "en": "Loss"
+    },
+    {
+      "de": "Zuglimit erreicht",
+      "en": "Move limit reached"
+    },
+    {
+      "de": "Wahrscheinlichkeit: Knoten hinzufügen",
+      "en": "Node addition probability"
+    },
+    {
+      "de": "Wahrscheinlichkeit: Verbindung hinzufügen",
+      "en": "Connection addition probability"
+    },
+    {
+      "de": "Artabstand",
+      "en": "Species distance"
+    },
+    {
+      "de": "Selbstspiel-Partien je Runde",
+      "en": "Self-play games per round"
+    },
+    {
+      "de": "Zukünftige Belohnung (Gamma)",
+      "en": "Future reward discount (gamma)"
+    },
+    {
+      "de": "Explorationsgewicht",
+      "en": "Exploration weight"
+    },
+    {
+      "de": "Gewicht illegaler Präferenzen",
+      "en": "Illegal preference weight"
+    },
+    {
+      "de": "Nach letztem Punkt wiederholen",
+      "en": "Repeat after the last point"
+    },
+    {
+      "de": "Punkt hinzufügen",
+      "en": "Add point"
+    },
+    {
+      "de": "Punkt entfernen",
+      "en": "Remove point"
+    },
+    {
+      "de": "Jeder X-Wert darf nur einmal vorkommen.",
+      "en": "Each X value must be unique."
+    },
+    {
+      "de": "Kurve",
+      "en": "Curve"
+    },
+    {
+      "de": "Punkte über die Runden",
+      "en": "Scores over rounds"
+    },
+    {
+      "de": "Nach der ersten Runde erscheinen Datenpunkte.",
+      "en": "Data points appear after the first round."
+    },
+    {
+      "de": "Durchgezogen: bester Score · gestrichelt: Durchschnitt",
+      "en": "Solid: best score · dashed: mean"
+    },
+    {
+      "de": "Durchgang",
+      "en": "Run"
+    },
+    {
+      "de": "Durchgang {0}/{1}",
+      "en": "Run {0}/{1}"
+    },
+    {
+      "de": "Runde {0}/{1}",
+      "en": "Round {0}/{1}"
+    },
+    {
+      "de": "Durchschnitt",
+      "en": "Mean"
+    },
+    {
+      "de": "Restzeit",
+      "en": "Remaining"
+    },
+    {
+      "de": "Bestes Modell der letzten Runde",
+      "en": "Best model of the previous round"
+    },
+    {
+      "de": "Training anhalten",
+      "en": "Stop training"
+    },
+    {
+      "de": "Training mit Fehler beendet",
+      "en": "Training ended with an error"
+    },
+    {
+      "de": "Name der Engine",
+      "en": "Engine name"
+    },
+    {
+      "de": "Engine speichern",
+      "en": "Save engine"
+    },
+    {
+      "de": "Engine gespeichert.",
+      "en": "Engine saved."
+    },
+    {
+      "de": "Als Standardengine verwenden",
+      "en": "Use as default engine"
+    },
+    {
+      "de": "Freies Spiel gegen diese Engine",
+      "en": "Custom game against this engine"
+    },
+    {
+      "de": "Weitertrainieren / Einstellungen",
+      "en": "Continue training / settings"
+    },
+    {
+      "de": "Ergebnis verwerfen",
+      "en": "Discard result"
+    },
+    {
+      "de": "Ergebnis schließen? Experimentdateien bleiben zur Nachvollziehbarkeit erhalten.",
+      "en": "Close this result? Experiment files remain available for reproducibility."
+    },
+    {
+      "de": "Experimentelle Scores sind keine Elo-Wertung.",
+      "en": "Experimental scores are not Elo ratings."
+    },
+    {
+      "de": "Noch kein gespeichertes Experiment vorhanden.",
+      "en": "No saved experiment is available yet."
+    },
+    {
+      "de": "Bitte einen gültigen Vorlagennamen eingeben.",
+      "en": "Please enter a valid template name."
+    },
+    {
+      "de": "Kurzes Turnier",
+      "en": "Short tournament"
+    },
+    {
+      "de": "Kurzes Selbstspiel",
+      "en": "Short self-play"
+    },
+    {
+      "de": "Kurze Lehrer-Imitation",
+      "en": "Short teacher imitation"
+    },
+    {
+      "de": "Engine löschen",
+      "en": "Delete engine"
+    },
+    {
+      "de": "Diese gespeicherte Engine löschen? Stockfish bleibt erhalten.",
+      "en": "Delete this saved engine? Stockfish is retained."
+    },
+    {
+      "de": "Bis zur Zieltiefe messen (ohne Zeitlimit)",
+      "en": "Measure to the target depth (no time limit)"
+    },
+    {
+      "de": "Messung abbrechen",
+      "en": "Cancel measurement"
+    },
+    {
+      "de": "Messung abgebrochen.",
+      "en": "Measurement cancelled."
+    },
+    {
+      "de": "Ziel {0} · erreicht {1} · {2} s",
+      "en": "Target {0} · reached {1} · {2} s"
+    },
+    {
+      "de": "0 deaktiviert die Brettdarstellung. Sonst werden bis zu so viele laufende Partien angezeigt; die beste bekannte Engine wird bevorzugt.",
+      "en": "0 disables board rendering. Otherwise display up to this many running games, prioritizing the best known engine."
+    },
+    {
+      "de": "Anzahl unabhängiger Trainingsläufe mit jeweils eigenem Zufallsstart, Checkpoint und Ergebnis.",
+      "en": "Number of independent training runs, each with its own random seed, checkpoint and results."
+    },
+    {
+      "de": "Kompakt: ungefähr 11 MiB Gewichte je Modell. Für schnelle Tests geeignet.",
+      "en": "Compact: approximately 11 MiB of weights per model. Suitable for quick tests."
+    },
+    {
+      "de": "Ausgewogen: ungefähr 224 MiB Gewichte je Modell. 100 Modelle benötigen mindestens etwa 22 GiB Festplattenspeicher.",
+      "en": "Balanced: approximately 224 MiB of weights per model. 100 models require at least about 22 GiB of disk space."
+    },
+    {
+      "de": "Backpropagation: ungefähr 1,54 GiB Gewichte, etwa 6,7–7 GiB GPU-Speicher mit Gradienten und AdamW. Empfohlen: 8-GB-GPU. Eine Population von 100 Modellen benötigt über 154 GiB Festplattenspeicher.",
+      "en": "Backpropagation: about 1.54 GiB of weights, approximately 6.7–7 GiB of GPU memory with gradients and AdamW. Recommended: 8 GB GPU. A population of 100 models would require over 154 GiB of disk space."
+    },
+    {
+      "de": "NEAT: kleine CPU-Netze mit veränderlicher Topologie. Keine CUDA-Abhängigkeit für die Netzauswertung.",
+      "en": "NEAT: small CPU networks with evolving topology. Network inference does not require CUDA."
+    },
+    {
+      "de": "Kompakt: schneller Funktionstest. Ausgewogen: größeres Modell für Population oder Gradientenlernen. Backpropagation: etwa 1,54 GiB Gewichte und bis etwa 7 GiB Trainingsbedarf; keine 6-GiB-Gewichte. Populationen liegen auf der Festplatte.",
+      "en": "Compact: quick functional tests. Balanced: a larger model for population or gradient training. Backpropagation: about 1.54 GiB of weights and approximately 7 GiB training memory. Populations are stored on disk."
+    },
+    {
+      "de": "CUDA benötigt eine passende PyTorch-Installation. CPU ist für kleine Tests verfügbar; große Modelle können sehr langsam sein.",
+      "en": "CUDA requires a compatible PyTorch installation. CPU is available for small tests; large models can be very slow."
+    },
+    {
+      "de": "Evolution bewertet und mutiert eine Population. Backpropagation lernt aus Stockfish-Zielwerten mit AdamW. Beide verwenden dieselben überprüften Schachregeln.",
+      "en": "Evolution evaluates and mutates a population. Backpropagation imitates Stockfish with AdamW. Self-play learns from game outcomes; NEAT evolves network topology on CPU. All modes use the shared chess rules."
+    },
+    {
+      "de": "Lädt die vollständige Aufgaben- und Kurvenkonfiguration. Eigene Vorlagen werden lokal gespeichert und sind als JSON editierbar.",
+      "en": "Loads the complete task and curve configuration. Custom templates are stored locally and are editable as JSON."
+    },
+    {
+      "de": "Python-Programm mit installiertem PyTorch. Das normale Schachtraining benötigt Python nicht.",
+      "en": "Python executable with PyTorch installed; NEAT additionally requires neat-python. Normal chess training does not need Python."
+    },
+    {
+      "de": "Fügt eine eigenständige Aufgabe hinzu. Mehrere Aufgaben desselben Typs dürfen unterschiedliche Parameter und Gewichte verwenden.",
+      "en": "Adds an independent task. Multiple tasks of the same type may use different parameters and weights."
+    },
+    {
+      "de": "Standardabweichung der additiven Gauß-Mutation relativ zur Streuung der Gewichte. 0 verändert duplizierte Modelle nicht.",
+      "en": "Standard deviation of additive Gaussian mutation relative to the weight variation. 0 leaves duplicated models unchanged."
+    },
+    {
+      "de": "Anteil der bestbewerteten Modelle, der unverändert erhalten bleibt. Nachkommen erhalten neue stabile IDs.",
+      "en": "Fraction of the highest-scoring models retained unchanged. Offspring receive new persistent IDs."
+    },
+    {
+      "de": "X: Rang innerhalb der Überlebenden, 0 = bester, 1 = letzter. Y: relatives Gewicht bei der Elternauswahl. Zwischen Anfang und Ende wird über die Runden interpoliert.",
+      "en": "X: rank among survivors, 0 = best, 1 = last. Y: relative parent-selection weight. The start and end distributions are interpolated across rounds."
+    },
+    {
+      "de": "X: relative Matttiefe im eingestellten Intervall, 0 = kürzestes, 1 = längstes Matt. Y: relative Häufigkeit. Anfangs- und Endverteilung werden über die Runden interpoliert.",
+      "en": "X: relative mate depth within the selected interval, 0 = shortest, 1 = longest. Y: relative frequency. Start and end distributions are interpolated across rounds."
+    },
+    {
+      "de": "Konstante oder Kurve über gespielte Halbzüge. Punkte werden bei der entsprechenden Aktion vergeben.",
+      "en": "A constant or curve over played half-moves. Points are awarded for the corresponding action."
+    },
+    {
+      "de": "Konstante oder linear interpolierte Kurve über Trainingsrunden. Nach dem letzten Punkt wahlweise zyklisch wiederholen oder den Endwert beibehalten.",
+      "en": "A constant or linearly interpolated curve over training rounds. After the final point, repeat cyclically or hold the last value."
+    },
+    {
+      "de": "Lokale JSON-/JSONL-Datei mit FEN-Einträgen. Die Stellungen werden vor Verwendung mit den Schachregeln und Stockfish geprüft.",
+      "en": "Local JSON/JSONL file with FEN entries. Positions are checked using the chess rules and Stockfish before use."
+    },
+    {
+      "de": "Diese Einstellung wird mit dem Experiment gespeichert und kann auch in der JSON-Konfiguration gesetzt werden.",
+      "en": "This setting is stored with the experiment and can also be set in its JSON configuration."
+    },
+    {
+      "de": "Genetischer Abstand für die Zuordnung zu Arten. NEAT schützt neue Topologien durch getrennte Arten und Innovationen.",
+      "en": "Genetic distance used to group genomes into species. NEAT protects new topologies through speciation and innovation tracking."
+    },
+    {
+      "de": "Abzinsung je Halbzug. 1 bewertet spätere und sofortige Endergebnisse gleich; kleinere Werte bevorzugen frühere Belohnungen.",
+      "en": "Discount per half-move. 1 values later and immediate outcomes equally; lower values favor earlier rewards."
+    },
+    {
+      "de": "Gewicht der Entropie im Actor-Critic-Verlust. Höhere Werte halten mehr legale Alternativen im Spiel.",
+      "en": "Entropy weight in the actor-critic loss. Higher values retain more legal alternatives during exploration."
+    },
+    {
+      "de": "Zusätzlicher Verlust für Wahrscheinlichkeitsmasse auf illegalen Aktionen. Ausgeführt werden ausschließlich legale Züge.",
+      "en": "Additional loss for probability assigned to illegal actions. Only legal moves are executed."
+    },
+    {
+      "de": "Kopiert das fertige Modell in die lokale Engine-Bibliothek. Die Experimentdateien und Stockfish bleiben erhalten.",
+      "en": "Copies the completed model into the local engine library. Experiment files and Stockfish are retained."
+    },
+    {
+      "de": "Öffnet ein unabhängiges Spiel mit diesem Modell. Das Ergebnisfenster bleibt geöffnet; die Standardengine wird nicht geändert.",
+      "en": "Opens an independent game using this model. Results remain open and the default engine is unchanged."
+    },
+    {
+      "de": "Training anhalten und das Engine-Labor verlassen? Gespeicherte Runden bleiben erhalten.",
+      "en": "Stop training and leave Engine Lab? Completed checkpointed rounds are retained."
+    },
+    {
+      "de": "Stockfish oder ein im Engine-Labor gespeichertes Modell. Die Auswahl betrifft Stellungsbewertung und automatische Gegnerzüge, nicht die Stockfish-Prüfung von Lernkarten und Rätseln.",
+      "en": "Stockfish or a model saved from Engine Lab. Applies to position evaluation and automatic opponent moves; validated cards and puzzles still use Stockfish."
+    },
+    {
+      "de": "Neuronale Modelle liefern Policy-/Wertvorhersagen ohne Stockfish-Tiefensuche. Stockfish bleibt für Generatoren und überprüfte Aufgaben verfügbar.",
+      "en": "Neural models provide policy/value predictions without Stockfish depth search. Stockfish remains available for generators and validated tasks. NEAT uses a policy with a material-only evaluation."
+    },
+    {
+      "de": "Aktiv: alle eingestellten Suchtiefen tatsächlich messen, auch wenn dies lange dauert. Inaktiv: die zeitbegrenzte Hintergrundanalyse messen. Erneutes Drücken bricht nur die Messung ab.",
+      "en": "Enabled: measure every configured Stockfish depth, even if it takes a long time. Disabled: measure time-limited background analysis. Press again to cancel the measurement."
+    },
+    {
+      "de": "Abdeckung der beobachteten Gegnerantworten, 0–100. Gewicht = absolute Partienzahl / (1 + Abstand in vollen Zügen ab Startstellung). Eigene Züge und die feste unverzweigte Anfangssequenz zählen nicht. Unbekannte Stellungen werden separat ausgewiesen. Vorschläge zeigen den unmittelbaren Score-Gewinn bei unverändertem restlichem Baum.",
+      "en": "Coverage of observed opponent replies, 0–100. Weight = game count / (1 + full-move distance from the start). Your own moves and the fixed, unbranched opening sequence are excluded. Unknown positions are reported separately. Suggestions show the immediate score increase with the rest of the tree unchanged."
+    },
+    {
+      "de": "Evolution bewertet und mutiert eine Population. Backpropagation imitiert Stockfish. Selbstspiel lernt aus Partien; NEAT entwickelt die Netztopologie auf der CPU. Alle verwenden dieselben Schachregeln.",
+      "en": "Evolution evaluates and mutates a population. Backpropagation imitates Stockfish. Self-play learns from games; NEAT evolves network topology on CPU. All use the shared chess rules."
+    },
+    {
+      "de": "Mittlere Entscheidungszeit",
+      "en": "Mean decision time"
+    },
+    {
+      "de": "Siege / Remis / Niederlagen",
+      "en": "Wins / draws / losses"
+    },
+    {
+      "de": "Zuglimit",
+      "en": "Move limit"
+    },
+    {
+      "de": "Suchtiefe in Halbzügen ohne festes Zeitlimit. Hohe Werte wie 40 können sehr lange dauern. Neue Partie, Zurück oder Schließen bricht die Suche ab.",
+      "en": "Search depth in plies without a fixed time limit. High values such as 40 can take a very long time. New game, Back or closing the window cancels the search."
+    },
+    {
+      "de": "0 %: schlechtester legaler Zug laut Suche. 50 %: Zufall aus allen legalen Zügen. 100 %: bester Enginezug. Zwischenwerte gewichten bessere oder schlechtere Züge; die Bewertung hängt von der Suchtiefe ab.",
+      "en": "0%: worst legal move according to the search. 50%: random legal move. 100%: best engine move. Intermediate values favor better or worse moves; evaluations depend on search depth."
     }
   ]
 }

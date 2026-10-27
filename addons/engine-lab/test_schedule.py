@@ -30,7 +30,7 @@ class ScheduleChecks(unittest.TestCase):
 
     def test_reject_unbalanced_or_excessive_configuration(self):
         Config().validate()
-        for c in (Config(peer_games=3), Config(vram_gib=8), Config(population=1000)):
+        for c in (Config(peer_games=3), Config(vram_gib=9), Config(population=1000)):
             with self.assertRaises(ValueError): c.validate()
 
 if __name__ == "__main__":

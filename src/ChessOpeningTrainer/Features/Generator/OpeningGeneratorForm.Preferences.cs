@@ -34,7 +34,7 @@ public sealed partial class OpeningGeneratorForm
         preferMode.CheckedChanged += (_, _) =>
         {
             board.MoveProvider = preferMode.Checked ? p => Enumerable.Range(0, 64).SelectMany(from => Enumerable.Range(0, 64)
-                .Where(to => PreferredMovePlan.CanAppend(p, color.SelectedIndex == 1, from, to)).Select(to => new Move { From = from, To = to })).ToArray() : null;
+                .Where(to => PreferredMovePlan.CanAppend(p, color.SelectedIndex == 1, from, to)).Select(to => new Move { From = from, To = to, IsCastle = char.ToLowerInvariant(p.Squares[from]) == 'k' && Math.Abs(to - from) == 2 })).ToArray() : null;
             RefreshPosition();
         };
         board.ForegroundPaint += (_, e) => PaintPreferredMoves(e.Graphics);

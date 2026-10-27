@@ -1,0 +1,129 @@
+{
+  "mode": "distillation",
+  "model": "compact",
+  "device": "cuda",
+  "rounds": 3,
+  "runs": 1,
+  "population": 4,
+  "display_boards": 1,
+  "visualize": true,
+  "record_thinking": true,
+  "vram_gib": 7.5,
+  "batch_size": 32,
+  "schedules": {
+    "population": {
+      "value": 4,
+      "cycle": false,
+      "points": []
+    },
+    "mutation": {
+      "value": 0.1,
+      "cycle": true,
+      "points": [
+        [
+          1,
+          0.15
+        ],
+        [
+          20,
+          0.015
+        ],
+        [
+          25,
+          0.015
+        ]
+      ]
+    },
+    "survivors": {
+      "value": 0.05,
+      "cycle": true,
+      "points": [
+        [
+          1,
+          0.05
+        ],
+        [
+          20,
+          0.2
+        ],
+        [
+          25,
+          0.2
+        ]
+      ]
+    },
+    "duplication_start": {
+      "value": 1,
+      "cycle": false,
+      "points": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "duplication_end": {
+      "value": 1,
+      "cycle": false,
+      "points": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    }
+  },
+  "tasks": [
+    {
+      "kind": "distillation",
+      "name": "Short teacher imitation",
+      "enabled": true,
+      "parameters": {
+        "count": {
+          "value": 16,
+          "cycle": false,
+          "points": []
+        },
+        "depth": {
+          "value": 1,
+          "cycle": false,
+          "points": []
+        },
+        "batch_size": {
+          "value": 4,
+          "cycle": false,
+          "points": []
+        },
+        "source": "generated",
+        "learning_rate": {
+          "value": 0.0003,
+          "cycle": false,
+          "points": []
+        }
+      }
+    }
+  ],
+  "results": [
+    {
+      "kind": "speed",
+      "name": "Decision speed",
+      "enabled": true,
+      "parameters": {
+        "count": {
+          "value": 100,
+          "cycle": false,
+          "points": []
+        }
+      }
+    }
+  ],
+  "max_moves": 12
+}

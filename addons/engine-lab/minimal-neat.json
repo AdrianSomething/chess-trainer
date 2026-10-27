@@ -1,0 +1,88 @@
+{
+  "mode": "neat",
+  "model": "neat",
+  "device": "cpu",
+  "rounds": 3,
+  "runs": 1,
+  "population": 4,
+  "display_boards": 1,
+  "visualize": true,
+  "record_thinking": true,
+  "vram_gib": 7.5,
+  "batch_size": 32,
+  "schedules": {
+    "population": {
+      "value": 8,
+      "cycle": false,
+      "points": []
+    },
+    "node_add": 0.1,
+    "connection_add": 0.3,
+    "compatibility": 3
+  },
+  "tasks": [
+    {
+      "kind": "tournament",
+      "name": "Short tournament",
+      "enabled": true,
+      "parameters": {
+        "count": {
+          "value": 2,
+          "cycle": false,
+          "points": []
+        },
+        "max_moves": {
+          "value": 12,
+          "cycle": false,
+          "points": []
+        },
+        "pairing": "random",
+        "win": {
+          "value": 100,
+          "cycle": false,
+          "points": []
+        },
+        "move": {
+          "value": 0.002,
+          "cycle": false,
+          "points": []
+        },
+        "loss": {
+          "value": -30,
+          "cycle": false,
+          "points": []
+        },
+        "draw": {
+          "value": -5,
+          "cycle": false,
+          "points": []
+        },
+        "abort": {
+          "value": -15,
+          "cycle": false,
+          "points": []
+        },
+        "weight": {
+          "value": 1,
+          "cycle": false,
+          "points": []
+        }
+      }
+    }
+  ],
+  "results": [
+    {
+      "kind": "speed",
+      "name": "Decision speed",
+      "enabled": true,
+      "parameters": {
+        "count": {
+          "value": 100,
+          "cycle": false,
+          "points": []
+        }
+      }
+    }
+  ],
+  "max_moves": 12
+}

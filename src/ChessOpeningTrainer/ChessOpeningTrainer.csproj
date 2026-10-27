@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>ChessOpeningTrainer</AssemblyName>
-    <Version>0.27.0-beta</Version>
+    <Version>0.27.1-beta</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <NoWarn>$(NoWarn);WFO1000</NoWarn>
@@ -22,7 +22,7 @@
     <DefineConstants>$(DefineConstants);PIXABAY_SOUNDS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="../../addons/engine-lab/*.py;../../addons/engine-lab/*.md;../../addons/engine-lab/requirements.txt">
+    <Content Include="../../addons/engine-lab/*.py;../../addons/engine-lab/*.md;../../addons/engine-lab/*.json;../../addons/engine-lab/requirements.txt">
       <Link>Addons/EngineLab/%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

@@ -1,5 +1,6 @@
 """Batches ready games by model identity to avoid switching GPU weights after every move."""
 import time
+from curves import value
 from schedule import reward
 
 
@@ -43,10 +44,20 @@ def play(host, policy, population, pairs, depth, config, rng, emit, check_stop, 
             moves = []
             for identity in group:
                 check_stop()
-                lines = host.call(op="analyze", id=identity, depth=depth)["lines"]
+                intelligence=config.stockfish_intelligence
+                legal=active[identity]["state"]["legal"]
+                if intelligence==50:
+                    moves.append((rng.choice(legal)["uci"],False));continue
+                lines = host.call(op="analyze", id=identity, depth=depth, multi=1 if intelligence==100 else len(legal))["lines"]
                 if not lines or not lines[0]["move"]:
                     raise RuntimeError("Stockfish returned no legal move.")
-                moves.append((lines[0]["move"], False))
+                if intelligence<=0: chosen=lines[-1]
+                elif intelligence>=100: chosen=lines[0]
+                else:
+                    rank=(1-intelligence/100)*(len(lines)-1)
+                    weights=[1/(1+abs(i-rank))**2 for i in range(len(lines))]
+                    chosen=rng.choices(lines,weights=weights,k=1)[0]
+                moves.append((chosen["move"], False))
         else:
             start = time.perf_counter()
             policy.load((player, id(population[player])), population[player])
@@ -60,13 +71,16 @@ def play(host, policy, population, pairs, depth, config, rng, emit, check_stop, 
                 raise RuntimeError("Legal-mask/host mismatch; match was not scored.")
             active[identity]["state"] = update["state"]
             if player >= 0 and fitness is not None:
-                fitness[player] += config.survival_reward - (config.illegal_penalty if illegal else 0)
+                fitness[player] += value((config.reward_overrides or {}).get("move"),update["state"]["plies"],config.survival_reward) - (config.illegal_penalty if illegal else 0)
             if config.teacher_depth and update["state"]["status"] == "playing":
                 feedback = host.call(op="analyze", id=identity, depth=config.teacher_depth)
                 emit(event="teacher", game=identity, fen=update["state"]["fen"], lines=feedback["lines"])
         now = time.monotonic()
         if now - last_display >= .25:
-            emit(event="progress", stage="games", completed=len(results), total=len(pairs),
+            def label(player): return None if player<0 else (config.engine_ids[player] if config.engine_ids else player)
+            visible=sorted(active.values(),key=lambda game:0 if config.best_engine in [label(p) for p in game["players"]] else 1)
+            boards=[dict(fen=g["state"]["fen"],white=label(g["players"][0]),black=label(g["players"][1])) for g in visible[:config.display_boards]] if config.visualize else []
+            emit(event="progress", stage="games", completed=len(results), total=len(pairs), boards=boards,
                  fen=updates[-1]["state"]["fen"] if config.visualize else None)
             last_display = now
     return results, [1000 * t / n if n else None for t, n in zip(thinking, decisions)]

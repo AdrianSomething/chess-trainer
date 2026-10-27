@@ -21,6 +21,10 @@ def selection(round_number, config):
 
 
 def reward(result, white, plies, status, config):
+    if config.reward_overrides:
+        from curves import value
+        field="abort" if status=="move_limit" else "draw" if result=="1/2-1/2" else "win" if result==("1-0" if white else "0-1") else "loss"
+        return value(config.reward_overrides.get(field),plies,{"abort":-15,"draw":-5,"win":100,"loss":-30}[field])
     if result == "1/2-1/2":
         return config.draw_reward - (config.limit_penalty if status == "move_limit" else 0)
     won = result == ("1-0" if white else "0-1")

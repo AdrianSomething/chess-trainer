@@ -25,7 +25,7 @@ public sealed class TrainingProtocol : IAsyncDisposable
     private async Task<EngineResult> Analyze(Position p, int depth, int multi = 1)
     {
         teacher ??= new EnginePool(engine, 1, 2, token);
-        return await teacher.Search(p, Math.Clamp(depth, 1, 64), Math.Clamp(multi, 1, 10), token);
+        return await teacher.Search(p, Math.Clamp(depth, 1, 64), Math.Clamp(multi, 1, 218), token);
     }
     public async Task<object> Execute(JsonElement request)
     {
@@ -45,6 +45,18 @@ public sealed class TrainingProtocol : IAsyncDisposable
                 // A supplied/generated position is the start of the measured game.
                 games[id] = new TrainingGame(game.Position.ToFen(), Int(request, "maxMoves", 500));
                 return State(id, games[id]);
+            }
+            case "dataset_sample":
+            {
+                string file=Str(request,"file") ?? throw new ArgumentException("Dataset index path required.");
+                using var index=new DatasetIndex(file);var p=Position.FromFen(Position.InitialFen);
+                var rng=new Random(Int(request,"seed",0));int plies=Math.Clamp(Int(request,"plies",40),0,300);
+                for(int i=0;i<plies;i++)
+                {
+                    token.ThrowIfCancellationRequested();var children=index.Children(p);if(children.Count==0)break;
+                    var next=children[rng.Next(children.Count)];var move=MoveGenerator.GenerateLegal(p).FirstOrDefault(m=>m.Uci==next.Move);if(move is null)break;p.Apply(move);
+                }
+                return new {fen=p.ToFen()};
             }
             case "state": { string id = Str(request, "id") ?? "0"; return State(id, games[id]); }
             case "step":

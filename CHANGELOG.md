@@ -2,6 +2,14 @@
 
 Earlier private iterations are not presented as independently published releases.
 
+## 0.27.1-beta — Development
+
+- Fix full-depth opponent searches, add cancellable target-depth timing, and support castling in preferred-move plans.
+- Calculate opening coverage automatically, exclude the fixed opening prefix and improve its themed results window.
+- Redesign Engine Lab into Setup, Training and Results with editable task schedules, score graphs, persistent identities, checkpoint continuation and saved playable engines.
+- Add minimal self-play actor-critic and NEAT templates alongside population evolution and teacher imitation. Add three tensor model sizes, including a backpropagation model sized and locally memory-tested for an 8 GB GPU.
+- Add synthetic regressions and bounded local CPU/GPU, resume, inference and UI checks. Stable 0.26.5 remains unchanged.
+
 ## 0.27.0-beta — Development
 
 - Add shared keyboard move entry with simplified notation, candidate selection, rotation-aware navigation and promotion support.

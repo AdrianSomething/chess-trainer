@@ -27,7 +27,7 @@ public sealed class AnalysisPresenter : IDisposable
         cancellation.Cancel();
         cancellation.Dispose();
         cancellation = new();
-        key = p.ToFen();
+        key = PositionKey(p);
         running = false;
         done = true;
         wantLines = true;
@@ -50,7 +50,7 @@ public sealed class AnalysisPresenter : IDisposable
         bar.Visible = showBar;
         rows.Visible = showLines;
         wantLines = showLines;
-        string next = p.ToFen();
+        string next = PositionKey(p);
         if (next != key)
         {
             cancellation.Cancel();
@@ -118,9 +118,11 @@ public sealed class AnalysisPresenter : IDisposable
         }
     }
 
+    private string PositionKey(Position p)=>(engine.NeuralOverride?.Id ?? Preferences.Current.EvaluationEngine)+"|"+p.ToFen();
+
     private async Task Search(Position p, CancellationToken token, bool heavy, bool strong)
     {
-        string positionKey = p.ToFen();
+        string positionKey = PositionKey(p);
         try
         {
             var result = await AnalysisSearch.Run(engine, p, 3, r =>
@@ -142,7 +144,7 @@ public sealed class AnalysisPresenter : IDisposable
                 if (token.IsCancellationRequested || disposed || key != positionKey)
                     return;
                 done = result.Error is null;
-                if (done && heavy) extension = current;
+                if (done && heavy && EngineRegistry.Selected(engine) is null) extension = current;
             });
             if (extension is not null && !token.IsCancellationRequested)
             {

@@ -59,6 +59,7 @@ internal static class Version270Checks
         Program.Check(OpeningGenerator.ChooseLearner(initial, lines, options, _ => true).BestMove == "d2d4", "Compression has priority");
         var opening = new OpeningDefinition { Perspective = "black", Tree = new() };
         var next = new OpeningNode(); opening.Tree.Moves.Add(new() { Uci = "e2e4", Next = next });
+        opening.Tree.Moves.Add(new() { Uci = "g1f3", Next = new() });
         var report = OpeningCoverage.Calculate(opening, p => p.ToFen() == initial.ToFen() ? [("e2e4", new(60,0,0,0)), ("d2d4", new(40,0,0,0))] : [], default);
         Program.Check(report.Score == 60 && report.Gaps.Single().Gain == 40, "Coverage 60/100 and exact immediate gap contribution");
         opening.GenerationStartFen = Position.InitialFen;

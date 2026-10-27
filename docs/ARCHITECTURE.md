@@ -37,7 +37,8 @@ All paths above are relative to src/ChessOpeningTrainer.
 | Dataset-guided generation / planned moves | GeneratorDatasetPolicy.cs, PreferredMovePolicy.cs, OpeningGeneratorForm.Preferences.cs; Domain/Openings/PreferredMovePlan.cs |
 | Opening coverage | Features/Branches/OpeningCoverage.cs and BranchForm.Coverage.cs |
 | Engine Lab protocol / rules | Infrastructure/Engine/TrainingProtocol.cs; Domain/Chess/TrainingGame.cs; App/Program.cs handles --training-host before UI initialization |
-| Engine Lab UI / lifecycle | Features/EngineLab; App/MainForm.EngineLab.cs suspends and restores puzzle preparation |
+| Engine Lab UI / lifecycle | Features/EngineLab: Setup, Tasks, Training and Results partials; LabConfiguration, LabTaskCatalog, LabCurveEditor and LabScoreChart; App/MainForm.EngineLab.cs suspends and restores puzzle preparation |
+| Saved neural/NEAT engines | Infrastructure/Storage/EngineRegistry; Infrastructure/Engine/NeuralEvaluationSession; addons/engine-lab/inference.py; generators retain Stockfish |
 | Rules / castling / en passant | Domain/Chess/MoveGenerator.cs and Position.cs |
 | Board input, silhouettes, drawing | UI/Board/BoardControl.Input.cs, .Pieces.cs, .Rendering.cs |
 | Shared history playback / reverse animation | UI/Board/HistoryPlayback.cs, BoardControl.Animation.cs, .ReverseAnimation.cs |

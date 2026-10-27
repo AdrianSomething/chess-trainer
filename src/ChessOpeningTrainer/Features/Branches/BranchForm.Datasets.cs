@@ -15,12 +15,14 @@ public sealed partial class BranchForm
         right.Controls.Add(datasetResults);
         void RefreshIndex()
         {
+            var previousPath=datasetIndexPath;
             try
             {
                 var store = new DatasetStore(originalProgress.DataDirectory);
                 datasetIndexPath = store.HasIndex ? store.IndexPath(store.Manifest.IndexFile!) : null;
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or InvalidDataException) { datasetIndexPath = null; }
+            if(previousPath!=datasetIndexPath && branchMode==BranchMode.Analysis)RefreshCoverage();
             if (board.Position is { } position)
                 UpdateDatasetStats(position);
         }

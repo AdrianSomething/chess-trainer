@@ -1,2 +1,5 @@
 # Install the CUDA-enabled PyTorch wheel appropriate for your driver from pytorch.org.
 torch>=2.6,<3
+
+# CPU topology evolution; not vendored into the application.
+neat-python==1.1.0

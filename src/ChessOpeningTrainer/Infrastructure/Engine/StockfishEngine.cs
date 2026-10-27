@@ -7,6 +7,8 @@ namespace ChessOpeningTrainer;
 public sealed class StockfishEngine
 {
     public string? Path { get; }
+    public SavedEngine? NeuralOverride { get; private set; }
+    public StockfishEngine WithNeural(SavedEngine model) { var copy=new StockfishEngine(AppContext.BaseDirectory);copy.NeuralOverride=model;return copy; }
     internal GenerationBudget? Budget { get; }
     private StockfishEngine(string? path, GenerationBudget budget) { Path = path; Budget = budget; }
     public StockfishEngine ForGeneration(GenerationBudget budget) => new(Path, budget);

@@ -70,7 +70,7 @@ public sealed partial class BranchForm
             EndEditorSession(keepCheckpoint: true);
         }
         CancelEditSearch(); branchMode = mode; board.StopAnimation();
-        coverageButton.Visible = mode == BranchMode.Analysis;
+        RefreshCoverage();
         if (IsEditingMode) BeginEditorSession();
         foreach (var control in learningControls) control.Visible = mode == BranchMode.Learning;
         editPanel!.Visible = IsEditingMode; gamesPanel!.Visible = mode == BranchMode.Analysis;

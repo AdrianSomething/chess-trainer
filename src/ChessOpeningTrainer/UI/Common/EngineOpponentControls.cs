@@ -12,8 +12,8 @@ internal static class EngineOpponentControls
         panel.Controls.Add(depth, 1, 0); panel.Controls.Add(intelligence, 1, 1);
         depth.Dock = intelligence.Dock = DockStyle.Fill;
         var tips = new ToolTip { AutoPopDelay = 20000 };
-        L.SetToolTip(tips, depth, "Zieltiefe in Halbzügen. Größere Werte prüfen längere Folgen; maximal 2,5 Sekunden pro Gegnerzug.");
-        L.SetToolTip(tips, intelligence, "0 %: schlechtester legaler Zug laut Suche. 50 %: Zufall aus allen legalen Zügen. 100 %: bester Enginezug. Zwischenwerte gewichten bessere oder schlechtere Züge; die Bewertung hängt von Suchtiefe und Zeitlimit ab.");
+        L.SetToolTip(tips, depth, "Suchtiefe in Halbzügen ohne festes Zeitlimit. Hohe Werte wie 40 können sehr lange dauern. Neue Partie, Zurück oder Schließen bricht die Suche ab.");
+        L.SetToolTip(tips, intelligence, "0 %: schlechtester legaler Zug laut Suche. 50 %: Zufall aus allen legalen Zügen. 100 %: bester Enginezug. Zwischenwerte gewichten bessere oder schlechtere Züge; die Bewertung hängt von der Suchtiefe ab.");
         panel.Disposed += (_, _) => tips.Dispose(); return panel;
     }
 }

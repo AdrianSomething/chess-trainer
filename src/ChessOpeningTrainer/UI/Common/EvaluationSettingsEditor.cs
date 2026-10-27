@@ -5,6 +5,7 @@ internal static class EvaluationSettingsEditor
     public static Control Create()
     {
         var panel = new FlowLayoutPanel { Dock = DockStyle.Fill, Padding = new(20), FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoScroll = true };
+        panel.Controls.Add(EngineSelectionEditor.Create());
         var settings = Preferences.Current;
         var defaults = new UserPreferences();
         var defaultValues = new Queue<int>([defaults.EvaluationWorkers, defaults.QuickEvaluationDepth, defaults.LightEvaluationDepth, defaults.HeavyEvaluationDepth]);
@@ -23,26 +24,56 @@ internal static class EvaluationSettingsEditor
         var measure = new Button { Text = "Laufzeit am Beispiel messen", AutoSize = true };
         var result = new Label { AutoSize = true, MaximumSize = new(460, 0), Text = "Realer Test auf diesem PC: Stellung nach 1. e4 e5 2. Sf3. Die Dauer hängt von Stellung, Tiefe und CPU-Auslastung ab." };
         var lifetime = new CancellationTokenSource();
-        panel.Disposed += (_, _) => lifetime.Cancel();
+        CancellationTokenSource? measurement = null;
+        var exact = new CheckBox { Text = "Bis zur Zieltiefe messen (ohne Zeitlimit)", Checked = true, AutoSize = true };
+        var tips = new ToolTip { AutoPopDelay = 25000 };
+        L.SetToolTip(tips, exact, "Aktiv: alle eingestellten Suchtiefen tatsächlich messen, auch wenn dies lange dauert. Inaktiv: die zeitbegrenzte Hintergrundanalyse messen. Erneutes Drücken bricht nur die Messung ab.");
+        panel.Disposed += (_, _) => { lifetime.Cancel(); measurement?.Cancel(); tips.Dispose(); };
         measure.Click += async (_, _) =>
         {
-            measure.Enabled = false;
+            if (measurement is not null) { measurement.Cancel(); return; }
+            using var run = CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token); measurement = run;
+            measure.Text = L.T("Messung abbrechen"); exact.Enabled = false;
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            var reports = new List<string>();
+            var reports = new Dictionary<int, string>();
             try
             {
                 var example = Position.FromFen("rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2");
-                result.Text = "Messung läuft …";
-                var final = await AnalysisSearch.Run(new StockfishEngine(AppContext.BaseDirectory), example, 3, r =>
+                result.Text = L.T("Messung läuft …");
+                var engine = new StockfishEngine(AppContext.BaseDirectory);
+                if (exact.Checked)
                 {
-                    reports.Add($"Nach {watch.Elapsed.TotalSeconds:0.000} s: Tiefe {r.Lines.FirstOrDefault()?.Depth ?? 0}");
-                    result.Text = string.Join("\n", reports);
-                }, lifetime.Token);
-                if (!panel.IsDisposed) result.Text += "\n" + (final.Error ?? $"Abgeschlossen nach {watch.Elapsed.TotalSeconds:0.00} s.");
+                    var depths = new[] { settings.QuickEvaluationDepth, settings.LightEvaluationDepth, settings.HeavyEvaluationDepth }.Take(settings.EvaluationWorkers).ToArray();
+                    var updates = new Progress<(int Index, int Depth, bool Done)>(value =>
+                    {
+                        if (panel.IsDisposed || run.IsCancellationRequested) return;
+                        reports[value.Index] = L.T($"Ziel {depths[value.Index]} · erreicht {value.Depth} · {watch.Elapsed.TotalSeconds:0.000} s") + (value.Done ? " ✓" : " …");
+                        result.Text = string.Join("\n", reports.OrderBy(x => x.Key).Select(x => x.Value));
+                    });
+                    await Task.WhenAll(depths.Select(async (depth, index) =>
+                    {
+                        await using var pool = new EnginePool(engine, 1, index == 2 ? Math.Clamp(Environment.ProcessorCount - 2, 1, 6) : 1, run.Token);
+                        var r = await pool.Search(example, depth, 3, run.Token, d => ((IProgress<(int,int,bool)>)updates).Report((index,d,false)));
+                        if (r.Error is not null) throw new IOException(r.Error);
+                        ((IProgress<(int,int,bool)>)updates).Report((index,r.Lines.FirstOrDefault()?.Depth ?? 0,true));
+                    }));
+                }
+                else
+                {
+                    var final = await AnalysisSearch.Run(engine, example, 3, r =>
+                    {
+                        reports[reports.Count] = L.T($"Nach {watch.Elapsed.TotalSeconds:0.000} s: Tiefe {r.Lines.FirstOrDefault()?.Depth ?? 0}");
+                        result.Text = string.Join("\n", reports.Values);
+                    }, run.Token);
+                    if (final.Error is not null) throw new IOException(final.Error);
+                }
+                if (!panel.IsDisposed) result.Text += "\n" + L.T($"Abgeschlossen nach {watch.Elapsed.TotalSeconds:0.00} s.");
             }
-            catch (OperationCanceledException) { }
-            finally { if (!panel.IsDisposed) measure.Enabled = true; }
+            catch (OperationCanceledException) { if (!panel.IsDisposed) result.Text += "\n" + L.T("Messung abgebrochen."); }
+            catch (Exception ex) when (ex is IOException or InvalidOperationException) { if (!panel.IsDisposed) result.Text = ex.Message; }
+            finally { measurement = null; if (!panel.IsDisposed) { measure.Text = L.T("Laufzeit am Beispiel messen"); exact.Enabled = true; } }
         };
+        panel.Controls.Add(exact);
         panel.Controls.AddRange([measure, result]);
         return panel;
     }

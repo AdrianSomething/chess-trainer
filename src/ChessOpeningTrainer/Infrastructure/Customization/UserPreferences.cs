@@ -3,6 +3,7 @@ using System.Text.Json;
 namespace ChessOpeningTrainer;
 public sealed class UserPreferences
 {
+    public string EvaluationEngine { get; set; } = "stockfish";
     public DatasetSettings Datasets { get; set; } = new();
     public bool GeneratorRestEnabled { get; set; }
     public int GeneratorWorkMinutes { get; set; } = 60;

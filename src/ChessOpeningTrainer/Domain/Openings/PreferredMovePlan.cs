@@ -9,7 +9,14 @@ public static class PreferredMovePlan
     public static Position Preview(Position start, IEnumerable<PreferredStep> steps)
     {
         var preview = start.Clone();
-        foreach (var step in steps) { preview.Squares[step.From] = '\0'; preview.Squares[step.To] = step.Piece; }
+        foreach (var step in steps)
+        {
+            bool castle = char.ToLowerInvariant(step.Piece) == 'k' && Math.Abs(step.To - step.From) == 2;
+            preview.Squares[step.From] = '\0'; preview.Squares[step.To] = step.Piece;
+            if (castle) { int rook = step.To > step.From ? step.From + 3 : step.From - 4; preview.Squares[step.To > step.From ? step.From + 1 : step.From - 1] = preview.Squares[rook]; preview.Squares[rook] = '\0'; }
+            if (char.ToLowerInvariant(step.Piece) == 'k') preview.Castling = preview.Castling.Replace(char.IsUpper(step.Piece) ? "K" : "k", "").Replace(char.IsUpper(step.Piece) ? "Q" : "q", "");
+            if (step.From is 0 or 7 or 56 or 63) preview.Castling = preview.Castling.Replace(step.From switch { 0 => "Q", 7 => "K", 56 => "q", _ => "k" }, "");
+        }
         return preview;
     }
     public static bool CanAppend(Position preview, bool white, int from, int to)
@@ -18,6 +25,16 @@ public static class PreferredMovePlan
         char piece = preview.Squares[from], target = preview.Squares[to];
         if (piece == '\0' || char.IsUpper(piece) != white || target != '\0' && char.IsUpper(target) == white) return false;
         int dx = to % 8 - from % 8, dy = to / 8 - from / 8, ax = Math.Abs(dx), ay = Math.Abs(dy);
+        if (char.ToLowerInvariant(piece) == 'k' && from == (white ? 4 : 60) && dy == 0 && ax == 2)
+        {
+            bool shortSide = dx > 0;
+            char right = white ? shortSide ? 'K' : 'Q' : shortSide ? 'k' : 'q';
+            int rook = from + (shortSide ? 3 : -4);
+            if (!preview.Castling.Contains(right) || preview.Squares[rook] != (white ? 'R' : 'r')) return false;
+            for (int square = from + Math.Sign(dx); square != rook; square += Math.Sign(dx))
+                if (preview.Squares[square] != '\0' && char.IsUpper(preview.Squares[square]) == white) return false;
+            return true; // Attack checks belong to actual legal generation, not the geometric preference plan.
+        }
         bool geometry = char.ToLowerInvariant(piece) switch
         {
             'n' => ax * ay == 2,

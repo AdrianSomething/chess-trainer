@@ -10,11 +10,11 @@ public static class OpeningCoverage
         Func<Position, IReadOnlyList<(string Move, DatasetCounts Counts)>> children, CancellationToken token)
     {
         var positions = GraphOperations.Positions(opening);
-        // Older generated repertoires explicitly label their manually supplied prefix.
+        // A repertoire's fixed opening sequence is a deliberate scope choice.
+        // Follow it regardless of labels; do not penalize an e4 repertoire for omitting d4.
         var start = positions[0];
         var seenPrefix = new HashSet<OpeningNode>();
-        while (seenPrefix.Add(start.Node) && start.Node.Moves.Count == 1 &&
-            start.Node.Moves[0].Explanation == "Manuell vorgegebene Startsequenz")
+        while (seenPrefix.Add(start.Node) && start.Node.Moves.Count == 1)
         {
             var next = positions.FirstOrDefault(w => w.Node == start.Node.Moves[0].Next);
             if (next.Node is null) break;
@@ -24,7 +24,7 @@ public static class OpeningCoverage
         {
             string key = OpeningStore.PositionKey(Position.FromFen(fen));
             var explicitStart = positions.FirstOrDefault(w => OpeningStore.PositionKey(w.Position) == key);
-            if (explicitStart.Node is not null) start = explicitStart;
+            if (explicitStart.Node is not null && explicitStart.Path.Count > start.Path.Count) start = explicitStart;
         }
         var reachable = new HashSet<OpeningNode>();
         var pending = new Queue<(OpeningNode Node, int Depth)>(); pending.Enqueue((start.Node, 0));

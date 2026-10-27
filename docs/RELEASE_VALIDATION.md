@@ -1,4 +1,14 @@
-# Validation record — 0.24.0
+# Validation records
+
+## 0.27.1-beta — 2026-10-27
+
+Local verification completed the existing rules/UI/dataset suite and real-engine checks through `tools/Test.ps1 -EngineGeneration -NoRestore`. Additional synthetic public regressions cover planned castling, fixed-prefix coverage and Engine Lab construction. Ten dependency-free Python checks cover schedules, curve validation, portable NEAT actions and the four minimal templates.
+
+All four training methods completed bounded local runs and checkpoint continuation. CUDA checks exercised tournament/Stockfish/mate/teacher tasks and gradient methods. An isolated Windows UI harness verified Setup / Training / Results, a real score point, model saving, default-engine inference, deletion and Stockfish fallback; coverage calculation and the result window were also checked. These checks do not access the maintainer’s games or normal profile.
+
+The large backpropagation profile completed two FP32 AdamW updates at batch size 16 on an 8 GB RTX 4060 Laptop GPU: peak tensor allocation 6,648,979,456 bytes; peak PyTorch reservation 6,677,331,968 bytes. This is a memory smoke test, not a 100-round training or strength benchmark. Driver/display allocations and other programs are additional. See the [Engine Lab documentation](../addons/engine-lab/README.md) for experimental boundaries.
+
+## Historical publication baseline — 0.24.0
 
 Validation date: 2026-10-18. These are local checks, not GitHub CI or an independent audit.
 

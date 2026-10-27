@@ -12,6 +12,7 @@ Replies are `{ "ok": true, "result": ... }` or `{ "ok": false, "error": "..." }`
 | `step` | `id`, `move` (UCI) | `accepted`, `state`; illegal moves leave state unchanged |
 | `remove` | `id` | Removes the instance |
 | `analyze` | `id` or `fen`, `depth` (1–64), `multi` (1–10) | `lines`: `move`, `cp`, `mate`, `depth`, `pv`; raw UCI evaluations are positive for the side to move in the analyzed position (convert explicitly for a White-positive display) |
+| `dataset_sample` | `file` (local dataset index), `seed`, `plies` (0–300) | A legal FEN sampled by walking the built local dataset; no mutation or download |
 | `batch` | `items` array of operations | Ordered response array; no nested batches |
 
 State includes `id`, complete `fen`, `board` (64 characters, a1 first, `.` empty), `white`, `castling`, `plies`, `status`, `result`, `legal`. Legal entries contain `uci` and `index`. Terminal states have no legal entries. Status is `playing`, `checkmate`, `draw` or `move_limit`. Results use PGN strings `1-0`, `0-1`, `1/2-1/2`, `*`.

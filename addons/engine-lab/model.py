@@ -18,18 +18,7 @@ def encode(states, device):
     return planes.to(device)
 
 
-class ChessNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.body = nn.Sequential(nn.Conv2d(17, 32, 3, padding=1), nn.ReLU(),
-                                  nn.Conv2d(32, 32, 3, padding=1), nn.ReLU(),
-                                  nn.Flatten(), nn.Linear(32 * 64, 128), nn.ReLU())
-        self.policy = nn.Linear(128, ACTIONS)
-        self.value = nn.Sequential(nn.Linear(128, 1), nn.Tanh())
-
-    def forward(self, positions):
-        hidden = self.body(positions)
-        return self.policy(hidden), self.value(hidden).squeeze(-1)
+from models import ChessNet, requirements
 
 
 class Policy:
@@ -43,12 +32,19 @@ class Policy:
             # Reserve headroom for the CUDA context/driver outside PyTorch's allocator.
             fraction = min(.90, max(.05, (config.vram_gib - .5) * 1024**3 / total))
             torch.cuda.set_per_process_memory_fraction(fraction, self.device)
-        self.net = ChessNet().to(self.device)
+        profile = getattr(config,"model","compact")
+        if self.device.type == "cuda":
+            free, _ = torch.cuda.mem_get_info(self.device)
+            need=requirements(profile,config.mode in ("distillation","selfplay"))["gpu_bytes"]
+            if free < need: raise RuntimeError(f"This model needs approximately {need/1024**3:.1f} GiB free GPU memory; available: {free/1024**3:.1f} GiB. Close GPU applications or select a smaller model.")
+        self.net = ChessNet(profile).to(self.device)
         self.config = config
         self.loaded = None
 
     def load(self, identity, weights):
         if self.loaded != identity:
+            if isinstance(weights, (str, __import__("pathlib").Path)):
+                weights=torch.load(weights,map_location="cpu",weights_only=True,mmap=True)
             self.net.load_state_dict(weights)
             self.loaded = identity
         self.net.eval()
@@ -69,4 +65,4 @@ class Policy:
         return results
 
     def cpu_weights(self):
-        return {name: value.detach().cpu().clone() for name, value in self.net.state_dict().items()}
+        return {name: value.detach().to("cpu",copy=True) for name, value in self.net.state_dict().items()}

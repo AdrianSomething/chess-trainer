@@ -2,8 +2,12 @@ namespace ChessOpeningTrainer;
 public static class AnalysisSearch
 {
     private static readonly Dictionary<string, EnginePool> quickPools = [];
+    // Owned by the existing analysis runtime; one GPU inference process is shared by board views.
+    private static readonly NeuralEvaluationSession neural = new();
+    internal static Task<EngineResult> RunNeural(SavedEngine model,Position position,int count,CancellationToken token)=>neural.Analyze(model,position,count,token);
     public static void Shutdown()
     {
+        neural.Dispose();
         lock (quickPools)
         {
             foreach (var pool in quickPools.Values)
@@ -27,6 +31,8 @@ public static class AnalysisSearch
     // A late shallow result must never replace a deeper result from another worker.
     public static async Task<EngineResult> Run(StockfishEngine engine, Position position, int multiPv, Action<EngineResult> update, CancellationToken token, bool strong = true, bool includeHeavy = true)
     {
+        if(EngineRegistry.Selected(engine) is {} model)
+        { var result=await RunNeural(model,position,multiPv,token);if(result.Error is null)update(result);return result; }
         using var budget = CancellationTokenSource.CreateLinkedTokenSource(token);
         budget.CancelAfter(TimeSpan.FromSeconds(10));
         int bestDepth = -1;

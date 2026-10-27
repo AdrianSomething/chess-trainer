@@ -5,6 +5,7 @@ Run from the repository root on Windows with the SDK in `global.json`:
 ```powershell
 dotnet run --project tests/Public -- rules
 dotnet run --project tests/Public -- datasets
+dotnet run --project tests/Public -- v027
 ```
 
 `RulesChecks` covers initial-position perft, castling, en passant, a terminal
@@ -31,3 +32,5 @@ The small console runner exits nonzero on the first failed assertion. Thousands
 of cheap assertions share one process; they are not thousands of CI jobs.
 The larger local UI/engine harness remains private. These checks complement it;
 they are not a claim of complete UI or chess-engine validation.
+
+`Version270Checks` and `Version271Checks` cover simplified keyboard input, dataset-guided moves, coverage scope, planned castling and Engine Lab configuration/construction without Python or Stockfish. Optional Python CPU/GPU training and checkpoint/inference checks remain local; CI runs only `test_*.py`, which has no GPU dependency.
